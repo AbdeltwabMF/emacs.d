@@ -1,7 +1,7 @@
 #+title: Emacs Rice
 #+date: <2022-03-06 Sun>
 #+property: header-args:emacs-lisp :tangle init.el
-#+options: toc:10
+#+options: toc:7
 #+author: Abd El-Twab M. Fakhry
 #+language: en
 #+creator: Emacs 27.2 (Org mode 9.4.4)
@@ -19,7 +19,6 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
   - [[#theme][Theme]]
   - [[#font][Font]]
     - [[#set-the-font][Set the font]]
-    - [[#enable-proper-unicode-glyph-support][Enable proper Unicode glyph support]]
     - [[#emojis-in-buffers][Emojis in buffers]]
   - [[#mode-line][Mode Line]]
     - [[#basic-customization][Basic Customization]]
@@ -50,6 +49,9 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
   - [[#control-buffer-placement][Control Buffer Placement]]
 - [[#credential-management][Credential Management]]
 - [[#evil-mode-and-key-binding][Evil Mode and Key Binding]]
+  - [[#esc-cancels-all][ESC Cancels All]]
+  - [[#rebind-c-u][Rebind C-u]]
+  - [[#lets-be-evil][Let’s Be Evil]]
 - [[#project-management][Project Management]]
   - [[#projectile][Projectile]]
   - [[#counsel-projectile][Counsel Projectile]]
@@ -76,6 +78,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
     - [[#snippets][Snippets]]
     - [[#smart-parens][Smart Parens]]
     - [[#rainbow-mode][Rainbow Mode]]
+- [[#writing][Writing]]
 - [[#applications][Applications]]
   - [[#calendar][Calendar]]
   - [[#vterm][vterm]]
@@ -139,6 +142,15 @@ Initialize package sources
 
   (require 'use-package)
   (setq use-package-always-ensure t)
+#+END_SRC
+
+Set up quelpa for packages not in Elpa/Melpa:
+#+BEGIN_SRC emacs-lisp
+  (use-package quelpa
+    :ensure t)
+
+  (use-package quelpa-use-package
+    :ensure t)
 #+END_SRC
 
 * General Configuration
@@ -251,34 +263,6 @@ Different platforms need different default font sizes, and Fantasque Sans Mono i
   (set-fontset-font "fontset-default" 'arabic (font-spec
                                                :family "Amiri Quran"
                                                :height 110))
-#+END_SRC
-
-*** Enable proper Unicode glyph support
-#+BEGIN_SRC emacs-lisp
-  (defun amf/replace-unicode-font-mapping (block-name old-font new-font)
-    (let* ((block-idx (cl-position-if
-                       (lambda (i) (string-equal (car i) block-name))
-                       unicode-fonts-block-font-mapping))
-           (block-fonts (cadr (nth block-idx unicode-fonts-block-font-mapping)))
-           (updated-block (cl-substitute new-font old-font block-fonts :test 'string-equal)))
-      (setf (cdr (nth block-idx unicode-fonts-block-font-mapping))
-            `(,updated-block))))
-
-  (use-package unicode-fonts
-    :disabled
-    :if (not amf/is-termux)
-    :custom
-    (unicode-fonts-skip-font-groups '(low-quality-glyphs))
-    :config
-    ;; Fix the font mappings to use the right emoji font
-    (mapcar
-     (lambda (block-name)
-       (amf/replace-unicode-font-mapping block-name "Noto Color Emoji"))
-     '("Dingbats"
-       "Emoticons"
-       "Miscellaneous Symbols and Pictographs"
-       "Transport and Map Symbols"))
-    (unicode-fonts-setup))
 #+END_SRC
 
 *** Emojis in buffers
@@ -682,51 +666,52 @@ The variable auth-sources controls how and where Auth-Source keeps its secrets. 
 #+END_SRC
 
 * Evil Mode and Key Binding
+** ESC Cancels All
 #+BEGIN_SRC emacs-lisp
-  (use-package general
-    :config
-    (general-create-definer rune/leader-keys
-      :keymaps '(normal insert visual emacs)
-      :prefix "SPC"
-      :global-prefix "C-SPC")
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+#+END_SRC
 
-    (rune/leader-keys
-      "t"  '(:ignore t :which-key "toggles")
-      "tt" '(counsel-load-theme :which-key "choose theme")))
+** Rebind C-u
+Since I let evil-mode take over C-u for buffer scrolling, I need to re-bind the universal-argument command to another key sequence. I’m choosing C-M-u for this purpose.
 
-  (use-package evil
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-M-u") 'universal-argument)
+#+END_SRC
+
+** Let’s Be Evil
+Some tips can be found here:
+- https://github.com/noctuid/evil-guide
+- https://nathantypanski.com/blog/2014-08-03-a-vim-like-emacs-config.html
+
+#+BEGIN_SRC emacs-lisp
+  (defun amf/evil-hook ()
+    (dolist (mode '(custom-mode
+                    eshell-mode
+                    git-rebase-mode
+                    erc-mode
+                    circe-server-mode
+                    circe-chat-mode
+                    circe-query-mode
+                    sauron-mode
+                    term-mode))
+      (add-to-list 'evil-emacs-state-modes mode)))
+
+  (use-package undo-tree
     :init
-    (setq evil-want-integration t)
-    (setq evil-want-keybinding nil)
-    (setq evil-want-C-u-scroll t)
-    (setq evil-want-C-i-jump nil)
-    :config
-    (evil-mode 1)
-    (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-    (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+    (global-undo-tree-mode 1))
 
-    ;; Use visual line motions even outside of visual-line-mode buffers
-    (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-    (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-
-    (evil-set-initial-state 'messages-buffer-mode 'normal)
-    (evil-set-initial-state 'dashboard-mode 'normal))
+  (use-package evil)
+  (evil-mode 1)
 
   (use-package evil-collection
     :after evil
     :config
     (evil-collection-init))
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (use-package general)
   (use-package hydra)
-
-  (defhydra hydra-text-scale (:timeout 4)
-    "scale text"
-    ("j" text-scale-increase "in")
-    ("k" text-scale-decrease "out")
-    ("f" nil "finished" :exit t))
-
-  (rune/leader-keys
-    "ts" '(hydra-text-scale/body :which-key "scale text"))
 #+END_SRC
 
 * Project Management
@@ -967,6 +952,30 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
            web-mode
            typescript-mode
            js2-mode))
+#+END_SRC
+* Writing
+Darkroom for distraction-free writing
+#+BEGIN_SRC emacs-lisp
+  (use-package darkroom
+    :commands darkroom-mode
+    :config
+    (setq darkroom-text-scale-increase 0))
+
+  (defun amf/enter-focus-mode ()
+    (interactive)
+    (darkroom-mode 1)
+    (display-line-numbers-mode 0))
+
+  (defun amf/leave-focus-mode ()
+    (interactive)
+    (darkroom-mode 0)
+    (display-line-numbers-mode 1))
+
+  (defun amf/toggle-focus-mode ()
+    (interactive)
+    (if (symbol-value darkroom-mode)
+        (amf/leave-focus-mode)
+      (amf/enter-focus-mode)))
 #+END_SRC
 
 * Applications

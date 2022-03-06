@@ -41,6 +41,12 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
+(use-package quelpa
+  :ensure t)
+
+(use-package quelpa-use-package
+  :ensure t)
+
 (setq inhibit-startup-message t)
 (setq visible-bell t)
 
@@ -114,31 +120,6 @@
 (set-fontset-font "fontset-default" 'arabic (font-spec
                                              :family "Amiri Quran"
                                              :height 110))
-
-(defun amf/replace-unicode-font-mapping (block-name old-font new-font)
-  (let* ((block-idx (cl-position-if
-                     (lambda (i) (string-equal (car i) block-name))
-                     unicode-fonts-block-font-mapping))
-         (block-fonts (cadr (nth block-idx unicode-fonts-block-font-mapping)))
-         (updated-block (cl-substitute new-font old-font block-fonts :test 'string-equal)))
-    (setf (cdr (nth block-idx unicode-fonts-block-font-mapping))
-          `(,updated-block))))
-
-(use-package unicode-fonts
-  :disabled
-  :if (not amf/is-termux)
-  :custom
-  (unicode-fonts-skip-font-groups '(low-quality-glyphs))
-  :config
-  ;; Fix the font mappings to use the right emoji font
-  (mapcar
-   (lambda (block-name)
-     (amf/replace-unicode-font-mapping block-name "Noto Color Emoji"))
-   '("Dingbats"
-     "Emoticons"
-     "Miscellaneous Symbols and Pictographs"
-     "Transport and Map Symbols"))
-  (unicode-fonts-setup))
 
 (use-package emojify
   :ensure t
@@ -438,50 +419,36 @@
 
 (setq auth-sources '("~/.authinfo.gpg"))
 
-(use-package general
-  :config
-  (general-create-definer rune/leader-keys
-    :keymaps '(normal insert visual emacs)
-    :prefix "SPC"
-    :global-prefix "C-SPC")
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
-  (rune/leader-keys
-    "t"  '(:ignore t :which-key "toggles")
-    "tt" '(counsel-load-theme :which-key "choose theme")))
+(global-set-key (kbd "C-M-u") 'universal-argument)
 
-(use-package evil
+(defun amf/evil-hook ()
+  (dolist (mode '(custom-mode
+                  eshell-mode
+                  git-rebase-mode
+                  erc-mode
+                  circe-server-mode
+                  circe-chat-mode
+                  circe-query-mode
+                  sauron-mode
+                  term-mode))
+    (add-to-list 'evil-emacs-state-modes mode)))
+
+(use-package undo-tree
   :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-u-scroll t)
-  (setq evil-want-C-i-jump nil)
-  :config
-  (evil-mode 1)
-  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+  (global-undo-tree-mode 1))
 
-  ;; Use visual line motions even outside of visual-line-mode buffers
-  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal))
+(use-package evil)
+(evil-mode 1)
 
 (use-package evil-collection
   :after evil
   :config
   (evil-collection-init))
 
+(use-package general)
 (use-package hydra)
-
-(defhydra hydra-text-scale (:timeout 4)
-  "scale text"
-  ("j" text-scale-increase "in")
-  ("k" text-scale-decrease "out")
-  ("f" nil "finished" :exit t))
-
-(rune/leader-keys
-  "ts" '(hydra-text-scale/body :which-key "scale text"))
 
 (use-package projectile
   :diminish projectile-mode
@@ -641,6 +608,27 @@
          web-mode
          typescript-mode
          js2-mode))
+
+(use-package darkroom
+  :commands darkroom-mode
+  :config
+  (setq darkroom-text-scale-increase 0))
+
+(defun amf/enter-focus-mode ()
+  (interactive)
+  (darkroom-mode 1)
+  (display-line-numbers-mode 0))
+
+(defun amf/leave-focus-mode ()
+  (interactive)
+  (darkroom-mode 0)
+  (display-line-numbers-mode 1))
+
+(defun amf/toggle-focus-mode ()
+  (interactive)
+  (if (symbol-value darkroom-mode)
+      (amf/leave-focus-mode)
+    (amf/enter-focus-mode)))
 
 (use-package calfw
   :commands cfw:open-org-calendar
