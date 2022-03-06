@@ -13,6 +13,20 @@
                              (float-time
                               (time-subtract after-init-time before-init-time))) gcs-done)))
 
+;; Change the user-emacs-directory to keep unwanted things out of ~/.config/emacs
+(setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
+      url-history-file (expand-file-name "url/history" user-emacs-directory))
+
+;; Use no-littering to automatically set common paths to the new user-emacs-directory
+(use-package no-littering)
+
+;; Keep customization settings in a temporary file
+(setq custom-file
+      (if (boundp 'server-socket-dir)
+          (expand-file-name "custom.el" server-socket-dir)
+        (expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
+(load custom-file t)
+
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
@@ -36,9 +50,21 @@
 (set-fringe-mode 10)
 (menu-bar-mode -1)
 
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+(setq scroll-step 1) ;; keyboard scroll one line at a time
+(setq use-dialog-box nil) ;; Disable dialog boxes since they weren't working in Mac OSX
+
+(set-frame-parameter (selected-frame) 'alpha '(95 . 90))
+(add-to-list 'default-frame-alist '(alpha . (95 . 90)))
+(set-frame-parameter (selected-frame) 'fullscreen 'maximized)
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+(global-display-line-numbers-mode t)
 (column-number-mode)
-(global-display-line-numbers-mode 1)
 (setq display-line-numbers-type 'relative)
+(use-package command-log-mode)
 
 (dolist (mode '(term-mode-hook
                 shell-mode-hook
@@ -46,11 +72,73 @@
                 vterm-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
+(setq large-file-warning-threshold nil)
+
+(setq vc-follow-symlinks t)
+
+(setq ad-redefinition-action 'accept)
+
 (use-package rainbow-delimiters
   :ensure t
   :config
   (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
   (add-hook 'foo-mode-hook #'rainbow-delimiters-mode))
+
+(use-package gruvbox-theme
+  :ensure t
+  :config
+  (load-theme 'gruvbox-light-soft t))
+
+;; Set the font face based on platform
+(pcase system-type
+  ((or 'gnu/linux 'windows-nt 'cygwin)
+   (set-face-attribute 'default nil
+                       :font "Fantasque Sans Mono"
+                       :weight 'light
+                       :height 110))
+  ('darwin (set-face-attribute 'default nil :font "Fira Mono" :height 110)))
+
+;; Set the fixed pitch face
+(set-face-attribute 'fixed-pitch nil
+                    :font "Fantasque Sans Mono"
+                    :weight 'light
+                    :height 110)
+
+;; Set the variable pitch face
+(set-face-attribute 'variable-pitch nil
+                    ;; :font "Cantarell"
+                    :font "Linux Biolinum"
+                    :height 100
+                    :weight 'light)
+
+(set-fontset-font "fontset-default" 'arabic (font-spec
+                                             :family "Amiri Quran"
+                                             :height 110))
+
+(defun amf/replace-unicode-font-mapping (block-name old-font new-font)
+  (let* ((block-idx (cl-position-if
+                     (lambda (i) (string-equal (car i) block-name))
+                     unicode-fonts-block-font-mapping))
+         (block-fonts (cadr (nth block-idx unicode-fonts-block-font-mapping)))
+         (updated-block (cl-substitute new-font old-font block-fonts :test 'string-equal)))
+    (setf (cdr (nth block-idx unicode-fonts-block-font-mapping))
+          `(,updated-block))))
+
+(use-package unicode-fonts
+  :disabled
+  :if (not amf/is-termux)
+  :custom
+  (unicode-fonts-skip-font-groups '(low-quality-glyphs))
+  :config
+  ;; Fix the font mappings to use the right emoji font
+  (mapcar
+   (lambda (block-name)
+     (amf/replace-unicode-font-mapping block-name "Noto Color Emoji"))
+   '("Dingbats"
+     "Emoticons"
+     "Miscellaneous Symbols and Pictographs"
+     "Transport and Map Symbols"))
+  (unicode-fonts-setup))
 
 (use-package emojify
   :ensure t
@@ -60,17 +148,35 @@
 (use-package all-the-icons
   :if (display-graphic-p))
 
-(use-package gruvbox-theme
-  :ensure t
-  :config
-  (load-theme 'gruvbox-light-soft t))
+(setq display-time-format "%l:%M %p %b %y"
+      display-time-default-load-average nil)
 
 (use-package diminish
   :ensure t)
 
-(set-fontset-font "fontset-default" 'arabic (font-spec
-                                             :family "Kawkab Mono"
-                                             :size 12))
+;; You must run (all-the-icons-install-fonts) one time after
+;; installing this package!
+
+(use-package minions
+  :hook (doom-modeline-mode . minions-mode))
+
+(use-package doom-modeline
+  :after eshell     ;; Make sure it gets hooked after eshell
+  :hook (after-init . doom-modeline-init)
+  :custom-face
+  (mode-line ((t (:height 0.85))))
+  (mode-line-inactive ((t (:height 0.85))))
+  :custom
+  (doom-modeline-height 15)
+  (doom-modeline-bar-width 6)
+  (doom-modeline-lsp t)
+  (doom-modeline-github nil)
+  (doom-modeline-mu4e nil)
+  (doom-modeline-irc t)
+  (doom-modeline-minor-modes t)
+  (doom-modeline-persp-name nil)
+  (doom-modeline-buffer-file-name-style 'truncate-except-project)
+  (doom-modeline-major-mode-icon nil))
 
 (use-package ivy
   :diminish

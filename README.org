@@ -4,21 +4,12 @@
 #+options: toc
 #+author: Abd El-Twab M. Fakhry
 #+language: en
-#+select_tags: export
-#+exclude_tags: noexport
 #+creator: Emacs 27.2 (Org mode 9.4.4)
 
-* Table of contents
-- Startup performance
-- Package manager
-- User interface
-  - Font
-- Ivy
-- Evil mode and key binding
-- Project management
-- Org mode
+* Preface
+GNU Emacs isn’t a text editor, it’s the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
 
-* Startup performance
+* Startup Performance
    
 Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time.
 The default is 800 kilobytes.  Measured in bytes.
@@ -30,16 +21,32 @@ The default is 800 kilobytes.  Measured in bytes.
 
   ;;; Code:
   (setq gc-cons-threshold (* 50 1000 1000))
-#+END_SRC
 
-Profile emacs startup
-#+BEGIN_SRC emacs-lisp
   (add-hook 'emacs-startup-hook
             (lambda ()
               (message "*** Emacs loaded in %s with %d garbage collections."
                        (format "%.2f seconds"
                                (float-time
                                 (time-subtract after-init-time before-init-time))) gcs-done)))
+#+END_SRC
+
+* Keep it Clean
+
+I don’t want a bunch of transient files showing up as untracked in the Git repo so I move them all to another location.
+#+BEGIN_SRC emacs-lisp
+  ;; Change the user-emacs-directory to keep unwanted things out of ~/.config/emacs
+  (setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
+        url-history-file (expand-file-name "url/history" user-emacs-directory))
+
+  ;; Use no-littering to automatically set common paths to the new user-emacs-directory
+  (use-package no-littering)
+
+  ;; Keep customization settings in a temporary file
+  (setq custom-file
+        (if (boundp 'server-socket-dir)
+            (expand-file-name "custom.el" server-socket-dir)
+          (expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
+  (load custom-file t)
 #+END_SRC
 
 * Package manager
@@ -61,7 +68,11 @@ Initialize package sources
   (setq use-package-always-ensure t)
 #+END_SRC
 
-* User interface
+* General Configuration
+
+** User Interface
+
+Clean up Emacs’ user interface, make it more minimal.
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-message t)
   (setq visible-bell t)
@@ -71,20 +82,55 @@ Initialize package sources
   (tooltip-mode -1)
   (set-fringe-mode 10)
   (menu-bar-mode -1)
-
-  (column-number-mode)
-  (global-display-line-numbers-mode 1)
-  (setq display-line-numbers-type 'relative)
 #+END_SRC
 
-Disable line numbers for some modes
+Improve scrolling.
 #+BEGIN_SRC emacs-lisp
+  (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+  (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+  (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+  (setq scroll-step 1) ;; keyboard scroll one line at a time
+  (setq use-dialog-box nil) ;; Disable dialog boxes since they weren't working in Mac OSX
+#+END_SRC
+
+Set frame transparency and maximize windows by default.
+#+BEGIN_SRC emacs-lisp
+  (set-frame-parameter (selected-frame) 'alpha '(95 . 90))
+  (add-to-list 'default-frame-alist '(alpha . (95 . 90)))
+  (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+#+END_SRC
+
+Enable line numbers and customize their format.
+#+BEGIN_SRC emacs-lisp
+  (global-display-line-numbers-mode t)
+  (column-number-mode)
+  (setq display-line-numbers-type 'relative)
+  (use-package command-log-mode)
+
   (dolist (mode '(term-mode-hook
                   shell-mode-hook
                   eshell-mode-hook
                   vterm-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 #+END_SRC
+
+Don’t warn for large files (shows up when launching videos)
+#+BEGIN_SRC emacs-lisp
+  (setq large-file-warning-threshold nil)
+#+END_SRC
+
+Don’t warn for following symlinked files
+#+BEGIN_SRC emacs-lisp
+  (setq vc-follow-symlinks t)
+#+END_SRC
+
+Don’t warn when advice is added for functions
+#+BEGIN_SRC emacs-lisp
+  (setq ad-redefinition-action 'accept)
+#+END_SRC
+
+** Theme 
 
 Rainbow Delimiters Mode
 #+BEGIN_SRC emacs-lisp
@@ -95,7 +141,81 @@ Rainbow Delimiters Mode
     (add-hook 'foo-mode-hook #'rainbow-delimiters-mode))
 #+END_SRC
 
-EMOJIS
+A nice gallery of Emacs themes can be found at https://emacsthemes.com/.
+#+BEGIN_SRC emacs-lisp
+  (use-package gruvbox-theme
+    :ensure t
+    :config
+    (load-theme 'gruvbox-light-soft t))
+#+END_SRC
+
+** Font
+
+*** Set the font
+
+Different platforms need different default font sizes, and Fantasque Sans Mono is currently my favorite face.
+#+BEGIN_SRC emacs-lisp
+  ;; Set the font face based on platform
+  (pcase system-type
+    ((or 'gnu/linux 'windows-nt 'cygwin)
+     (set-face-attribute 'default nil
+                         :font "Fantasque Sans Mono"
+                         :weight 'light
+                         :height 110))
+    ('darwin (set-face-attribute 'default nil :font "Fira Mono" :height 110)))
+
+  ;; Set the fixed pitch face
+  (set-face-attribute 'fixed-pitch nil
+                      :font "Fantasque Sans Mono"
+                      :weight 'light
+                      :height 110)
+
+  ;; Set the variable pitch face
+  (set-face-attribute 'variable-pitch nil
+                      ;; :font "Cantarell"
+                      :font "Linux Biolinum"
+                      :height 100
+                      :weight 'light)
+#+END_SRC
+
+إعداد الخط للنصوص العربية
+#+BEGIN_SRC emacs-lisp
+  (set-fontset-font "fontset-default" 'arabic (font-spec
+                                               :family "Amiri Quran"
+                                               :height 110))
+#+END_SRC
+
+*** Enable proper Unicode glyph support
+
+#+BEGIN_SRC emacs-lisp
+  (defun amf/replace-unicode-font-mapping (block-name old-font new-font)
+    (let* ((block-idx (cl-position-if
+                       (lambda (i) (string-equal (car i) block-name))
+                       unicode-fonts-block-font-mapping))
+           (block-fonts (cadr (nth block-idx unicode-fonts-block-font-mapping)))
+           (updated-block (cl-substitute new-font old-font block-fonts :test 'string-equal)))
+      (setf (cdr (nth block-idx unicode-fonts-block-font-mapping))
+            `(,updated-block))))
+
+  (use-package unicode-fonts
+    :disabled
+    :if (not amf/is-termux)
+    :custom
+    (unicode-fonts-skip-font-groups '(low-quality-glyphs))
+    :config
+    ;; Fix the font mappings to use the right emoji font
+    (mapcar
+     (lambda (block-name)
+       (amf/replace-unicode-font-mapping block-name "Noto Color Emoji"))
+     '("Dingbats"
+       "Emoticons"
+       "Miscellaneous Symbols and Pictographs"
+       "Transport and Map Symbols"))
+    (unicode-fonts-setup))
+#+END_SRC
+
+*** Emojis in buffers
+
 Emojify is an Emacs extension to display emojis. It can display github style emojis like :smile: or plain ascii ones like :).
 #+BEGIN_SRC emacs-lisp
   (use-package emojify
@@ -113,28 +233,47 @@ display correctly:
     :if (display-graphic-p))
 #+END_SRC
 
-Theme and Modeline
+** Mode Line
+
+*** Basic Customization
 #+BEGIN_SRC emacs-lisp
-  (use-package gruvbox-theme
-    :ensure t
-    :config
-    (load-theme 'gruvbox-light-soft t))
+  (setq display-time-format "%l:%M %p %b %y"
+        display-time-default-load-average nil)
 #+END_SRC
 
-Enable Mode Diminishing
+*** Enable Mode Diminishing
 The diminish package hides pesky minor modes from the modelines.
 #+BEGIN_SRC emacs-lisp
   (use-package diminish
     :ensure t)
 #+END_SRC
 
-
-** Font
+*** Doom Modeline
 
 #+BEGIN_SRC emacs-lisp
-  (set-fontset-font "fontset-default" 'arabic (font-spec
-                                               :family "Kawkab Mono"
-                                               :size 12))
+  ;; You must run (all-the-icons-install-fonts) one time after
+  ;; installing this package!
+
+  (use-package minions
+    :hook (doom-modeline-mode . minions-mode))
+
+  (use-package doom-modeline
+    :after eshell     ;; Make sure it gets hooked after eshell
+    :hook (after-init . doom-modeline-init)
+    :custom-face
+    (mode-line ((t (:height 0.85))))
+    (mode-line-inactive ((t (:height 0.85))))
+    :custom
+    (doom-modeline-height 15)
+    (doom-modeline-bar-width 6)
+    (doom-modeline-lsp t)
+    (doom-modeline-github nil)
+    (doom-modeline-mu4e nil)
+    (doom-modeline-irc t)
+    (doom-modeline-minor-modes t)
+    (doom-modeline-persp-name nil)
+    (doom-modeline-buffer-file-name-style 'truncate-except-project)
+    (doom-modeline-major-mode-icon nil))
 #+END_SRC
 
 * Ivy
