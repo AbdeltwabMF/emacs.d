@@ -481,6 +481,24 @@
 (rune/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :demand t
+  :custom ((projectile-completion-system 'ivy))
+  :bind ("C-M-p" . projectile-find-file)
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  (when (file-directory-p "~/.local/src")
+    (setq projectile-project-search-path '("~/.local/src")))
+  (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package counsel-projectile
+  :after projectile
+  :config (counsel-projectile-mode))
+
 (use-package magit
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
@@ -500,12 +518,12 @@
 
 (with-eval-after-load 'org-faces
   ;; Increase the size of various headings
-  (set-face-attribute 'org-document-title nil :font "Cantarell" :weight 'bold :height 2.0)
-  (dolist (face '((org-level-1 . 2.0)
-                  (org-level-2 . 1.8)
-                  (org-level-3 . 1.6)
-                  (org-level-4 . 1.4)
-                  (org-level-5 . 1.2)
+  (set-face-attribute 'org-document-title nil :font "Cantarell" :weight 'bold :height 1.5)
+  (dolist (face '((org-level-1 . 1.5)
+                  (org-level-2 . 1.4)
+                  (org-level-3 . 1.3)
+                  (org-level-4 . 1.2)
+                  (org-level-5 . 1.1)
                   (org-level-6 . 1.0)
                   (org-level-7 . 1.0)
                   (org-level-8 . 1.0)))
