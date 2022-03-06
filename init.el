@@ -550,6 +550,9 @@
   (setq mu4e-get-mail-command "mbsync -a -c ~/.config/isync/mbsyncrc")
   (setq mu4e-maildir "~/.local/share/Mail")
 
+  ;; Use Ivy for mu4e completions (maildir folders, etc)
+  (setq mu4e-completing-read-function #'ivy-completing-read)
+
   ;; load mu4e-context configuration
   (setq mu4e-contexts
         (list
@@ -610,6 +613,10 @@
 
   ;; You can create bookmarks to show merged views of folders across accounts:
   (add-to-list 'mu4e-bookmarks '("m:/Uni/Inbox or m:/Work/Inbox" "All Inboxes" ?i))
+
+  ;; Display options
+  (setq mu4e-view-show-images t)
+  (setq mu4e-view-show-addresses 't)
 
   (setq message-confirm-send t)
 
