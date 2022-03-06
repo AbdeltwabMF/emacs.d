@@ -506,6 +506,40 @@
 (use-package forge
   :ensure t)
 
+(use-package calfw
+  :commands cfw:open-org-calendar
+  :config
+  (setq cfw:fchar-junction ?╋
+        cfw:fchar-vertical-line ?┃
+        cfw:fchar-horizontal-line ?━
+        cfw:fchar-left-junction ?┣
+        cfw:fchar-right-junction ?┫
+        cfw:fchar-top-junction ?┯
+        cfw:fchar-top-left-corner ?┏
+        cfw:fchar-top-right-corner ?┓)
+
+  (use-package calfw-org
+    :config
+    (setq cfw:org-agenda-schedule-args '(:timestamp))))
+
+(use-package vterm
+  :after evil-collection
+  :commands vterm
+  :config
+  (setq vterm-max-scrollback 1000000)
+  (advice-add 'evil-collection-vterm-insert :before #'vterm-reset-cursor-point))
+
+(use-package mpv)
+
+(use-package emms
+  :commands emms
+  :config
+  (require 'emms-setup)
+  (emms-standard)
+  (emms-default-players)
+  (emms-mode-line-disable)
+  (setq emms-source-file-default-directory "/mnt/entertainment/music"))
+
 (defun amf/org-mode-setup ()
   (org-indent-mode)
   (visual-line-mode 1))

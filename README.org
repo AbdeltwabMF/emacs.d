@@ -48,6 +48,10 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
   - [[#projectile][Projectile]]
   - [[#counsel-projectile][Counsel Projectile]]
   - [[#magit][Magit]]
+- [[#applications][Applications]]
+  - [[#calendar][Calendar]]
+  - [[#vterm][vterm]]
+  - [[#media][Media]]
 - [[#org-mode][Org Mode]]
 
 * Startup Performance
@@ -732,6 +736,56 @@ NOTE: Make sure to configure a GitHub token before using this package!
 
   (use-package forge
     :ensure t)
+#+END_SRC
+
+* Applications
+** Calendar
+calfw is a gorgeous calendar UI that is able to show all of my scheduled Org Agenda items.
+#+BEGIN_SRC emacs-lisp
+  (use-package calfw
+    :commands cfw:open-org-calendar
+    :config
+    (setq cfw:fchar-junction ?╋
+          cfw:fchar-vertical-line ?┃
+          cfw:fchar-horizontal-line ?━
+          cfw:fchar-left-junction ?┣
+          cfw:fchar-right-junction ?┫
+          cfw:fchar-top-junction ?┯
+          cfw:fchar-top-left-corner ?┏
+          cfw:fchar-top-right-corner ?┓)
+
+    (use-package calfw-org
+      :config
+      (setq cfw:org-agenda-schedule-args '(:timestamp))))
+#+END_SRC
+
+** vterm
+vterm enables the use of fully-fledged terminal applications within Emacs so that I don’t need an external terminal emulator.
+#+BEGIN_SRC emacs-lisp
+  (use-package vterm
+    :after evil-collection
+    :commands vterm
+    :config
+    (setq vterm-max-scrollback 1000000)
+    (advice-add 'evil-collection-vterm-insert :before #'vterm-reset-cursor-point))
+#+END_SRC
+
+** Media
+*** mpv
+#+BEGIN_SRC emacs-lisp
+  (use-package mpv)
+#+END_SRC
+
+*** EMMS
+#+BEGIN_SRC emacs-lisp
+  (use-package emms
+    :commands emms
+    :config
+    (require 'emms-setup)
+    (emms-standard)
+    (emms-default-players)
+    (emms-mode-line-disable)
+    (setq emms-source-file-default-directory "/mnt/entertainment/music"))
 #+END_SRC
 
 * Org Mode
