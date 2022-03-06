@@ -540,6 +540,118 @@
   (emms-mode-line-disable)
   (setq emms-source-file-default-directory "/mnt/entertainment/music"))
 
+(use-package mu4e
+  :ensure nil
+  ;; :defer 20 ;; Wait until 20 seconds after startup
+  :config
+
+  ;; Refresh mail using isync every 10 minutes
+  (setq mu4e-update-interval (* 5 60))
+  (setq mu4e-get-mail-command "mbsync -a -c ~/.config/isync/mbsyncrc")
+  (setq mu4e-maildir "~/.local/share/Mail")
+
+  ;; load mu4e-context configuration
+  (setq mu4e-contexts
+        (list
+         ;; Work
+         (make-mu4e-context
+          :name "Work"
+          :match-func
+          (lambda (msg)
+            (when msg
+              (string-prefix-p "/Work" (mu4e-message-field msg :maildir))))
+          :vars '((user-mail-address . "abdeltwab.m.fakhry@gmail.com")
+                  (user-full-name    . "Abd El-Twab M. Fakhry")
+
+                  (smtpmail-smtp-server  . "smtp.gmail.com")
+                  (smtpmail-smtp-service . 465)
+                  (smtpmail-stream-type  . ssl)
+
+                  (mu4e-sent-folder       . "/Work/[Gmail]/Sent Mail")
+                  (mu4e-spam-folder       . "/Work/[Gmail]/Spam")
+                  (mu4e-trash-folder      . "/Work/[Gmail]/Trash")
+                  (mu4e-starred-folder    . "/Work/[Gmail]/Starred")
+                  (mu4e-scheduled-folder  . "/Work/[Gmail]/Scheduled")
+                  (mu4e-drafts-folder     . "/Work/[Gmail]/Drafts")))
+
+         ;; University account
+         (make-mu4e-context
+          :name "Uni"
+          :match-func
+          (lambda (msg)
+            (when msg
+              (string-prefix-p "/Uni" (mu4e-message-field msg :maildir))))
+          :vars '((user-mail-address . "AbdEl-TwabFakhry.2020@azhar.edu.eg")
+                  (user-full-name    . "Abd El-Twab M. Fakhry")
+
+                  (smtpmail-smtp-server  . "smtp.office365.com")
+                  (smtpmail-smtp-service . 587)
+                  (smtpmail-stream-type  . ssl)
+
+                  (mu4e-inbox-folder     . "/Uni/Inbox")
+                  (mu4e-sent-folder      . "/Uni/Sent Items")
+                  (mu4e-spam-folder      . "/Uni/Spambox")
+                  (mu4e-trash-folder     . "/Uni/Trash")
+                  (mu4e-drafts-folder    . "/Uni/Drafts")))))
+
+  ;; Mail dir
+  (setq mu4e-maildir-shortcuts
+        '(("/Work/Inbox" 				     . ?i)
+          ("/Work/[Gmail]/Sent Mail" . ?s)
+          ("/Work/[Gmail]/Spam"      . ?p)
+          ("/Work/[Gmail]/Trash"     . ?t)
+          ("/Work/[Gmail]/Starred"   . ?r)
+          ("/Work/[Gmail]/Scheduled" . ?c)
+
+          ("/Uni/Inbox"        . ?u)
+          ("/Uni/Sent Items"   . ?n)
+          ("/Uni/Spambox"      . ?m)
+          ("/Uni/Trash"        . ?h)))
+
+  ;; You can create bookmarks to show merged views of folders across accounts:
+  (add-to-list 'mu4e-bookmarks '("m:/Uni/Inbox or m:/Work/Inbox" "All Inboxes" ?i))
+
+  (setq message-confirm-send t)
+
+  ;; Picking a context for sending mail
+  ;; When using multiple contexts, you might want to define which context gets picked automatically for sending email (similar to mu4e-context-policy):
+  ;; Only ask if a context hasn't been previously picked
+  (setq mu4e-compose-context-policy 'ask-if-none)
+
+  ;; start with the first (default) context;
+  ;; default is to ask-if-none (ask when there's no context yet, and none match)
+  (setq mu4e-context-policy 'pick-first)
+
+  ;; This is set to 't' to avoid mail syncing issues when using mbsync
+  (setq mu4e-change-filenames-when-moving t)
+
+  ;; Configure the function to use for sending mail
+  (setq message-send-mail-function 'smtpmail-send-it)
+
+  ;; Improving the look of plain text emails
+  ;; By default all e-mails are sent as plain text. This can lead to strange wrapping in other email clients when reading your messages. You can improve this by setting the following variable:
+  ;; Make sure plain text mails flow correctly for recipients
+  (setq mu4e-compose-format-flowed t)
+
+  ;; Adding a signature to your emails
+  ;; You can set the mu4e-compose-signature variable to a string for the signature to include in your e-mails!
+  (setq mu4e-compose-signature "https://abdeltwabmf.github.io")
+
+  ;; Automatically Sign Every Email
+  ;; You can automatically sign every e-mail using the message-send-hook:
+  (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
+
+  ;; Run mu4e in the background to sync mail periodically
+  (mu4e t))
+
+(use-package mu4e-alert
+  :after mu4e
+  :config
+  ;; Show notifications for mails already notified
+  (setq mu4e-alert-notify-repeated-mails nil)
+
+  (mu4e-alert-enable-notifications))
+
 (defun amf/org-mode-setup ()
   (org-indent-mode)
   (visual-line-mode 1))
