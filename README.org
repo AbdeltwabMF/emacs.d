@@ -265,8 +265,8 @@ The diminish package hides pesky minor modes from the modelines.
     (mode-line ((t (:height 0.85))))
     (mode-line-inactive ((t (:height 0.85))))
     :custom
-    (doom-modeline-height 15)
-    (doom-modeline-bar-width 6)
+    (doom-modeline-height 16)
+    (doom-modeline-bar-width 4)
     (doom-modeline-lsp t)
     (doom-modeline-github nil)
 
@@ -275,25 +275,34 @@ The diminish package hides pesky minor modes from the modelines.
     ;; also enable the start of mu4e-alert
     (mu4e-alert-enable-mode-line-display)
 
-    (doom-modeline-irc t)
-    (doom-modeline-minor-modes t)
     (doom-modeline-persp-name nil)
-    (doom-modeline-buffer-file-name-style 'truncate-all)
+    (doom-modeline-buffer-file-name-style 'truncate-upto-project)
+
+    ;; Whether to use hud instead of default bar. It's only respected in GUI.
+    (doom-modeline-hud nil)
 
     ;; Whether display icons in the mode-line.
     ;; While using the server mode in GUI, should set the value explicitly.
     (doom-modeline-icon (display-graphic-p))
 
+    ;; Whether display the indentation information.
+    (doom-modeline-indent-info t)
+
+    ;; The limit of the window width.
+    ;; If `window-width' is smaller than the limit, some information won't be displayed.
+    (doom-modeline-window-width-limit fill-column)
+
     ;; Whether display the environment version.
     (doom-modeline-env-version t)
+    (doom-modeline-major-mode-icon t)
+    ;; Whether display the colorful icon for `major-mode'.
+    ;; It respects `all-the-icons-color-icons'.
+    (doom-modeline-major-mode-color-icon t)
 
-    (doom-modeline-major-mode-icon nil))
+    (doom-modeline-minor-modes t))
 
   (doom-modeline-mode 1)
 #+END_SRC
-
-#+RESULTS:
-: t
 
 ** Notifications
 
@@ -494,6 +503,119 @@ Default to an indentation size of 2 spaces since it’s the norm for pretty much
     ([remap describe-command] . helpful-command)
     ([remap describe-variable] . counsel-describe-variable)
     ([remap describe-key] . helpful-key))
+
+  ;;If you want to replace the default Emacs help keybindings, you can do so:
+  ;; Note that the built-in `describe-function' includes both functions
+  ;; and macros. `helpful-function' is functions only, so we provide
+  ;; `helpful-callable' as a drop-in replacement.
+  (global-set-key (kbd "C-h f") #'helpful-callable)
+  (global-set-key (kbd "C-h v") #'helpful-variable)
+  (global-set-key (kbd "C-h k") #'helpful-key)
+#+END_SRC
+
+* Buffer Management with Bufler
+
+Bufler is an excellent package by alphapapa which enables you to automatically group all of your Emacs buffers into workspaces by defining a series of grouping rules. Once you have your groups defined (or use the default configuration which is quite good already), you can use the bufler-workspace-frame-set command to focus your current Emacs frame on a particular workspace so that bufler-switch-buffer will only show buffers from that workspace. In my case, this allows me to dedicate an EXWM workspace to a specific Bufler workspace so that only see the buffers I care about in that EXWM workspace.
+#+BEGIN_SRC emacs-lisp
+  (use-package bufler
+    :disabled
+    :straight t
+    :bind (("C-M-j" . bufler-switch-buffer)
+           ("C-M-k" . bufler-workspace-frame-set))
+    :config
+    (evil-collection-define-key 'normal 'bufler-list-mode-map
+      (kbd "RET")   'bufler-list-buffer-switch
+      (kbd "M-RET") 'bufler-list-buffer-peek
+      "D"           'bufler-list-buffer-kill)
+
+    (setf bufler-groups
+          (bufler-defgroups
+           ;; Subgroup collecting all named workspaces.
+           (group (auto-workspace))
+           ;; Subgroup collecting buffers in a projectile project.
+           (group (auto-projectile))
+           ;; Grouping browser windows
+           (group
+            (group-or "Browsers"
+                      (name-match "Vimb" (rx bos "vimb"))
+                      (name-match "Qutebrowser" (rx bos "Qutebrowser"))
+                      (name-match "Chromium" (rx bos "Chromium"))))
+           (group
+            (group-or "Chat"
+                      (mode-match "Telega" (rx bos "telega-"))))
+           (group
+            ;; Subgroup collecting all `help-mode' and `info-mode' buffers.
+            (group-or "Help/Info"
+                      (mode-match "*Help*" (rx bos (or "help-" "helpful-")))
+                      ;; (mode-match "*Helpful*" (rx bos "helpful-"))
+                      (mode-match "*Info*" (rx bos "info-"))))
+           (group
+            ;; Subgroup collecting all special buffers (i.e. ones that are not
+            ;; file-backed), except `magit-status-mode' buffers (which are allowed to fall
+            ;; through to other groups, so they end up grouped with their project buffers).
+            (group-and "*Special*"
+                       (name-match "**Special**"
+                                   (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace" "Pinentry") "*"))
+                       (lambda (buffer)
+                         (unless (or (funcall (mode-match "Magit" (rx bos "magit-status"))
+                                              buffer)
+                                     (funcall (mode-match "Dired" (rx bos "dired"))
+                                              buffer)
+                                     (funcall (auto-file) buffer))
+                           "*Special*"))))
+           ;; Group remaining buffers by major mode.
+           (auto-mode))))
+#+END_SRC
+
+* Window Management
+
+** Frame Scaling / Zooming
+
+The keybindings for this are C+M+- and C+M+=.
+#+BEGIN_SRC emacs-lisp
+  (use-package default-text-scale
+    :defer 1
+    :config
+    (default-text-scale-mode))
+#+END_SRC
+
+** Window Selection with ace-window
+
+ace-window helps with easily switching between windows based on a predefined set of keys used to identify each.
+#+BEGIN_SRC emacs-lisp
+  (use-package ace-window
+    :bind (("M-o" . ace-window))
+    :custom
+    (aw-scope 'frame)
+    (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+    (aw-minibuffer-flag t)
+    :config
+    (ace-window-display-mode 1))
+#+END_SRC
+
+** Window History with winner-mode
+
+#+BEGIN_SRC emacs-lisp
+  (use-package winner
+    :after evil
+    :config
+    (winner-mode)
+    (define-key evil-window-map "u" 'winner-undo)
+    (define-key evil-window-map "U" 'winner-redo))
+#+END_SRC
+
+** Control Buffer Placement
+
+Emacs’ default buffer placement algorithm is pretty disruptive if you like setting up window layouts a certain way in your workflow. The display-buffer-alist variable controls this behavior and you can customize it to prevent Emacs from popping up new windows when you run commands.
+
+#+BEGIN_SRC emacs-lisp
+  ;; (setq display-buffer-base-action
+  ;;       '(display-buffer-reuse-mode-window
+  ;;         display-buffer-reuse-window
+  ;;         display-buffer-same-window))
+
+  ;; If a popup does happen, don't resize windows to be equal-sized
+  (setq even-window-sizes nil)
 #+END_SRC
 
 * Evil Mode and Key Binding
