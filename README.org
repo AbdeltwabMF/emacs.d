@@ -258,6 +258,7 @@ The diminish package hides pesky minor modes from the modelines.
     :hook (doom-modeline-mode . minions-mode))
 
   (use-package doom-modeline
+    :ensure t
     :after eshell     ;; Make sure it gets hooked after eshell
     :hook (after-init . doom-modeline-init)
     :custom-face
@@ -268,13 +269,31 @@ The diminish package hides pesky minor modes from the modelines.
     (doom-modeline-bar-width 6)
     (doom-modeline-lsp t)
     (doom-modeline-github nil)
+
+    ;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
     (doom-modeline-mu4e nil)
+    ;; also enable the start of mu4e-alert
+    (mu4e-alert-enable-mode-line-display)
+
     (doom-modeline-irc t)
     (doom-modeline-minor-modes t)
     (doom-modeline-persp-name nil)
-    (doom-modeline-buffer-file-name-style 'truncate-except-project)
+    (doom-modeline-buffer-file-name-style 'truncate-all)
+
+    ;; Whether display icons in the mode-line.
+    ;; While using the server mode in GUI, should set the value explicitly.
+    (doom-modeline-icon (display-graphic-p))
+
+    ;; Whether display the environment version.
+    (doom-modeline-env-version t)
+
     (doom-modeline-major-mode-icon nil))
+
+  (doom-modeline-mode 1)
 #+END_SRC
+
+#+RESULTS:
+: t
 
 * Ivy
 
