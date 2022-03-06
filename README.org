@@ -646,6 +646,11 @@ I use pass to manage all of my passwords locally. I also use auth-source-pass as
   (use-package oauth2)
 #+END_SRC
 
+The variable auth-sources controls how and where Auth-Source keeps its secrets. The default value is a list of three files: ("~/.authinfo" "~/.authinfo.gpg" "~/.netrc"), but to avoid confusion you should make sure that only one of these files exists and then you should also adjust the value of the variable to only ever use that file,
+#+BEGIN_SRC emacs-lisp
+  (setq auth-sources '("~/.authinfo.gpg"))
+#+END_SRC
+
 * Evil Mode and Key Binding
 #+BEGIN_SRC emacs-lisp
   (use-package general

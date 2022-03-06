@@ -436,6 +436,8 @@
 
 (use-package oauth2)
 
+(setq auth-sources '("~/.authinfo.gpg"))
+
 (use-package general
   :config
   (general-create-definer rune/leader-keys
