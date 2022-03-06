@@ -46,6 +46,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
 - [[#evil-mode-and-key-binding][Evil Mode and Key Binding]]
 - [[#project-management][Project Management]]
   - [[#projectile][Projectile]]
+  - [[#counsel-projectile][Counsel Projectile]]
   - [[#magit][Magit]]
 - [[#org-mode][Org Mode]]
 
@@ -704,7 +705,17 @@ I use pass to manage all of my passwords locally. I also use auth-source-pass as
     (when (file-directory-p "~/.local/src")
       (setq projectile-project-search-path '("~/.local/src")))
     (setq projectile-switch-project-action #'projectile-dired))
+#+END_SRC
 
+** Counsel Projectile
+The counsel-projectile-rg command
+Default key binding: C-c p s r.
+
+This command is a replacement for projectile-ripgrep. It is similar to counsel-projectile-grep (see above) but uses rg (ripgrep) instead of grep.
+
+/Search in files and folders using C-c p s r./
+*C-c C-o to pups up the result list into a separate buffer.*
+#+BEGIN_SRC emacs-lisp
   (use-package counsel-projectile
     :after projectile
     :config (counsel-projectile-mode))
