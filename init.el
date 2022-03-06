@@ -424,6 +424,18 @@
 ;; If a popup does happen, don't resize windows to be equal-sized
 (setq even-window-sizes nil)
 
+(use-package password-store
+  :config
+  (setq password-store-password-length 12))
+
+(use-package auth-source-pass
+  :config
+  (auth-source-pass-enable))
+
+(use-package password-store-otp)
+
+(use-package oauth2)
+
 (use-package general
   :config
   (general-create-definer rune/leader-keys
