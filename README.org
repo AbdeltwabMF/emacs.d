@@ -1,7 +1,7 @@
 #+title: Emacs Rice
 #+date: <2022-03-06 Sun>
 #+property: header-args:emacs-lisp :tangle init.el
-#+options: toc
+#+options: toc:10
 #+author: Abd El-Twab M. Fakhry
 #+language: en
 #+creator: Emacs 27.2 (Org mode 9.4.4)
@@ -9,7 +9,7 @@
 * Preface
 GNU Emacs isn’t a text editor, it’s the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
 
-* TABLE OF CONTENTS                                                     :TOC:
+* TABLE OF CONTENTS                                                     :TOC_7:
 - [[#preface][Preface]]
 - [[#startup-performance][Startup Performance]]
 - [[#keep-it-clean][Keep it Clean]]
@@ -18,7 +18,13 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
   - [[#user-interface][User Interface]]
   - [[#theme][Theme]]
   - [[#font][Font]]
+    - [[#set-the-font][Set the font]]
+    - [[#enable-proper-unicode-glyph-support][Enable proper Unicode glyph support]]
+    - [[#emojis-in-buffers][Emojis in buffers]]
   - [[#mode-line][Mode Line]]
+    - [[#basic-customization][Basic Customization]]
+    - [[#enable-mode-diminishing][Enable Mode Diminishing]]
+    - [[#doom-modeline][Doom Modeline]]
   - [[#notifications][Notifications]]
   - [[#auto-saving-changed-files][Auto-Saving Changed Files]]
   - [[#auto-reverting-changed-files][Auto-Reverting Changed Files]]
@@ -48,15 +54,34 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
   - [[#projectile][Projectile]]
   - [[#counsel-projectile][Counsel Projectile]]
   - [[#magit][Magit]]
+    - [[#magit-todos][magit-todos]]
 - [[#development][Development]]
   - [[#git][Git]]
+    - [[#git-link][git-link]]
   - [[#languages][Languages]]
+    - [[#language-server-support][Language Server Support]]
+    - [[#debug-adapter-support][Debug Adapter Support]]
+    - [[#meta-lisp][Meta Lisp]]
+    - [[#scheme][Scheme]]
+    - [[#cc][C/C++]]
+    - [[#go][Go]]
+    - [[#rust][Rust]]
+    - [[#emacs-lisp][Emacs Lisp]]
+    - [[#markdown][Markdown]]
+    - [[#html][HTML]]
+    - [[#yaml][YAML]]
   - [[#compilation][Compilation]]
   - [[#productivity][Productivity]]
+    - [[#syntax-checking-with-flycheck][Syntax checking with Flycheck]]
+    - [[#snippets][Snippets]]
+    - [[#smart-parens][Smart Parens]]
+    - [[#rainbow-mode][Rainbow Mode]]
 - [[#applications][Applications]]
   - [[#calendar][Calendar]]
   - [[#vterm][vterm]]
   - [[#media][Media]]
+    - [[#mpv][mpv]]
+    - [[#emms][EMMS]]
   - [[#mail][Mail]]
 - [[#org-mode][Org Mode]]
 
