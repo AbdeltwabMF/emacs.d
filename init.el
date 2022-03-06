@@ -550,6 +550,9 @@
 (use-package visual-fill-column
   :hook (org-mode . amf/org-mode-visual-fill))
 
+(use-package toc-org)
+(toc-org-insert-toc t)
+
 (setq inhibit-compacting-font-caches t)
 
 (provide 'init)

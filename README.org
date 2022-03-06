@@ -9,6 +9,46 @@
 * Preface
 GNU Emacs isn’t a text editor, it’s the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
 
+* TABLE OF CONTENTS                                                     :TOC:
+- [[#preface][Preface]]
+- [[#startup-performance][Startup Performance]]
+- [[#keep-it-clean][Keep it Clean]]
+- [[#package-manager][Package Manager]]
+- [[#general-configuration][General Configuration]]
+  - [[#user-interface][User Interface]]
+  - [[#theme][Theme]]
+  - [[#font][Font]]
+  - [[#mode-line][Mode Line]]
+  - [[#notifications][Notifications]]
+  - [[#auto-saving-changed-files][Auto-Saving Changed Files]]
+  - [[#auto-reverting-changed-files][Auto-Reverting Changed Files]]
+  - [[#workspaces][Workspaces]]
+  - [[#highlight-matching-braces][Highlight Matching Braces]]
+  - [[#displaying-world-time][Displaying World Time]]
+  - [[#pinentry][Pinentry]]
+  - [[#tramp][TRAMP]]
+- [[#editing-configuration][Editing Configuration]]
+  - [[#tab-widths][Tab Widths]]
+  - [[#use-spaces-instead-of-tabs-for-indentation][Use spaces instead of tabs for indentation]]
+  - [[#automatically-clean-whitespace][Automatically clean whitespace]]
+- [[#completion-system][Completion System]]
+  - [[#completions-in-regions-with-corfu][Completions in Regions with Corfu]]
+  - [[#improved-candidate-filtering-with-orderless][Improved Candidate Filtering with Orderless]]
+- [[#jumping-with-avy][Jumping with Avy]]
+- [[#ivy][Ivy]]
+- [[#buffer-management-with-bufler][Buffer Management with Bufler]]
+- [[#window-management][Window Management]]
+  - [[#frame-scaling--zooming][Frame Scaling / Zooming]]
+  - [[#window-selection-with-ace-window][Window Selection with ace-window]]
+  - [[#window-history-with-winner-mode][Window History with winner-mode]]
+  - [[#control-buffer-placement][Control Buffer Placement]]
+- [[#credential-management][Credential Management]]
+- [[#evil-mode-and-key-binding][Evil Mode and Key Binding]]
+- [[#project-management][Project Management]]
+  - [[#projectile][Projectile]]
+  - [[#magit][Magit]]
+- [[#org-mode][Org Mode]]
+
 * Startup Performance
 Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time.
 The default is 800 kilobytes.  Measured in bytes.
@@ -730,8 +770,11 @@ NOTE: Make sure to configure a GitHub token before using this package!
     :hook (org-mode . amf/org-mode-visual-fill))
 #+END_SRC
 
-#+RESULTS:
-| org-bullets-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | amf/org-mode-visual-fill | amf/org-mode-setup |
+toc-org is an Emacs utility to have an up-to-date table of contents in the org files
+#+BEGIN_SRC emacs-lisp
+  (use-package toc-org)
+  (toc-org-insert-toc t)
+#+END_SRC
 
 This mode causes significant slowdown!
 I have looked into the matter in the past, and from what I understand the usual cause
