@@ -194,6 +194,93 @@
 
 (doom-modeline-mode 1)
 
+(use-package alert
+  :commands alert
+  :config
+  (setq alert-default-style 'notifications))
+
+(use-package super-save
+  :defer 1
+  :diminish super-save-mode
+  :config
+  (super-save-mode +1)
+  (setq super-save-auto-save-when-idle t))
+
+;; Revert Dired and other buffers
+(setq global-auto-revert-non-file-buffers t)
+
+;; Revert buffers when the underlying file has changed
+(global-auto-revert-mode 1)
+
+(use-package perspective
+  :demand t
+  :bind (("C-M-k" . persp-switch)
+         ("C-M-n" . persp-next)
+         ("C-x k" . persp-kill-buffer*))
+  :custom
+  (persp-initial-frame-name "Main")
+  :config
+  ;; Running `persp-mode' multiple times resets the perspective list...
+  (unless (equal persp-mode t)
+    (persp-mode)))
+
+(use-package paren
+  :config
+  (set-face-attribute 'show-paren-match-expression nil :background "#363e4a")
+  (show-paren-mode 1))
+
+(setq display-time-world-list
+      '(("Etc/UTC" "UTC")
+        ("America/Los_Angeles" "Seattle")
+        ("Africa/Cairo" "Cairo")
+        ("Europe/Athens" "Athens")
+        ("Pacific/Auckland" "Auckland")
+        ("Asia/Shanghai" "Shanghai")
+        ("Asia/Kolkata" "Hyderabad")))
+(setq display-time-world-time-format "%a, %d %b %I:%M %p %Z")
+
+(use-package pinentry
+  :ensure t)
+
+(setq epa-pinentry-mode 'loopback)
+(pinentry-start)
+
+(setq tramp-default-method "ssh")
+
+(setq-default tab-width 2)
+(setq-default evil-shift-width tab-width)
+
+(setq-default indent-tabs-mode nil)
+
+(use-package ws-butler
+  :hook ((text-mode . ws-butler-mode)
+         (prog-mode . ws-butler-mode)))
+
+(use-package corfu
+  :bind (:map corfu-map
+              ("C-j" . corfu-next)
+              ("C-k" . corfu-previous)
+              ("C-f" . corfu-insert))
+  :custom
+  (corfu-cycle t)
+  :config
+  (corfu-global-mode))
+
+(use-package orderless
+  :init
+  (setq completion-styles '(orderless)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles . (partial-completion))))))
+
+(use-package avy
+  :commands (avy-goto-char avy-goto-word-0 avy-goto-line))
+
+(global-set-key (kbd "C-:") 'avy-goto-char) ;; القفز إلى حرف ما
+(global-set-key (kbd "C-'") 'avy-goto-char-2) ;; القفز إلى حرف باستخدام حرفين
+(global-set-key (kbd "M-g f") 'avy-goto-line) ;; القفز إلى سطر
+(global-set-key (kbd "M-g w") 'avy-goto-word-1) ;; القفز إلى كلمة باستخدام حرفها الأول
+(global-set-key (kbd "M-g e") 'avy-goto-word-0) ;; القفز إلى أي كلمة من كلمات البفر
+
 (use-package ivy
   :diminish
   :bind (("C-s" . swiper)
