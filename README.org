@@ -794,8 +794,9 @@ Mail in Emacs with mu4e
 mu4e is the best mail interface I’ve ever used because it’s fast and makes it really easy to power through a huge e-mail backlog. Love the ability to capture links to emails with org-mode too.
 
 Useful mu4e manual pages:
-[[https://www.djcbsoftware.nl/code/mu/mu4e/MSGV-Keybindings.html#MSGV-Keybindings][Key bindings]]
-[[https://www.djcbsoftware.nl/code/mu/mu4e/Org_002dmode-links.html#Org_002dmode-links][org-mode integration]]
+- [[https://www.djcbsoftware.nl/code/mu/mu4e/MSGV-Keybindings.html#MSGV-Keybindings][Key bindings]]
+- [[https://www.djcbsoftware.nl/code/mu/mu4e/Org_002dmode-links.html#Org_002dmode-links][org-mode integration]]
+
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
     :ensure nil
