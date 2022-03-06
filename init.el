@@ -1,7 +1,3 @@
-- M-x toc-org-insert-toc
-- C-c C-c for local setup refresh
-- C-c C-v t for tangle init.el
-
 ;;; package --- Summary
 
 ;;; Commentary:

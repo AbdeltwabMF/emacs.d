@@ -10,15 +10,14 @@
 GNU Emacs isn’t a text editor, it’s the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
 
 ** Generate init.el form this org mode file
-#+BEGIN_SRC emacs-lisp
   - M-x toc-org-insert-toc
-  - C-c C-c for local setup refresh
-  - C-c C-v t for tangle init.el
-#+END_SRC
+  - Move the cursor up to the very top of the file and then:
+    -  C-c C-c for local setup refresh
+    -  C-c C-v t for tangle init.el
 
 * TABLE OF CONTENTS                                                     :TOC_7:
 - [[#preface][Preface]]
-  - [[#tangle][Tangle]]
+  - [[#generate-initel-form-this-org-mode-file][Generate init.el form this org mode file]]
 - [[#startup-performance][Startup Performance]]
 - [[#keep-it-clean][Keep it Clean]]
 - [[#package-manager][Package Manager]]
