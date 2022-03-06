@@ -286,7 +286,6 @@
 
 (use-package avy
   :commands (avy-goto-char avy-goto-word-0 avy-goto-line))
-
 (global-set-key (kbd "C-:") 'avy-goto-char) ;; القفز إلى حرف ما
 (global-set-key (kbd "C-'") 'avy-goto-char-2) ;; القفز إلى حرف باستخدام حرفين
 (global-set-key (kbd "M-g f") 'avy-goto-line) ;; القفز إلى سطر
