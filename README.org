@@ -1,21 +1,9 @@
 #+TITLE: Emacs Rice
 #+PROPERTY: header-args:emacs-lisp :tangle init.el
 
+** TABLE OF CONTENTS                                                 :toc:
 
-* Emacs Configuration
-
-███████╗███╗   ███╗ █████╗  ██████╗███████╗
-██╔════╝████╗ ████║██╔══██╗██╔════╝██╔════╝
-█████╗  ██╔████╔██║███████║██║     ███████╗
-██╔══╝  ██║╚██╔╝██║██╔══██║██║     ╚════██║
-███████╗██║ ╚═╝ ██║██║  ██║╚██████╗███████║
-╚══════╝╚═╝     ╚═╝╚═╝  ╚═╝ ╚═════╝╚══════╝
-
-*The font used for EMACS 3d heading:* /figlet -f ANSI Shadow {the heading name}/
-
-** TABLE OF CONTENTS :toc:
-   
-** Startup Performance
+** Startup performance
    
 Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time.
 The default is 800 kilobytes.  Measured in bytes.
@@ -39,7 +27,7 @@ Profile emacs startup
                                 (time-subtract after-init-time before-init-time))) gcs-done)))
 #+END_SRC
 
-** Package Manager Confiuration
+** Package manager
 
 Initialize package sources
 #+BEGIN_SRC emacs-lisp
@@ -58,7 +46,7 @@ Initialize package sources
   (setq use-package-always-ensure t)
 #+END_SRC
 
-** User Interface
+** User interface
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-message t)
   (setq visible-bell t)
@@ -126,7 +114,7 @@ The diminish package hides pesky minor modes from the modelines.
 #+END_SRC
 
 
-*** Font Configuration
+*** Font
 
 #+BEGIN_SRC emacs-lisp
   (set-fontset-font "fontset-default" 'arabic (font-spec
@@ -134,7 +122,7 @@ The diminish package hides pesky minor modes from the modelines.
                                                :size 12))
 #+END_SRC
 
-** Ivy Configuration
+** Ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package ivy
@@ -184,7 +172,7 @@ The diminish package hides pesky minor modes from the modelines.
     ([remap describe-key] . helpful-key))
 #+END_SRC
 
-** Evil Mode and Key Binding Configuration
+** Evil mode and key binding
 
 #+BEGIN_SRC emacs-lisp
   (use-package general
