@@ -1,3 +1,7 @@
+- M-x toc-org-insert-toc
+- C-c C-c for local setup refresh
+- C-c C-v t for tangle init.el
+
 ;;; package --- Summary
 
 ;;; Commentary:
@@ -436,8 +440,15 @@
     (add-to-list 'evil-emacs-state-modes mode)))
 
 (use-package undo-tree
+  :ensure t
   :init
-  (global-undo-tree-mode 1))
+  (global-undo-tree-mode)
+  :config
+  ;; (setq undo-tree-auto-save-history 1) ;; you can turn this on
+  ;; Each node in the undo tree should have a timestamp.
+  (setq undo-tree-visualizer-timestamps t)
+  ;; Show a diff window displaying changes between undo nodes.
+  (setq undo-tree-visualizer-diff t))
 
 (use-package evil)
 (evil-mode 1)
@@ -629,6 +640,21 @@
   (if (symbol-value darkroom-mode)
       (amf/leave-focus-mode)
     (amf/enter-focus-mode)))
+
+(use-package flyspell-correct
+  :ensure t
+  :config
+  ;; set ivy as correcting interface
+  (define-key flyspell-mode-map (kbd "C-;") 'flyspell-correct-wrapper))
+
+(use-package flyspell-correct-ivy
+  :ensure t)
+
+(require 'flymake)
+(setq ispell-program-name "aspell") ; could be ispell as well, depending on your preferences
+(setq ispell-dictionary "british") ; this can obviously be set to any language your spell-checking program supports
+
+(add-hook 'text-mode-hook 'flyspell-mode)
 
 (use-package calfw
   :commands cfw:open-org-calendar

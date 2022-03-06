@@ -9,8 +9,16 @@
 * Preface
 GNU Emacs isn’t a text editor, it’s the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
 
+** Generate init.el form this org mode file
+#+BEGIN_SRC emacs-lisp
+  - M-x toc-org-insert-toc
+  - C-c C-c for local setup refresh
+  - C-c C-v t for tangle init.el
+#+END_SRC
+
 * TABLE OF CONTENTS                                                     :TOC_7:
 - [[#preface][Preface]]
+  - [[#tangle][Tangle]]
 - [[#startup-performance][Startup Performance]]
 - [[#keep-it-clean][Keep it Clean]]
 - [[#package-manager][Package Manager]]
@@ -79,6 +87,8 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
     - [[#smart-parens][Smart Parens]]
     - [[#rainbow-mode][Rainbow Mode]]
 - [[#writing][Writing]]
+  - [[#darkroom-for-distraction-free-writing][Darkroom for distraction-free writing]]
+  - [[#spell-checking][Spell-checking]]
 - [[#applications][Applications]]
   - [[#calendar][Calendar]]
   - [[#vterm][vterm]]
@@ -697,8 +707,15 @@ Some tips can be found here:
       (add-to-list 'evil-emacs-state-modes mode)))
 
   (use-package undo-tree
+    :ensure t
     :init
-    (global-undo-tree-mode 1))
+    (global-undo-tree-mode)
+    :config
+    ;; (setq undo-tree-auto-save-history 1) ;; you can turn this on
+    ;; Each node in the undo tree should have a timestamp.
+    (setq undo-tree-visualizer-timestamps t)
+    ;; Show a diff window displaying changes between undo nodes.
+    (setq undo-tree-visualizer-diff t))
 
   (use-package evil)
   (evil-mode 1)
@@ -954,7 +971,7 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
            js2-mode))
 #+END_SRC
 * Writing
-Darkroom for distraction-free writing
+** Darkroom for distraction-free writing
 #+BEGIN_SRC emacs-lisp
   (use-package darkroom
     :commands darkroom-mode
@@ -976,6 +993,24 @@ Darkroom for distraction-free writing
     (if (symbol-value darkroom-mode)
         (amf/leave-focus-mode)
       (amf/enter-focus-mode)))
+#+END_SRC
+
+** Spell-checking
+#+BEGIN_SRC emacs-lisp
+  (use-package flyspell-correct
+    :ensure t
+    :config
+    ;; set ivy as correcting interface
+    (define-key flyspell-mode-map (kbd "C-;") 'flyspell-correct-wrapper))
+
+  (use-package flyspell-correct-ivy
+    :ensure t)
+
+  (require 'flymake)
+  (setq ispell-program-name "aspell") ; could be ispell as well, depending on your preferences
+  (setq ispell-dictionary "british") ; this can obviously be set to any language your spell-checking program supports
+
+  (add-hook 'text-mode-hook 'flyspell-mode)
 #+END_SRC
 
 * Applications
