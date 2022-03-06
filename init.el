@@ -508,6 +508,140 @@
 (use-package forge
   :ensure t)
 
+(use-package magit-todos
+  :defer t)
+
+(use-package git-link
+  :commands git-link
+  :config
+  (setq git-link-open-in-browser t))
+
+;;Functions can be called interactively (M-x git-link) or via a key binding of your choice. For example:
+(global-set-key (kbd "C-c g l") 'git-link)
+
+(use-package lsp-mode
+  :commands lsp
+  :hook ((typescript-mode js2-mode web-mode) . lsp)
+  :bind (:map lsp-mode-map
+              ("TAB" . completion-at-point))
+  :custom (lsp-headerline-breadcrumb-enable nil))
+
+(use-package lsp-ui
+  :hook (lsp-mode . lsp-ui-mode)
+  :config
+  (setq lsp-ui-sideline-enable t)
+  (setq lsp-ui-sideline-show-hover nil)
+  (setq lsp-ui-doc-position 'bottom)
+  (lsp-ui-doc-show))
+
+(use-package dap-mode
+  :custom
+  (lsp-enable-dap-auto-configure nil)
+  :config
+  (dap-ui-mode 1)
+  (dap-tooltip-mode 1)
+  (require 'dap-node)
+  (dap-node-setup))
+
+(use-package lispy
+  :hook ((emacs-lisp-mode . lispy-mode)
+         (scheme-mode . lispy-mode)))
+
+(use-package lispyville
+  :hook ((lispy-mode . lispyville-mode))
+  :config
+  (lispyville-set-key-theme '(operators c-w additional
+                                        additional-movement slurp/barf-cp
+                                        prettify)))
+
+(use-package scheme-mode
+  :mode "\\.sld\\'")
+
+(use-package ccls
+  :hook ((c-mode c++-mode objc-mode cuda-mode) .
+         (lambda () (require 'ccls) (lsp))))
+
+(use-package go-mode
+  :hook (go-mode . lsp-deferred))
+
+(use-package rust-mode
+  :mode "\\.rs\\'"
+  :init (setq rust-format-on-save t))
+
+(use-package cargo
+  :defer t)
+
+(add-hook 'emacs-lisp-mode-hook #'flycheck-mode)
+
+(use-package helpful
+  :custom
+  (counsel-describe-function-function #'helpful-callable)
+  (counsel-describe-variable-function #'helpful-variable)
+  :bind
+  ([remap describe-function] . helpful-function)
+  ([remap describe-symbol] . helpful-symbol)
+  ([remap describe-variable] . helpful-variable)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-key] . helpful-key))
+
+(use-package markdown-mode
+  :mode "\\.md\\'"
+  :config
+  (setq markdown-command "marked")
+  (defun amf/set-markdown-header-font-sizes ()
+    (dolist (face '((markdown-header-face-1 . 1.8)
+                    (markdown-header-face-2 . 1.6)
+                    (markdown-header-face-3 . 1.4)
+                    (markdown-header-face-4 . 1.2)
+                    (markdown-header-face-5 . 1.0)))
+      (set-face-attribute (car face) nil :weight 'normal :height (cdr face)))))
+
+(use-package web-mode
+  :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
+  :config
+  (setq-default web-mode-code-indent-offset 2)
+  (setq-default web-mode-markup-indent-offset 2)
+  (setq-default web-mode-attribute-indent-offset 2))
+
+;; 1. Start the server with `httpd-start'
+;; 2. Use `impatient-mode' on any buffer
+(use-package impatient-mode)
+
+(use-package skewer-mode)
+
+(use-package yaml-mode
+  :mode "\\.ya?ml\\'")
+
+(use-package compile
+  :custom
+  (compilation-scroll-output t))
+
+(defun auto-recompile-buffer ()
+  (interactive)
+  (if (member #'recompile after-save-hook)
+      (remove-hook 'after-save-hook #'recompile t)
+    (add-hook 'after-save-hook #'recompile nil t)))
+
+(use-package flycheck
+  :defer t
+  :hook (lsp-mode . flycheck-mode))
+
+(use-package yasnippet
+  :hook (prog-mode . yas-minor-mode)
+  :config
+  (yas-reload-all))
+
+(use-package smartparens
+  :hook (prog-mode . smartparens-mode))
+
+(use-package rainbow-mode
+  :defer t
+  :hook (org-mode
+         emacs-lisp-mode
+         web-mode
+         typescript-mode
+         js2-mode))
+
 (use-package calfw
   :commands cfw:open-org-calendar
   :config
