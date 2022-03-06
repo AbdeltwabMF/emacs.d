@@ -1,9 +1,24 @@
-#+TITLE: Emacs Rice
-#+PROPERTY: header-args:emacs-lisp :tangle init.el
+#+title: Emacs Rice
+#+date: <2022-03-06 Sun>
+#+property: header-args:emacs-lisp :tangle init.el
+#+options: toc
+#+author: Abd El-Twab M. Fakhry
+#+language: en
+#+select_tags: export
+#+exclude_tags: noexport
+#+creator: Emacs 27.2 (Org mode 9.4.4)
 
-** TABLE OF CONTENTS                                                 :toc:
+* Table of contents
+- Startup performance
+- Package manager
+- User interface
+  - Font
+- Ivy
+- Evil mode and key binding
+- Project management
+- Org mode
 
-** Startup performance
+* Startup performance
    
 Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time.
 The default is 800 kilobytes.  Measured in bytes.
@@ -27,7 +42,7 @@ Profile emacs startup
                                 (time-subtract after-init-time before-init-time))) gcs-done)))
 #+END_SRC
 
-** Package manager
+* Package manager
 
 Initialize package sources
 #+BEGIN_SRC emacs-lisp
@@ -46,7 +61,7 @@ Initialize package sources
   (setq use-package-always-ensure t)
 #+END_SRC
 
-** User interface
+* User interface
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-message t)
   (setq visible-bell t)
@@ -114,7 +129,7 @@ The diminish package hides pesky minor modes from the modelines.
 #+END_SRC
 
 
-*** Font
+** Font
 
 #+BEGIN_SRC emacs-lisp
   (set-fontset-font "fontset-default" 'arabic (font-spec
@@ -122,7 +137,7 @@ The diminish package hides pesky minor modes from the modelines.
                                                :size 12))
 #+END_SRC
 
-** Ivy
+* Ivy
 
 #+BEGIN_SRC emacs-lisp
   (use-package ivy
@@ -172,7 +187,7 @@ The diminish package hides pesky minor modes from the modelines.
     ([remap describe-key] . helpful-key))
 #+END_SRC
 
-** Evil mode and key binding
+* Evil mode and key binding
 
 #+BEGIN_SRC emacs-lisp
   (use-package general
@@ -221,9 +236,7 @@ The diminish package hides pesky minor modes from the modelines.
     "ts" '(hydra-text-scale/body :which-key "scale text"))
 #+END_SRC
 
-** Project Management
-#+BEGIN_SRC emacs-lisp
-#+END_SRC
+* Project management
 
 NOTE: Make sure to configure a GitHub token before using this package!
 [[https://magit.vc/manual/forge/Token-Creation.html#Token-Creation][Token Creation]]
@@ -237,7 +250,7 @@ NOTE: Make sure to configure a GitHub token before using this package!
     :ensure t)
 #+END_SRC
 
-** Org Mode
+* Org mode
 
 #+BEGIN_SRC emacs-lisp
   (defun amf/org-mode-setup ()

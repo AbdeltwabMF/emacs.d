@@ -163,8 +163,6 @@
 (rune/leader-keys
   "ts" '(hydra-text-scale/body :which-key "scale text"))
 
-
-
 (use-package magit
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
