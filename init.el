@@ -47,6 +47,11 @@
 (use-package quelpa-use-package
   :ensure t)
 
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
+
 (setq inhibit-startup-message t)
 (setq visible-bell t)
 
@@ -119,7 +124,7 @@
 
 (set-fontset-font "fontset-default" 'arabic (font-spec
                                              :family "Amiri Quran"
-                                             :height 110))
+                                             :height 100))
 
 (use-package emojify
   :ensure t

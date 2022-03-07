@@ -10,10 +10,10 @@
 GNU Emacs isn’t a text editor, it’s the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
 
 ** Generate init.el form this org mode file
-  - M-x toc-org-insert-toc
-  - Move the cursor up to the very top of the file and then:
-    -  C-c C-c for local setup refresh
-    -  C-c C-v t for tangle init.el
+- M-x toc-org-insert-toc
+- Move the cursor up to the very top of the file and then:
+  -  C-c C-c for local setup refresh
+  -  C-c C-v t for tangle init.el
 
 * TABLE OF CONTENTS                                                     :TOC_7:
 - [[#preface][Preface]]
@@ -162,6 +162,14 @@ Set up quelpa for packages not in Elpa/Melpa:
     :ensure t)
 #+END_SRC
 
+Elpy is available on Melpa, the most straightforward way to install it is to use use-package:
+#+BEGIN_SRC emacs-lisp
+  (use-package elpy
+    :ensure t
+    :init
+    (elpy-enable))
+#+END_SRC
+
 * General Configuration
 ** User Interface
 Clean up Emacs’ user interface, make it more minimal.
@@ -271,7 +279,7 @@ Different platforms need different default font sizes, and Fantasque Sans Mono i
 #+BEGIN_SRC emacs-lisp
   (set-fontset-font "fontset-default" 'arabic (font-spec
                                                :family "Amiri Quran"
-                                               :height 110))
+                                               :height 100))
 #+END_SRC
 
 *** Emojis in buffers
