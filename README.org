@@ -88,6 +88,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
 - [[#writing][Writing]]
   - [[#darkroom-for-distraction-free-writing][Darkroom for distraction-free writing]]
   - [[#spell-checking][Spell-checking]]
+  - [[#translation][Translation]]
 - [[#applications][Applications]]
   - [[#calendar][Calendar]]
   - [[#vterm][vterm]]
@@ -96,6 +97,8 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
     - [[#emms][EMMS]]
   - [[#mail][Mail]]
 - [[#org-mode][Org Mode]]
+  - [[#pomodoro][Pomodoro]]
+  - [[#essential][Essential]]
 
 * Startup Performance
 Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time.
@@ -1020,6 +1023,15 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
   (add-hook 'text-mode-hook 'flyspell-mode)
 #+END_SRC
 
+** Translation
+Each block supports the following arguments:
+Argument	Description	Example	Default
+:src	Source language.	#+BEGIN_SRC translate :src de	‘auto’ (for auto detection).
+:dest	Destination language(s).	#+BEGIN_SRC translate :dest it,fr	‘en’ (for English).
+#+BEGIN_SRC emacs-lisp
+  (use-package ob-translate)
+#+END_SRC
+
 * Applications
 ** Calendar
 calfw is a gorgeous calendar UI that is able to show all of my scheduled Org Agenda items.
@@ -1203,6 +1215,12 @@ Use [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]] to show notificati
 #+END_SRC
 
 * Org Mode
+** Pomodoro
+#+BEGIN_SRC emacs-lisp
+  (use-package org-pomodoro)
+#+END_SRC
+
+** Essential
 #+BEGIN_SRC emacs-lisp
   (defun amf/org-mode-setup ()
     (org-indent-mode)
@@ -1264,4 +1282,3 @@ of this is relates to a deeper rooted issue involving fonts and font-lock relian
   (provide 'init)
   ;;; init.el ends here
 #+END_SRC
-

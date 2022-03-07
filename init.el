@@ -657,6 +657,8 @@
 
 (add-hook 'text-mode-hook 'flyspell-mode)
 
+(use-package ob-translate)
+
 (use-package calfw
   :commands cfw:open-org-calendar
   :config
@@ -809,6 +811,8 @@
   (setq mu4e-alert-notify-repeated-mails nil)
 
   (mu4e-alert-enable-notifications))
+
+(use-package org-pomodoro)
 
 (defun amf/org-mode-setup ()
   (org-indent-mode)
