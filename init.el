@@ -737,6 +737,14 @@
   (setq vterm-max-scrollback 1000000)
   (advice-add 'evil-collection-vterm-insert :before #'vterm-reset-cursor-point))
 
+(use-package tracking
+  :defer t
+  :config
+  (setq tracking-faces-priorities '(all-the-icons-pink
+                                    all-the-icons-lgreen
+                                    all-the-icons-lblue))
+  (setq tracking-frame-behavior nil))
+
 (use-package mpv)
 
 (use-package emms

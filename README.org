@@ -92,6 +92,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
 - [[#applications][Applications]]
   - [[#calendar][Calendar]]
   - [[#vterm][vterm]]
+  - [[#tracking][Tracking]]
   - [[#media][Media]]
     - [[#mpv][mpv]]
     - [[#emms][EMMS]]
@@ -1126,6 +1127,17 @@ vterm enables the use of fully-fledged terminal applications within Emacs so tha
     (advice-add 'evil-collection-vterm-insert :before #'vterm-reset-cursor-point))
 #+END_SRC
 
+** Tracking
+#+BEGIN_SRC emacs-lisp
+  (use-package tracking
+    :defer t
+    :config
+    (setq tracking-faces-priorities '(all-the-icons-pink
+                                      all-the-icons-lgreen
+                                      all-the-icons-lblue))
+    (setq tracking-frame-behavior nil))
+#+END_SRC
+
 ** Media
 *** mpv
 #+BEGIN_SRC emacs-lisp
@@ -1298,9 +1310,6 @@ subjects - Display the subject of unread emails
 
 * Org Mode
 ** Pomodoro
-:LOGBOOK:
-CLOCK: [2022-03-08 Tue 01:34]
-:END:
 #+BEGIN_SRC emacs-lisp
   (use-package org-pomodoro)
 #+END_SRC
