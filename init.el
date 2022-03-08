@@ -45,12 +45,12 @@
 ;; Use no-littering to automatically set common paths to the new user-emacs-directory
 (use-package no-littering)
 
-;; Keep customization settings in a temporary file
 (setq custom-file
       (if (boundp 'server-socket-dir)
           (expand-file-name "custom.el" server-socket-dir)
         (expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
-(load custom-file t)
+
+(load custom-file 'noerror 'nomessage)
 
 (setq inhibit-startup-message t)
 (setq visible-bell t)
@@ -68,7 +68,7 @@
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 (setq scroll-step 1) ;; keyboard scroll one line at a time
-(setq use-dialog-box t)
+(setq use-dialog-box nil) ;; Don't pop up UI dialogs when prompting
 (setq isearch-allow-scroll t) ;; السماح بالسكرول دون الخروج من عملية البحث الحالية
 (setq undo-outer-limit 104857600) ;; set the size of output in bytes
 
@@ -275,6 +275,15 @@
          (prog-mode . ws-butler-mode)))
 
 (delete-selection-mode +1) ;; حذف النص المُحدد عند إدراج نص جديد
+
+(recentf-mode 1)
+
+;; Save what you enter into minibuffer prompts
+(setq history-length 100)
+(savehist-mode 1)
+
+;; Remember and restore the last cursor location of opened files
+(save-place-mode 1)
 
 (use-package corfu
   :bind (:map corfu-map
@@ -713,6 +722,28 @@
   :init
   (company-mode t))
 (add-hook 'after-init-hook 'global-company-mode)
+
+(use-package dashboard
+  :init      ;; tweak dashboard config before loading it
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-banner-logo-title "emacs is more than a text editor!")
+  ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+  (setq dashboard-startup-banner "~/.config/grub.jpg")  ;; use custom image as banner
+  (setq dashboard-center-content nil) ;; set to 't' for centered content
+  (setq dashboard-items '((recents . 5)
+                          (agenda . 5 )
+                          (bookmarks . 3)
+                          (projects . 3)
+                          (registers . 3)))
+  :config
+  (dashboard-setup-startup-hook)
+  (dashboard-modify-heading-icons '((recents . "file-text")
+                                    (bookmarks . "book"))))
+
+(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+
+(use-package page-break-lines)
 
 (use-package calfw
   :commands cfw:open-org-calendar

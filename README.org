@@ -43,6 +43,10 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
   - [[#tab-widths][Tab Widths]]
   - [[#use-spaces-instead-of-tabs-for-indentation][Use spaces instead of tabs for indentation]]
   - [[#automatically-clean-whitespace][Automatically clean whitespace]]
+  - [[#history][History]]
+    - [[#remembering-recently-edited-files][Remembering recently edited files]]
+    - [[#remembering-minibuffer-prompt-history][Remembering minibuffer prompt history]]
+    - [[#remembering-the-last-place-you-visited-in-a-file][Remembering the last place you visited in a file]]
 - [[#completion-system][Completion System]]
   - [[#completions-in-regions-with-corfu][Completions in Regions with Corfu]]
   - [[#improved-candidate-filtering-with-orderless][Improved Candidate Filtering with Orderless]]
@@ -89,6 +93,8 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
   - [[#darkroom-for-distraction-free-writing][Darkroom for distraction-free writing]]
   - [[#spell-checking][Spell-checking]]
   - [[#auto-complete][Auto complete]]
+- [[#dashboard][Dashboard]]
+  - [[#page-break-lines][Page Break Lines]]
 - [[#applications][Applications]]
   - [[#calendar][Calendar]]
   - [[#vterm][vterm]]
@@ -165,13 +171,19 @@ I don’t want a bunch of transient files showing up as untracked in the Git rep
 
   ;; Use no-littering to automatically set common paths to the new user-emacs-directory
   (use-package no-littering)
+#+END_SRC
 
-  ;; Keep customization settings in a temporary file
+If you're watching this channel, you're probably interested in writing your own Emacs configuration mostly by hand without using Emacs' customization UI. However, even if you avoid using the customization UI, some settings may cause customization variables to be added to your init.el file.
+
+To avoid having Emacs place those variables into your hand-crafted configuration file, you can use this snippet:
+
+#+BEGIN_SRC emacs-lisp
   (setq custom-file
         (if (boundp 'server-socket-dir)
             (expand-file-name "custom.el" server-socket-dir)
           (expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
-  (load custom-file t)
+
+  (load custom-file 'noerror 'nomessage)
 #+END_SRC
 
 * General Configuration
@@ -197,7 +209,7 @@ Improve scrolling.
   (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
   (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
   (setq scroll-step 1) ;; keyboard scroll one line at a time
-  (setq use-dialog-box t)
+  (setq use-dialog-box nil) ;; Don't pop up UI dialogs when prompting
   (setq isearch-allow-scroll t) ;; السماح بالسكرول دون الخروج من عملية البحث الحالية
   (setq undo-outer-limit 104857600) ;; set the size of output in bytes
 #+END_SRC
@@ -500,6 +512,39 @@ Default to an indentation size of 2 spaces since it’s the norm for pretty much
 
 #+BEGIN_SRC emacs-lisp
   (delete-selection-mode +1) ;; حذف النص المُحدد عند إدراج نص جديد
+#+END_SRC
+
+** History
+*** Remembering recently edited files
+When you do a lot of work with Emacs, you will probably want to get back to files you recently edited. Instead of using find-file to go hunt those files down again, you can enable recentf-mode to have Emacs remember the files you edited most recently:
+
+
+#+BEGIN_SRC emacs-lisp
+  (recentf-mode 1)
+#+END_SRC
+
+After enabling this mode, you can use the M-x recentf-open-files command to be shown a list of recent files which can be selected by typing the relevant number. This command isn't bound to a key by default, so I recommend doing that if you want to use it regularly!
+
+*** Remembering minibuffer prompt history
+One thing you will do a lot in Emacs is enter text into minibuffer prompts. Everything from M-x, isearch, the describe-* commands, and even the shell modes will receive a lot of input from you over time.
+
+You'll quickly realize that it would be helpful for Emacs to remember the things you've entered into these prompts the next time you use them. That's where the savehist-mode comes in!
+
+When you enable this mode, you will be able to use M-n (next-history-element) and M-p (previous-history-element) key bindings in almost every minibuffer (and shell) prompt to call up the inputs you used previously for the current command.
+
+I also like to set the history-length to a reasonable number to reduce the impact that reading these history files can have on Emacs' startup performance.
+#+BEGIN_SRC emacs-lisp
+  ;; Save what you enter into minibuffer prompts
+  (setq history-length 100)
+  (savehist-mode 1)
+#+END_SRC
+
+*** Remembering the last place you visited in a file
+Sometimes it's convenient for Emacs to remember the last location you were at when you visited a particular file. The save-place-mode can help with that!
+Once you turn on this mode, Emacs will drop your cursor to the last visited location in any file that you open.
+#+BEGIN_SRC emacs-lisp
+  ;; Remember and restore the last cursor location of opened files
+  (save-place-mode 1)
 #+END_SRC
 
 * Completion System
@@ -1094,6 +1139,40 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
     (company-mode t))
   (add-hook 'after-init-hook 'global-company-mode)
 #+END_SRC
+
+* Dashboard
+Emacs dashboard is an extensible startup screen showing you recent files, bookmarks, agenda items and an emacs banner.
+configuring dashboard
+#+begin_src emacs-lisp
+  (use-package dashboard
+    :init      ;; tweak dashboard config before loading it
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
+    (setq dashboard-banner-logo-title "emacs is more than a text editor!")
+    ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+    (setq dashboard-startup-banner "~/.config/grub.jpg")  ;; use custom image as banner
+    (setq dashboard-center-content nil) ;; set to 't' for centered content
+    (setq dashboard-items '((recents . 5)
+                            (agenda . 5 )
+                            (bookmarks . 3)
+                            (projects . 3)
+                            (registers . 3)))
+    :config
+    (dashboard-setup-startup-hook)
+    (dashboard-modify-heading-icons '((recents . "file-text")
+                                      (bookmarks . "book"))))
+#+end_src
+
+dashboard in emacsclient
+this setting ensures that emacsclient always opens on dashboard rather than scratch.
+#+begin_src emacs-lisp
+  (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+#+end_src
+
+** Page Break Lines
+#+begin_src emacs-lisp
+  (use-package page-break-lines)
+#+end_src
 
 * Applications
 ** Calendar
