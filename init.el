@@ -128,9 +128,7 @@
                     :height 100
                     :weight 'light)
 
-(set-fontset-font "fontset-default" 'arabic (font-spec
-                                             :family "Amiri Quran"
-                                             :height 100))
+(set-fontset-font "fontset-default" 'arabic (font-spec :family "Janna LT" :height 110))
 
 (use-package emojify
   :ensure t

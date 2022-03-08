@@ -304,10 +304,9 @@ Different platforms need different default font sizes, and Fantasque Sans Mono i
 
 إعداد الخط للنصوص العربية
 #+BEGIN_SRC emacs-lisp
-  (set-fontset-font "fontset-default" 'arabic (font-spec
-                                               :family "Amiri Quran"
-                                               :height 100))
+  (set-fontset-font "fontset-default" 'arabic (font-spec :family "Janna LT" :height 110))
 #+END_SRC
+
 
 *** Emojis in buffers
 Emojify is an Emacs extension to display emojis. It can display github style emojis like :smile: or plain ascii ones like :).
