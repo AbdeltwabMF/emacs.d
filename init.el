@@ -922,8 +922,6 @@
 
 (setq mu4e-alert-email-notification-types '(count subjects))
 
-(use-package org-pomodoro)
-
 (defun amf/org-mode-setup ()
   (org-indent-mode)
   (visual-line-mode 1))
@@ -967,6 +965,8 @@
 
 (use-package visual-fill-column
   :hook (org-mode . amf/org-mode-visual-fill))
+
+(setq org-clock-sound "~/.local/share/sounds/notification.wav")
 
 (use-package toc-org)
 (toc-org-insert-toc t)

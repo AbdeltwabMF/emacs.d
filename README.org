@@ -104,8 +104,6 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
     - [[#emms][EMMS]]
   - [[#mail][Mail]]
 - [[#org-mode][Org Mode]]
-  - [[#pomodoro][Pomodoro]]
-  - [[#essential][Essential]]
 
 * Startup Performance
 Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time.
@@ -402,9 +400,6 @@ The diminish package hides pesky minor modes from the modelines.
 
   (doom-modeline-mode 1)
 #+END_SRC
-
-#+RESULTS:
-: t
 
 ** Notifications
 alert is a great library for showing notifications from other packages in a variety of ways. For now I just use it to surface desktop notifications from package code.
@@ -1388,12 +1383,6 @@ subjects - Display the subject of unread emails
 #+END_SRC
 
 * Org Mode
-** Pomodoro
-#+BEGIN_SRC emacs-lisp
-  (use-package org-pomodoro)
-#+END_SRC
-
-** Essential
 #+BEGIN_SRC emacs-lisp
   (defun amf/org-mode-setup ()
     (org-indent-mode)
@@ -1438,6 +1427,8 @@ subjects - Display the subject of unread emails
 
   (use-package visual-fill-column
     :hook (org-mode . amf/org-mode-visual-fill))
+
+  (setq org-clock-sound "~/.local/share/sounds/notification.wav")
 #+END_SRC
 
 toc-org is an Emacs utility to have an up-to-date table of contents in the org files
