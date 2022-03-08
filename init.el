@@ -363,6 +363,11 @@
 (global-set-key (kbd "C-h v") #'helpful-variable)
 (global-set-key (kbd "C-h k") #'helpful-key)
 
+(setq ivy-initial-inputs-alist nil)
+
+(use-package smex)
+(smex-initialize)
+
 (use-package bufler
   :disabled
   :straight t
@@ -728,14 +733,14 @@
   (setq dashboard-set-heading-icons t)
   (setq dashboard-set-file-icons t)
   (setq dashboard-banner-logo-title "emacs is more than a text editor!")
-  ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
-  (setq dashboard-startup-banner "./images/RMS.png")  ;; use custom image as banner
+  (setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+  ;; (setq dashboard-startup-banner "~/.config/emacs/images/RMS.png")  ;; use custom image as banner
   (setq dashboard-center-content nil) ;; set to 't' for centered content
   (setq dashboard-items '((recents . 5)
                           (agenda . 5 )
-                          (bookmarks . 3)
-                          (projects . 3)
-                          (registers . 3)))
+                          (bookmarks . 5)
+                          (projects . 5)
+                          (registers . 5)))
   :config
   (dashboard-setup-startup-hook)
   (dashboard-modify-heading-icons '((recents . "file-text")
@@ -744,6 +749,28 @@
 (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 
 (use-package page-break-lines)
+
+(use-package all-the-icons-dired)
+(use-package dired-open)
+(use-package peep-dired)
+
+(with-eval-after-load 'dired
+  ;;(define-key dired-mode-map (kbd "M-p") 'peep-dired)
+  (evil-define-key 'normal dired-mode-map (kbd "h") 'dired-up-directory)
+  (evil-define-key 'normal dired-mode-map (kbd "l") 'dired-open-file) ; use dired-find-file instead if not using dired-open package
+  (evil-define-key 'normal peep-dired-mode-map (kbd "j") 'peep-dired-next-file)
+  (evil-define-key 'normal peep-dired-mode-map (kbd "k") 'peep-dired-prev-file))
+
+(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
+;; Get file icons in dired
+(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+;; With dired-open plugin, you can launch external programs for certain extensions
+;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
+(setq dired-open-extensions '(("gif" . "sxiv")
+                              ("jpg" . "sxiv")
+                              ("png" . "sxiv")
+                              ("mkv" . "mpv")
+                              ("mp4" . "mpv")))
 
 (use-package calfw
   :commands cfw:open-org-calendar
@@ -970,6 +997,18 @@
 
 (use-package toc-org)
 (toc-org-insert-toc t)
+
+(setq org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
+      '((sequence
+         "TODO(t)"           ; A task that is ready to be tackled
+         "BLOG(b)"           ; Blog writing assignments
+         "GYM(g)"            ; Things to accomplish at the gym
+         "PROJ(p)"           ; A project that contains other tasks
+         "Code(v)"           ; Video assignments
+         "WAIT(w)"           ; Something is holding up this task
+         "|"                 ; The pipe necessary to separate "active" states and "inactive" states
+         "DONE(d)"           ; Task has been completed
+         "CANCELLED(c)" )))  ; Task has been cancelled
 
 (setq inhibit-compacting-font-caches t)
 

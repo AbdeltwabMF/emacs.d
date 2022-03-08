@@ -52,6 +52,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
   - [[#improved-candidate-filtering-with-orderless][Improved Candidate Filtering with Orderless]]
 - [[#jumping-with-avy][Jumping with Avy]]
 - [[#ivy][Ivy]]
+  - [[#making-m-x-great-again][Making M-x Great Again!]]
 - [[#buffer-management-with-bufler][Buffer Management with Bufler]]
 - [[#window-management][Window Management]]
   - [[#frame-scaling--zooming][Frame Scaling / Zooming]]
@@ -95,6 +96,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
   - [[#auto-complete][Auto complete]]
 - [[#dashboard][Dashboard]]
   - [[#page-break-lines][Page Break Lines]]
+- [[#file-manager][File Manager]]
 - [[#applications][Applications]]
   - [[#calendar][Calendar]]
   - [[#vterm][vterm]]
@@ -633,6 +635,18 @@ Once you turn on this mode, Emacs will drop your cursor to the last visited loca
   (global-set-key (kbd "C-h k") #'helpful-key)
 #+END_SRC
 
+** Making M-x Great Again!
+The following line removes the annoying ‘^’ in things like counsel-M-x and other ivy/counsel prompts.  The default ‘^’ string means that if you type something immediately after this string only completion candidates that begin with what you typed are shown.  Most of the time, I’m searching for a command without knowing what it begins with though.
+#+BEGIN_SRC emacs-lisp
+  (setq ivy-initial-inputs-alist nil)
+#+END_SRC
+
+Smex is a package the makes M-x remember our history.  Now M-x will show our last used commands first.
+#+BEGIN_SRC emacs-lisp
+  (use-package smex)
+  (smex-initialize)
+#+END_SRC
+
 * Buffer Management with Bufler
 Bufler is an excellent package by alphapapa which enables you to automatically group all of your Emacs buffers into workspaces by defining a series of grouping rules. Once you have your groups defined (or use the default configuration which is quite good already), you can use the bufler-workspace-frame-set command to focus your current Emacs frame on a particular workspace so that bufler-switch-buffer will only show buffers from that workspace. In my case, this allows me to dedicate an EXWM workspace to a specific Bufler workspace so that only see the buffers I care about in that EXWM workspace.
 #+BEGIN_SRC emacs-lisp
@@ -1144,14 +1158,14 @@ configuring dashboard
     (setq dashboard-set-heading-icons t)
     (setq dashboard-set-file-icons t)
     (setq dashboard-banner-logo-title "emacs is more than a text editor!")
-    ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
-    (setq dashboard-startup-banner "./images/RMS.png")  ;; use custom image as banner
+    (setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+    ;; (setq dashboard-startup-banner "~/.config/emacs/images/RMS.png")  ;; use custom image as banner
     (setq dashboard-center-content nil) ;; set to 't' for centered content
     (setq dashboard-items '((recents . 5)
                             (agenda . 5 )
-                            (bookmarks . 3)
-                            (projects . 3)
-                            (registers . 3)))
+                            (bookmarks . 5)
+                            (projects . 5)
+                            (registers . 5)))
     :config
     (dashboard-setup-startup-hook)
     (dashboard-modify-heading-icons '((recents . "file-text")
@@ -1167,6 +1181,31 @@ this setting ensures that emacsclient always opens on dashboard rather than scra
 ** Page Break Lines
 #+begin_src emacs-lisp
   (use-package page-break-lines)
+#+end_src
+
+* File Manager
+#+begin_src emacs-lisp
+  (use-package all-the-icons-dired)
+  (use-package dired-open)
+  (use-package peep-dired)
+
+  (with-eval-after-load 'dired
+    ;;(define-key dired-mode-map (kbd "M-p") 'peep-dired)
+    (evil-define-key 'normal dired-mode-map (kbd "h") 'dired-up-directory)
+    (evil-define-key 'normal dired-mode-map (kbd "l") 'dired-open-file) ; use dired-find-file instead if not using dired-open package
+    (evil-define-key 'normal peep-dired-mode-map (kbd "j") 'peep-dired-next-file)
+    (evil-define-key 'normal peep-dired-mode-map (kbd "k") 'peep-dired-prev-file))
+
+  (add-hook 'peep-dired-hook 'evil-normalize-keymaps)
+  ;; Get file icons in dired
+  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+  ;; With dired-open plugin, you can launch external programs for certain extensions
+  ;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
+  (setq dired-open-extensions '(("gif" . "sxiv")
+                                ("jpg" . "sxiv")
+                                ("png" . "sxiv")
+                                ("mkv" . "mpv")
+                                ("mp4" . "mpv")))
 #+end_src
 
 * Applications
@@ -1435,6 +1474,22 @@ toc-org is an Emacs utility to have an up-to-date table of contents in the org f
 #+BEGIN_SRC emacs-lisp
   (use-package toc-org)
   (toc-org-insert-toc t)
+#+END_SRC
+
+Org Todo Keywords
+This lets us create the various TODO tags that we can use in Org.
+#+BEGIN_SRC emacs-lisp
+  (setq org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
+        '((sequence
+           "TODO(t)"           ; A task that is ready to be tackled
+           "BLOG(b)"           ; Blog writing assignments
+           "GYM(g)"            ; Things to accomplish at the gym
+           "PROJ(p)"           ; A project that contains other tasks
+           "Code(v)"           ; Video assignments
+           "WAIT(w)"           ; Something is holding up this task
+           "|"                 ; The pipe necessary to separate "active" states and "inactive" states
+           "DONE(d)"           ; Task has been completed
+           "CANCELLED(c)" )))  ; Task has been cancelled
 #+END_SRC
 
 This mode causes significant slowdown!
