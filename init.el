@@ -64,8 +64,9 @@
 (global-visual-line-mode 1) ;; الأسطر هي الأسطر المرئية، يُشبه خيار إلتفاف الأسطر في باقي المحررات
 (blink-cursor-mode -1) ;; إيقاف وميض مؤشر الكتابة
 
+(setq scroll-conservatively 101) ;; value greater than 100 gets rid of half page jumping
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
-(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+(setq mouse-wheel-progressive-speed nil)
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 (setq scroll-step 1) ;; keyboard scroll one line at a time
 (setq use-dialog-box nil) ;; Don't pop up UI dialogs when prompting
@@ -995,8 +996,9 @@
 
 (setq org-clock-sound "~/.local/share/sounds/notification.wav")
 
-(use-package toc-org)
-(toc-org-insert-toc t)
+(use-package toc-org
+  :commands toc-org-enable
+  :init (add-hook 'org-mode-hook 'toc-org-enable))
 
 (setq org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
       '((sequence

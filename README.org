@@ -106,6 +106,10 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
     - [[#emms][EMMS]]
   - [[#mail][Mail]]
 - [[#org-mode][Org Mode]]
+  - [[#automatically-create-table-of-contents][Automatically Create Table of Contents]]
+  - [[#org-todo-keywords][Org Todo Keywords]]
+  - [[#this-mode-causes-significant-slowdown][This mode causes significant slowdown!]]
+  - [[#footer][Footer]]
 
 * Startup Performance
 Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time.
@@ -205,8 +209,9 @@ Clean up Emacs’ user interface, make it more minimal.
 
 Improve scrolling.
 #+BEGIN_SRC emacs-lisp
+  (setq scroll-conservatively 101) ;; value greater than 100 gets rid of half page jumping
   (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
-  (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+  (setq mouse-wheel-progressive-speed nil)
   (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
   (setq scroll-step 1) ;; keyboard scroll one line at a time
   (setq use-dialog-box nil) ;; Don't pop up UI dialogs when prompting
@@ -1470,13 +1475,15 @@ subjects - Display the subject of unread emails
   (setq org-clock-sound "~/.local/share/sounds/notification.wav")
 #+END_SRC
 
-toc-org is an Emacs utility to have an up-to-date table of contents in the org files
+** Automatically Create Table of Contents
+Toc-org helps you to have an up-to-date table of contents in org files without exporting (useful useful for README files on GitHub).  Use :TOC: to create the table.
 #+BEGIN_SRC emacs-lisp
-  (use-package toc-org)
-  (toc-org-insert-toc t)
+  (use-package toc-org
+    :commands toc-org-enable
+    :init (add-hook 'org-mode-hook 'toc-org-enable))
 #+END_SRC
 
-Org Todo Keywords
+** Org Todo Keywords
 This lets us create the various TODO tags that we can use in Org.
 #+BEGIN_SRC emacs-lisp
   (setq org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
@@ -1492,12 +1499,15 @@ This lets us create the various TODO tags that we can use in Org.
            "CANCELLED(c)" )))  ; Task has been cancelled
 #+END_SRC
 
-This mode causes significant slowdown!
+** This mode causes significant slowdown!
 I have looked into the matter in the past, and from what I understand the usual cause
 of this is relates to a deeper rooted issue involving fonts and font-lock reliant packages
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-compacting-font-caches t)
+#+END_SRC
 
+** Footer
+#+BEGIN_SRC emacs-lisp
   (provide 'init)
   ;;; init.el ends here
 #+END_SRC
