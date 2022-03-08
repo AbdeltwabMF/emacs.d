@@ -34,7 +34,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
   - [[#notifications][Notifications]]
   - [[#auto-saving-changed-files][Auto-Saving Changed Files]]
   - [[#auto-reverting-changed-files][Auto-Reverting Changed Files]]
-  - [[#workspaces][Workspaces]]
+  - [[#work-spaces][Work spaces]]
   - [[#highlight-matching-braces][Highlight Matching Braces]]
   - [[#displaying-world-time][Displaying World Time]]
   - [[#pinentry][Pinentry]]
@@ -76,7 +76,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
     - [[#rust][Rust]]
     - [[#emacs-lisp][Emacs Lisp]]
     - [[#markdown][Markdown]]
-    - [[#html][HTML]]
+    - [[#html--jsx][HTML & JSX]]
     - [[#yaml][YAML]]
     - [[#solidity][Solidity]]
   - [[#compilation][Compilation]]
@@ -185,6 +185,9 @@ Clean up Emacs’ user interface, make it more minimal.
   (tooltip-mode -1)
   (set-fringe-mode 10)
   (menu-bar-mode -1)
+  (global-hl-line-mode +1) ;; إبراز السطر الحالي
+  (global-visual-line-mode 1) ;; الأسطر هي الأسطر المرئية، يُشبه خيار إلتفاف الأسطر في باقي المحررات
+  (blink-cursor-mode -1) ;; إيقاف وميض مؤشر الكتابة
 #+END_SRC
 
 Improve scrolling.
@@ -193,7 +196,9 @@ Improve scrolling.
   (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
   (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
   (setq scroll-step 1) ;; keyboard scroll one line at a time
-  (setq use-dialog-box nil) ;; Disable dialog boxes since they weren't working in Mac OSX
+  (setq use-dialog-box t)
+  (setq isearch-allow-scroll t) ;; السماح بالسكرول دون الخروج من عملية البحث الحالية
+  (setq undo-outer-limit 104857600) ;; set the size of output in bytes
 #+END_SRC
 
 Set frame transparency and maximize windows by default.
@@ -417,7 +422,7 @@ alert is a great library for showing notifications from other packages in a vari
   (global-auto-revert-mode 1)
 #+END_SRC
 
-** Workspaces
+** Work spaces
 #+BEGIN_SRC emacs-lisp
   (use-package perspective
     :demand t
@@ -438,6 +443,8 @@ alert is a great library for showing notifications from other packages in a vari
     :config
     (set-face-attribute 'show-paren-match-expression nil :background "#363e4a")
     (show-paren-mode 1))
+
+  (electric-pair-mode 1) ;; إغلاق تلقائي للأقواس
 #+END_SRC
 
 ** Displaying World Time
@@ -487,6 +494,11 @@ Default to an indentation size of 2 spaces since it’s the norm for pretty much
   (use-package ws-butler
     :hook ((text-mode . ws-butler-mode)
            (prog-mode . ws-butler-mode)))
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+  (delete-selection-mode +1) ;; حذف النص المُحدد عند إدراج نص جديد
 #+END_SRC
 
 * Completion System
@@ -877,6 +889,17 @@ Here are packages that are useful across different Lisp and Scheme implementatio
 #+END_SRC
 
 *** C/C++
+Emacs frontend to GNU Global source code tagging system.
+#+BEGIN_SRC emacs-lisp
+  (use-package ggtags
+    :ensure t
+    :config
+    (add-hook 'c-mode-common-hook
+              (lambda ()
+                (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+                  (ggtags-mode 1)))))
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
   (use-package ccls
     :hook ((c-mode c++-mode objc-mode cuda-mode) .
@@ -930,7 +953,7 @@ Here are packages that are useful across different Lisp and Scheme implementatio
         (set-face-attribute (car face) nil :weight 'normal :height (cdr face)))))
 #+END_SRC
 
-*** HTML
+*** HTML & JSX
 #+BEGIN_SRC emacs-lisp
   (use-package web-mode
     :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
@@ -944,6 +967,25 @@ Here are packages that are useful across different Lisp and Scheme implementatio
   (use-package impatient-mode)
 
   (use-package skewer-mode)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package emmet-mode
+    :init
+    (emmet-mode t))
+
+  (add-hook 'sgml-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
+  (add-hook 'css-mode-hook  'emmet-mode) ;; enable Emmet's css abbreviation.
+
+  (add-hook 'emmet-mode-hook (lambda () (setq emmet-indent-after-insert nil)))
+
+  ;; If you disable indent-region, you can set the default indent level thusly:
+  (add-hook 'emmet-mode-hook (lambda () (setq emmet-indentation 2))) ;; indent 2 spaces.
+
+  (setq emmet-move-cursor-between-quotes t) ;; default nil
+
+  ;; To enable the JSX support, add your major-mode to emmet-jsx-major-modes:
+  (add-to-list 'emmet-jsx-major-modes 'your-jsx-major-mode)
 #+END_SRC
 
 *** YAML

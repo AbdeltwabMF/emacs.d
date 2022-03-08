@@ -60,12 +60,17 @@
 (tooltip-mode -1)
 (set-fringe-mode 10)
 (menu-bar-mode -1)
+(global-hl-line-mode +1) ;; إبراز السطر الحالي
+(global-visual-line-mode 1) ;; الأسطر هي الأسطر المرئية، يُشبه خيار إلتفاف الأسطر في باقي المحررات
+(blink-cursor-mode -1) ;; إيقاف وميض مؤشر الكتابة
 
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 (setq scroll-step 1) ;; keyboard scroll one line at a time
-(setq use-dialog-box nil) ;; Disable dialog boxes since they weren't working in Mac OSX
+(setq use-dialog-box t)
+(setq isearch-allow-scroll t) ;; السماح بالسكرول دون الخروج من عملية البحث الحالية
+(setq undo-outer-limit 104857600) ;; set the size of output in bytes
 
 (set-frame-parameter (selected-frame) 'alpha '(95 . 90))
 (add-to-list 'default-frame-alist '(alpha . (95 . 90)))
@@ -240,6 +245,8 @@
   (set-face-attribute 'show-paren-match-expression nil :background "#363e4a")
   (show-paren-mode 1))
 
+(electric-pair-mode 1) ;; إغلاق تلقائي للأقواس
+
 (setq display-time-world-list
       '(("Etc/UTC" "UTC")
         ("America/Los_Angeles" "Seattle")
@@ -266,6 +273,8 @@
 (use-package ws-butler
   :hook ((text-mode . ws-butler-mode)
          (prog-mode . ws-butler-mode)))
+
+(delete-selection-mode +1) ;; حذف النص المُحدد عند إدراج نص جديد
 
 (use-package corfu
   :bind (:map corfu-map
@@ -552,6 +561,14 @@
                                         additional-movement slurp/barf-cp
                                         prettify)))
 
+(use-package ggtags
+  :ensure t
+  :config
+  (add-hook 'c-mode-common-hook
+            (lambda ()
+              (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+                (ggtags-mode 1)))))
+
 (use-package ccls
   :hook ((c-mode c++-mode objc-mode cuda-mode) .
          (lambda () (require 'ccls) (lsp))))
@@ -603,6 +620,23 @@
 (use-package impatient-mode)
 
 (use-package skewer-mode)
+
+(use-package emmet-mode
+  :init
+  (emmet-mode t))
+
+(add-hook 'sgml-mode-hook 'emmet-mode) ;; Auto-start on any markup modes
+(add-hook 'css-mode-hook  'emmet-mode) ;; enable Emmet's css abbreviation.
+
+(add-hook 'emmet-mode-hook (lambda () (setq emmet-indent-after-insert nil)))
+
+;; If you disable indent-region, you can set the default indent level thusly:
+(add-hook 'emmet-mode-hook (lambda () (setq emmet-indentation 2))) ;; indent 2 spaces.
+
+(setq emmet-move-cursor-between-quotes t) ;; default nil
+
+;; To enable the JSX support, add your major-mode to emmet-jsx-major-modes:
+(add-to-list 'emmet-jsx-major-modes 'your-jsx-major-mode)
 
 (use-package yaml-mode
   :mode "\\.ya?ml\\'")
