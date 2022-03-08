@@ -1,4 +1,4 @@
-;;; package --- Summary
+;;; init.el --- Emacs Rice
 
 ;;; Commentary:
 ;; My Emacs configuration in org mode
@@ -12,20 +12,6 @@
                      (format "%.2f seconds"
                              (float-time
                               (time-subtract after-init-time before-init-time))) gcs-done)))
-
-;; Change the user-emacs-directory to keep unwanted things out of ~/.config/emacs
-(setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
-      url-history-file (expand-file-name "url/history" user-emacs-directory))
-
-;; Use no-littering to automatically set common paths to the new user-emacs-directory
-(use-package no-littering)
-
-;; Keep customization settings in a temporary file
-(setq custom-file
-      (if (boundp 'server-socket-dir)
-          (expand-file-name "custom.el" server-socket-dir)
-        (expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
-(load custom-file t)
 
 (require 'package)
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
@@ -51,6 +37,20 @@
   :ensure t
   :init
   (elpy-enable))
+
+;; Change the user-emacs-directory to keep unwanted things out of ~/.config/emacs
+(setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
+      url-history-file (expand-file-name "url/history" user-emacs-directory))
+
+;; Use no-littering to automatically set common paths to the new user-emacs-directory
+(use-package no-littering)
+
+;; Keep customization settings in a temporary file
+(setq custom-file
+      (if (boundp 'server-socket-dir)
+          (expand-file-name "custom.el" server-socket-dir)
+        (expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
+(load custom-file t)
 
 (setq inhibit-startup-message t)
 (setq visible-bell t)
@@ -148,19 +148,18 @@
 
 (use-package doom-modeline
   :ensure t
-  :after eshell     ;; Make sure it gets hooked after eshell
   :hook (after-init . doom-modeline-init)
   :custom-face
-  (mode-line ((t (:height 0.85))))
-  (mode-line-inactive ((t (:height 0.85))))
+  (mode-line ((t (:height 0.90))))
+  (mode-line-inactive ((t (:height 0.90))))
   :custom
-  (doom-modeline-height 16)
-  (doom-modeline-bar-width 4)
+  (doom-modeline-height 26)
+  (doom-modeline-bar-width 6)
   (doom-modeline-lsp t)
   (doom-modeline-github nil)
 
   ;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
-  (doom-modeline-mu4e nil)
+  (doom-modeline-mu4e t)
   ;; also enable the start of mu4e-alert
   (mu4e-alert-enable-mode-line-display)
 
@@ -177,13 +176,27 @@
   ;; Whether display the indentation information.
   (doom-modeline-indent-info t)
 
+  ;; The maximum displayed length of the branch name of version control.
+  (setq doom-modeline-vcs-max-length 6)
+
+  ;; Whether display the environment version.
+  (setq doom-modeline-env-version t)
+
   ;; The limit of the window width.
   ;; If `window-width' is smaller than the limit, some information won't be displayed.
   (doom-modeline-window-width-limit fill-column)
 
+  ;; If non-nil, a word count will be added to the selection-info modeline segment.
+  (setq doom-modeline-enable-word-count t)
+
+  ;; Whether display the modification icon for the buffer.
+  ;; It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
+  (setq doom-modeline-buffer-modification-icon t)
+
   ;; Whether display the environment version.
   (doom-modeline-env-version t)
   (doom-modeline-major-mode-icon t)
+
   ;; Whether display the colorful icon for `major-mode'.
   ;; It respects `all-the-icons-color-icons'.
   (doom-modeline-major-mode-color-icon t)
@@ -451,11 +464,17 @@
   ;; Show a diff window displaying changes between undo nodes.
   (setq undo-tree-visualizer-diff t))
 
-(use-package evil)
-(evil-mode 1)
+(use-package evil
+  :ensure t
+  :init
+  (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
+  (setq evil-want-keybinding nil)
+  :config
+  (evil-mode 1))
 
 (use-package evil-collection
   :after evil
+  :ensure t
   :config
   (evil-collection-init))
 
@@ -533,9 +552,6 @@
                                         additional-movement slurp/barf-cp
                                         prettify)))
 
-(use-package scheme-mode
-  :mode "\\.sld\\'")
-
 (use-package ccls
   :hook ((c-mode c++-mode objc-mode cuda-mode) .
          (lambda () (require 'ccls) (lsp))))
@@ -590,6 +606,8 @@
 
 (use-package yaml-mode
   :mode "\\.ya?ml\\'")
+
+(use-package solidity-mode)
 
 (use-package compile
   :custom
@@ -651,13 +669,16 @@
 (use-package flyspell-correct-ivy
   :ensure t)
 
-(require 'flymake)
+(use-package flymake)
 (setq ispell-program-name "aspell") ; could be ispell as well, depending on your preferences
-(setq ispell-dictionary "british") ; this can obviously be set to any language your spell-checking program supports
+(setq ispell-dictionary "american") ; this can obviously be set to any language your spell-checking program supports
 
-(add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'text-mode-hook #'flyspell-mode)
 
-(use-package ob-translate)
+(use-package company
+  :init
+  (company-mode t))
+(add-hook 'after-init-hook 'global-company-mode)
 
 (use-package calfw
   :commands cfw:open-org-calendar
@@ -695,7 +716,7 @@
 
 (use-package mu4e
   :ensure nil
-  ;; :defer 20 ;; Wait until 20 seconds after startup
+  :defer 20 ;; Wait until 20 seconds after startup
   :config
 
   ;; Refresh mail using isync every 10 minutes
@@ -811,6 +832,22 @@
   (setq mu4e-alert-notify-repeated-mails nil)
 
   (mu4e-alert-enable-notifications))
+
+;; Choose the style you prefer for desktop notifications
+;; If you are on Linux you can use
+;; 1. notifications - Emacs lisp implementation of the Desktop Notifications API
+;; 2. libnotify     - Notifications using the `notify-send' program, requires `notify-send' to be in PATH
+;;
+;; On Mac OSX you can set style to
+;; 1. notifier      - Notifications using the `terminal-notifier' program, requires `terminal-notifier' to be in PATH
+;; 1. growl         - Notifications using the `growl' program, requires `growlnotify' to be in PATH
+(mu4e-alert-set-default-style 'notifications)
+(add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+
+;; Mode Line display of unread emails
+(add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
+
+(setq mu4e-alert-email-notification-types '(count subjects))
 
 (use-package org-pomodoro)
 

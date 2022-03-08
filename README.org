@@ -19,8 +19,8 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
 - [[#preface][Preface]]
   - [[#generate-initel-form-this-org-mode-file][Generate init.el form this org mode file]]
 - [[#startup-performance][Startup Performance]]
-- [[#keep-it-clean][Keep it Clean]]
 - [[#package-manager][Package Manager]]
+- [[#keep-it-clean][Keep it Clean]]
 - [[#general-configuration][General Configuration]]
   - [[#user-interface][User Interface]]
   - [[#theme][Theme]]
@@ -71,7 +71,6 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
     - [[#language-server-support][Language Server Support]]
     - [[#debug-adapter-support][Debug Adapter Support]]
     - [[#meta-lisp][Meta Lisp]]
-    - [[#scheme][Scheme]]
     - [[#cc][C/C++]]
     - [[#go][Go]]
     - [[#rust][Rust]]
@@ -79,6 +78,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
     - [[#markdown][Markdown]]
     - [[#html][HTML]]
     - [[#yaml][YAML]]
+    - [[#solidity][Solidity]]
   - [[#compilation][Compilation]]
   - [[#productivity][Productivity]]
     - [[#syntax-checking-with-flycheck][Syntax checking with Flycheck]]
@@ -88,7 +88,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
 - [[#writing][Writing]]
   - [[#darkroom-for-distraction-free-writing][Darkroom for distraction-free writing]]
   - [[#spell-checking][Spell-checking]]
-  - [[#translation][Translation]]
+  - [[#auto-complete][Auto complete]]
 - [[#applications][Applications]]
   - [[#calendar][Calendar]]
   - [[#vterm][vterm]]
@@ -104,7 +104,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
 Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time.
 The default is 800 kilobytes.  Measured in bytes.
 #+BEGIN_SRC emacs-lisp
-  ;;; package --- Summary
+  ;;; init.el --- Emacs Rice
 
   ;;; Commentary:
   ;; My Emacs configuration in org mode
@@ -118,24 +118,6 @@ The default is 800 kilobytes.  Measured in bytes.
                        (format "%.2f seconds"
                                (float-time
                                 (time-subtract after-init-time before-init-time))) gcs-done)))
-#+END_SRC
-
-* Keep it Clean
-I don’t want a bunch of transient files showing up as untracked in the Git repo so I move them all to another location.
-#+BEGIN_SRC emacs-lisp
-  ;; Change the user-emacs-directory to keep unwanted things out of ~/.config/emacs
-  (setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
-        url-history-file (expand-file-name "url/history" user-emacs-directory))
-
-  ;; Use no-littering to automatically set common paths to the new user-emacs-directory
-  (use-package no-littering)
-
-  ;; Keep customization settings in a temporary file
-  (setq custom-file
-        (if (boundp 'server-socket-dir)
-            (expand-file-name "custom.el" server-socket-dir)
-          (expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
-  (load custom-file t)
 #+END_SRC
 
 * Package Manager
@@ -171,6 +153,24 @@ Elpy is available on Melpa, the most straightforward way to install it is to use
     :ensure t
     :init
     (elpy-enable))
+#+END_SRC
+
+* Keep it Clean
+I don’t want a bunch of transient files showing up as untracked in the Git repo so I move them all to another location.
+#+BEGIN_SRC emacs-lisp
+  ;; Change the user-emacs-directory to keep unwanted things out of ~/.config/emacs
+  (setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
+        url-history-file (expand-file-name "url/history" user-emacs-directory))
+
+  ;; Use no-littering to automatically set common paths to the new user-emacs-directory
+  (use-package no-littering)
+
+  ;; Keep customization settings in a temporary file
+  (setq custom-file
+        (if (boundp 'server-socket-dir)
+            (expand-file-name "custom.el" server-socket-dir)
+          (expand-file-name (format "emacs-custom-%s.el" (user-uid)) temporary-file-directory)))
+  (load custom-file t)
 #+END_SRC
 
 * General Configuration
@@ -327,19 +327,18 @@ The diminish package hides pesky minor modes from the modelines.
 
   (use-package doom-modeline
     :ensure t
-    :after eshell     ;; Make sure it gets hooked after eshell
     :hook (after-init . doom-modeline-init)
     :custom-face
-    (mode-line ((t (:height 0.85))))
-    (mode-line-inactive ((t (:height 0.85))))
+    (mode-line ((t (:height 0.90))))
+    (mode-line-inactive ((t (:height 0.90))))
     :custom
-    (doom-modeline-height 16)
-    (doom-modeline-bar-width 4)
+    (doom-modeline-height 26)
+    (doom-modeline-bar-width 6)
     (doom-modeline-lsp t)
     (doom-modeline-github nil)
 
     ;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
-    (doom-modeline-mu4e nil)
+    (doom-modeline-mu4e t)
     ;; also enable the start of mu4e-alert
     (mu4e-alert-enable-mode-line-display)
 
@@ -356,13 +355,27 @@ The diminish package hides pesky minor modes from the modelines.
     ;; Whether display the indentation information.
     (doom-modeline-indent-info t)
 
+    ;; The maximum displayed length of the branch name of version control.
+    (setq doom-modeline-vcs-max-length 6)
+
+    ;; Whether display the environment version.
+    (setq doom-modeline-env-version t)
+
     ;; The limit of the window width.
     ;; If `window-width' is smaller than the limit, some information won't be displayed.
     (doom-modeline-window-width-limit fill-column)
 
+    ;; If non-nil, a word count will be added to the selection-info modeline segment.
+    (setq doom-modeline-enable-word-count t)
+
+    ;; Whether display the modification icon for the buffer.
+    ;; It respects `doom-modeline-icon' and `doom-modeline-buffer-state-icon'.
+    (setq doom-modeline-buffer-modification-icon t)
+
     ;; Whether display the environment version.
     (doom-modeline-env-version t)
     (doom-modeline-major-mode-icon t)
+
     ;; Whether display the colorful icon for `major-mode'.
     ;; It respects `all-the-icons-color-icons'.
     (doom-modeline-major-mode-color-icon t)
@@ -371,6 +384,9 @@ The diminish package hides pesky minor modes from the modelines.
 
   (doom-modeline-mode 1)
 #+END_SRC
+
+#+RESULTS:
+: t
 
 ** Notifications
 alert is a great library for showing notifications from other packages in a variety of ways. For now I just use it to surface desktop notifications from package code.
@@ -727,11 +743,17 @@ Some tips can be found here:
     ;; Show a diff window displaying changes between undo nodes.
     (setq undo-tree-visualizer-diff t))
 
-  (use-package evil)
-  (evil-mode 1)
+  (use-package evil
+    :ensure t
+    :init
+    (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
+    (setq evil-want-keybinding nil)
+    :config
+    (evil-mode 1))
 
   (use-package evil-collection
     :after evil
+    :ensure t
     :config
     (evil-collection-init))
 #+END_SRC
@@ -807,6 +829,7 @@ Configuration for various programming languages and dev tools that I use.
   ;;Functions can be called interactively (M-x git-link) or via a key binding of your choice. For example:
   (global-set-key (kbd "C-c g l") 'git-link)
 #+END_SRC
+
 ** Languages
 *** Language Server Support
 #+BEGIN_SRC emacs-lisp
@@ -851,13 +874,6 @@ Here are packages that are useful across different Lisp and Scheme implementatio
     (lispyville-set-key-theme '(operators c-w additional
                                           additional-movement slurp/barf-cp
                                           prettify)))
-#+END_SRC
-
-*** Scheme
-Include .sld library definition files
-#+BEGIN_SRC emacs-lisp
-  (use-package scheme-mode
-    :mode "\\.sld\\'")
 #+END_SRC
 
 *** C/C++
@@ -934,6 +950,11 @@ Include .sld library definition files
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
     :mode "\\.ya?ml\\'")
+#+END_SRC
+
+*** Solidity
+#+BEGIN_SRC emacs-lisp
+  (use-package solidity-mode)
 #+END_SRC
 
 ** Compilation
@@ -1016,20 +1037,19 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
   (use-package flyspell-correct-ivy
     :ensure t)
 
-  (require 'flymake)
+  (use-package flymake)
   (setq ispell-program-name "aspell") ; could be ispell as well, depending on your preferences
-  (setq ispell-dictionary "british") ; this can obviously be set to any language your spell-checking program supports
+  (setq ispell-dictionary "american") ; this can obviously be set to any language your spell-checking program supports
 
-  (add-hook 'text-mode-hook 'flyspell-mode)
+  (add-hook 'text-mode-hook #'flyspell-mode)
 #+END_SRC
 
-** Translation
-Each block supports the following arguments:
-Argument	Description	Example	Default
-:src	Source language.	#+BEGIN_SRC translate :src de	‘auto’ (for auto detection).
-:dest	Destination language(s).	#+BEGIN_SRC translate :dest it,fr	‘en’ (for English).
+** Auto complete
 #+BEGIN_SRC emacs-lisp
-  (use-package ob-translate)
+  (use-package company
+    :init
+    (company-mode t))
+  (add-hook 'after-init-hook 'global-company-mode)
 #+END_SRC
 
 * Applications
@@ -1093,7 +1113,7 @@ Useful mu4e manual pages:
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
     :ensure nil
-    ;; :defer 20 ;; Wait until 20 seconds after startup
+    :defer 20 ;; Wait until 20 seconds after startup
     :config
 
     ;; Refresh mail using isync every 10 minutes
@@ -1212,10 +1232,33 @@ Use [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]] to show notificati
     (setq mu4e-alert-notify-repeated-mails nil)
 
     (mu4e-alert-enable-notifications))
+
+  ;; Choose the style you prefer for desktop notifications
+  ;; If you are on Linux you can use
+  ;; 1. notifications - Emacs lisp implementation of the Desktop Notifications API
+  ;; 2. libnotify     - Notifications using the `notify-send' program, requires `notify-send' to be in PATH
+  ;;
+  ;; On Mac OSX you can set style to
+  ;; 1. notifier      - Notifications using the `terminal-notifier' program, requires `terminal-notifier' to be in PATH
+  ;; 1. growl         - Notifications using the `growl' program, requires `growlnotify' to be in PATH
+  (mu4e-alert-set-default-style 'notifications)
+  (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+
+  ;; Mode Line display of unread emails
+  (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
+#+END_SRC
+
+count - Display the count of unread emails
+subjects - Display the subject of unread emails
+#+BEGIN_SRC emacs-lisp
+  (setq mu4e-alert-email-notification-types '(count subjects))
 #+END_SRC
 
 * Org Mode
 ** Pomodoro
+:LOGBOOK:
+CLOCK: [2022-03-08 Tue 01:34]
+:END:
 #+BEGIN_SRC emacs-lisp
   (use-package org-pomodoro)
 #+END_SRC
