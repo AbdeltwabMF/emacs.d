@@ -1145,7 +1145,7 @@ configuring dashboard
     (setq dashboard-set-file-icons t)
     (setq dashboard-banner-logo-title "emacs is more than a text editor!")
     ;;(setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
-    (setq dashboard-startup-banner "~/.config/grub.jpg")  ;; use custom image as banner
+    (setq dashboard-startup-banner "./images/RMS.png")  ;; use custom image as banner
     (setq dashboard-center-content nil) ;; set to 't' for centered content
     (setq dashboard-items '((recents . 5)
                             (agenda . 5 )
