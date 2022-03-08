@@ -729,6 +729,11 @@
   (company-mode t))
 (add-hook 'after-init-hook 'global-company-mode)
 
+(use-package redacted)
+
+;; Enable `read-only-mode' to ensure that we don't change what we can't read.
+(add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1))))
+
 (use-package dashboard
   :init      ;; tweak dashboard config before loading it
   (setq dashboard-set-heading-icons t)

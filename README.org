@@ -94,6 +94,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
   - [[#darkroom-for-distraction-free-writing][Darkroom for distraction-free writing]]
   - [[#spell-checking][Spell-checking]]
   - [[#auto-complete][Auto complete]]
+  - [[#hide-your-current-text][Hide your current text.]]
 - [[#dashboard][Dashboard]]
   - [[#page-break-lines][Page Break Lines]]
 - [[#file-manager][File Manager]]
@@ -1152,6 +1153,13 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
     :init
     (company-mode t))
   (add-hook 'after-init-hook 'global-company-mode)
+#+END_SRC
+** Hide your current text.
+#+BEGIN_SRC emacs-lisp
+  (use-package redacted)
+
+  ;; Enable `read-only-mode' to ensure that we don't change what we can't read.
+  (add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1))))
 #+END_SRC
 
 * Dashboard
