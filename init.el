@@ -744,37 +744,6 @@
 
 (use-package keycast)
 
-(use-package eaf
-  :load-path "~/.config/emacs/site-lisp/emacs-application-framework"
-  :custom
-                                        ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
-  (eaf-browser-continue-where-left-off t)
-  (eaf-browser-enable-adblocker t)
-  (browse-url-browser-function 'eaf-open-browser)
-  :config
-  (defalias 'browse-web #'eaf-open-browser)) ;; unbind, see more in the Wiki
-
-(require 'eaf-browser)
-(require 'eaf-pdf-viewer)
-(require 'eaf-terminal)
-(require 'eaf-video-player)
-(require 'eaf-markdown-previewer)
-(require 'eaf-org-previewer)
-(require 'eaf-music-player)
-(require 'eaf-rss-reader)
-(require 'eaf-file-manager)
-(require 'eaf-mindmap)
-(require 'eaf-jupyter)
-(require 'eaf-image-viewer)
-(require 'eaf-camera)
-(require 'eaf-system-monitor)
-(require 'eaf-netease-cloud-music)
-(require 'eaf-file-browser)
-(require 'eaf-file-sender)
-(require 'eaf-airshare)
-(require 'eaf-demo)
-(require 'eaf-vue-demo)
-
 (use-package pdf-view-restore
   :after pdf-tools
   :config
@@ -825,6 +794,37 @@
                               ("png" . "sxiv")
                               ("mkv" . "mpv")
                               ("mp4" . "mpv")))
+
+(use-package eaf
+  :load-path "~/.config/emacs/site-lisp/emacs-application-framework"
+  :custom
+                                        ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
+  (eaf-browser-continue-where-left-off t)
+  (eaf-browser-enable-adblocker t)
+  (browse-url-browser-function 'eaf-open-browser)
+  :config
+  (defalias 'browse-web #'eaf-open-browser)) ;; unbind, see more in the Wiki
+
+(require 'eaf-browser)
+(require 'eaf-pdf-viewer)
+(require 'eaf-terminal)
+(require 'eaf-video-player)
+(require 'eaf-markdown-previewer)
+(require 'eaf-org-previewer)
+(require 'eaf-music-player)
+(require 'eaf-rss-reader)
+(require 'eaf-file-manager)
+(require 'eaf-mindmap)
+(require 'eaf-jupyter)
+(require 'eaf-image-viewer)
+(require 'eaf-camera)
+(require 'eaf-system-monitor)
+(require 'eaf-netease-cloud-music)
+(require 'eaf-file-browser)
+(require 'eaf-file-sender)
+(require 'eaf-airshare)
+(require 'eaf-demo)
+(require 'eaf-vue-demo)
 
 (use-package calfw
   :commands cfw:open-org-calendar
