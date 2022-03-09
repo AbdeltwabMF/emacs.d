@@ -72,6 +72,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
 - [[#development][Development]]
   - [[#git][Git]]
     - [[#git-link][git-link]]
+  - [[#docker][Docker]]
   - [[#languages][Languages]]
     - [[#language-server-support][Language Server Support]]
     - [[#debug-adapter-support][Debug Adapter Support]]
@@ -82,6 +83,8 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
     - [[#emacs-lisp][Emacs Lisp]]
     - [[#markdown][Markdown]]
     - [[#html--jsx][HTML & JSX]]
+    - [[#javascript][Javascript]]
+    - [[#json][JSON]]
     - [[#yaml][YAML]]
     - [[#solidity][Solidity]]
   - [[#compilation][Compilation]]
@@ -93,8 +96,13 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
 - [[#writing][Writing]]
   - [[#darkroom-for-distraction-free-writing][Darkroom for distraction-free writing]]
   - [[#spell-checking][Spell-checking]]
+  - [[#translation][Translation]]
   - [[#auto-complete][Auto complete]]
   - [[#hide-your-current-text][Hide your current text.]]
+  - [[#show-current-command-and-its-key-in-the-mode-line][Show current command and its key in the mode line]]
+- [[#e-book][E-Book]]
+  - [[#pdf-tools][Pdf Tools]]
+  - [[#pdf-view-restore][Pdf View Restore]]
 - [[#dashboard][Dashboard]]
   - [[#page-break-lines][Page Break Lines]]
 - [[#file-manager][File Manager]]
@@ -901,6 +909,12 @@ Configuration for various programming languages and dev tools that I use.
   ;;Functions can be called interactively (M-x git-link) or via a key binding of your choice. For example:
   (global-set-key (kbd "C-c g l") 'git-link)
 #+END_SRC
+** Docker
+#+BEGIN_SRC emacs-lisp
+  (use-package docker
+    :ensure t
+    :bind ("C-c d" . docker))
+#+END_SRC
 
 ** Languages
 *** Language Server Support
@@ -1048,6 +1062,16 @@ Emacs frontend to GNU Global source code tagging system.
   (add-to-list 'emmet-jsx-major-modes 'your-jsx-major-mode)
 #+END_SRC
 
+*** Javascript
+#+BEGIN_SRC emacs-lisp
+  (use-package indium)
+#+END_SRC
+
+*** JSON
+#+BEGIN_SRC emacs-lisp
+  (use-package json-mode)
+#+END_SRC
+
 *** YAML
 #+BEGIN_SRC emacs-lisp
   (use-package yaml-mode
@@ -1146,6 +1170,11 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
   (add-hook 'text-mode-hook #'flyspell-mode)
 #+END_SRC
 
+** Translation
+#+BEGIN_SRC emacs-lisp
+  (use-package google-maps)
+#+END_SRC
+
 ** Auto complete
 #+BEGIN_SRC emacs-lisp
   (use-package company
@@ -1160,6 +1189,38 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
   ;; Enable `read-only-mode' to ensure that we don't change what we can't read.
   (add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1))))
 #+END_SRC
+** Show current command and its key in the mode line
+keycast-mode displays the command and event in the mode-line and keycast-log-mode displays them in a dedicated frame.
+#+begin_src emacs-lisp
+  (use-package keycast)
+#+END_src
+* E-Book
+** Pdf Tools
+#+begin_src emacs-lisp
+  (use-package eaf
+    :load-path "~/.config/emacs/site-lisp/emacs-application-framework"
+    :custom
+                                          ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
+    (eaf-browser-continue-where-left-off t)
+    (eaf-browser-enable-adblocker t)
+    (browse-url-browser-function 'eaf-open-browser)
+    :config
+    (defalias 'browse-web #'eaf-open-browser)
+    (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+    (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
+    (eaf-bind-key take_photo "p" eaf-camera-keybinding)
+    (eaf-bind-key nil "M-q" eaf-browser-keybinding)) ;; unbind, see more in the Wiki
+#+end_src
+
+** Pdf View Restore
+Support for opening last known pdf position in pdf-view-mode provided by pdf-tools.
+#+begin_src emacs-lisp
+  (use-package pdf-view-restore
+    :after pdf-tools
+    :config
+    (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
+  (setq pdf-view-restore-filename "~/.cache/emacs/.pdf-view-restore")
+#+end_src
 
 * Dashboard
 Emacs dashboard is an extensible startup screen showing you recent files, bookmarks, agenda items and an emacs banner.
@@ -1169,7 +1230,8 @@ configuring dashboard
     :init      ;; tweak dashboard config before loading it
     (setq dashboard-set-heading-icons t)
     (setq dashboard-set-file-icons t)
-    (setq dashboard-banner-logo-title "emacs is more than a text editor!")
+    (setq dashboard-banner-logo-title "While any text editor can save your files, only Emacs can save your soul
+  ")
     (setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
     ;; (setq dashboard-startup-banner "~/.config/emacs/images/RMS.png")  ;; use custom image as banner
     (setq dashboard-center-content nil) ;; set to 't' for centered content

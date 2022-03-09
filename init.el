@@ -539,6 +539,10 @@
 ;;Functions can be called interactively (M-x git-link) or via a key binding of your choice. For example:
 (global-set-key (kbd "C-c g l") 'git-link)
 
+(use-package docker
+  :ensure t
+  :bind ("C-c d" . docker))
+
 (use-package lsp-mode
   :commands lsp
   :hook ((typescript-mode js2-mode web-mode) . lsp)
@@ -651,6 +655,10 @@
 ;; To enable the JSX support, add your major-mode to emmet-jsx-major-modes:
 (add-to-list 'emmet-jsx-major-modes 'your-jsx-major-mode)
 
+(use-package indium)
+
+(use-package json-mode)
+
 (use-package yaml-mode
   :mode "\\.ya?ml\\'")
 
@@ -722,6 +730,8 @@
 
 (add-hook 'text-mode-hook #'flyspell-mode)
 
+(use-package google-maps)
+
 (use-package company
   :init
   (company-mode t))
@@ -732,11 +742,34 @@
 ;; Enable `read-only-mode' to ensure that we don't change what we can't read.
 (add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1))))
 
+(use-package keycast)
+
+(use-package eaf
+  :load-path "~/.config/emacs/site-lisp/emacs-application-framework"
+  :custom
+                                        ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
+  (eaf-browser-continue-where-left-off t)
+  (eaf-browser-enable-adblocker t)
+  (browse-url-browser-function 'eaf-open-browser)
+  :config
+  (defalias 'browse-web #'eaf-open-browser)
+  (eaf-bind-key scroll_up "C-n" eaf-pdf-viewer-keybinding)
+  (eaf-bind-key scroll_down "C-p" eaf-pdf-viewer-keybinding)
+  (eaf-bind-key take_photo "p" eaf-camera-keybinding)
+  (eaf-bind-key nil "M-q" eaf-browser-keybinding)) ;; unbind, see more in the Wiki
+
+(use-package pdf-view-restore
+  :after pdf-tools
+  :config
+  (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
+(setq pdf-view-restore-filename "~/.cache/emacs/.pdf-view-restore")
+
 (use-package dashboard
   :init      ;; tweak dashboard config before loading it
   (setq dashboard-set-heading-icons t)
   (setq dashboard-set-file-icons t)
-  (setq dashboard-banner-logo-title "emacs is more than a text editor!")
+  (setq dashboard-banner-logo-title "While any text editor can save your files, only Emacs can save your soul
+")
   (setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
   ;; (setq dashboard-startup-banner "~/.config/emacs/images/RMS.png")  ;; use custom image as banner
   (setq dashboard-center-content nil) ;; set to 't' for centered content
