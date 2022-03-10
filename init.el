@@ -806,6 +806,7 @@
 
 (require 'eaf-org-previewer)
 (require 'eaf-airshare)
+(require 'eaf-all-the-icons)
 
 (use-package eaf
   (require 'eaf-browser)

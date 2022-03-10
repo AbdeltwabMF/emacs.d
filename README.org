@@ -115,7 +115,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
       - [[#enable-adblocker][Enable Adblocker]]
       - [[#continue-where-you-left-off][Continue Where You Left Off]]
   - [[#calendar][Calendar]]
-  - [[#vterm][vterm]]
+  - [[#vterm][Vterm]]
   - [[#tracking][Tracking]]
   - [[#media][Media]]
     - [[#mpv][mpv]]
@@ -1287,6 +1287,7 @@ this setting ensures that emacsclient always opens on dashboard rather than scra
 
   (require 'eaf-org-previewer)
   (require 'eaf-airshare)
+  (require 'eaf-all-the-icons)
 #+end_src
 
 *** Browser
@@ -1343,7 +1344,7 @@ calfw is a gorgeous calendar UI that is able to show all of my scheduled Org Age
       (setq cfw:org-agenda-schedule-args '(:timestamp))))
 #+END_SRC
 
-** vterm
+** Vterm
 vterm enables the use of fully-fledged terminal applications within Emacs so that I don’t need an external terminal emulator.
 #+BEGIN_SRC emacs-lisp
   (use-package vterm
