@@ -807,10 +807,9 @@
 (require 'eaf-org-previewer)
 (require 'eaf-airshare)
 (require 'eaf-all-the-icons)
+(require 'eaf-browser)
 
-(use-package eaf
-  (require 'eaf-browser)
-  (setq eaf-browse-blank-page-url "https://duckduckgo.com")
+(setq eaf-browse-blank-page-url "https://duckduckgo.com")
 
 (setq eaf-browser-default-search-engine "duckduckgo")
 
