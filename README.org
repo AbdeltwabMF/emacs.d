@@ -106,14 +106,6 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
   - [[#page-break-lines][Page Break Lines]]
 - [[#file-manager][File Manager]]
 - [[#applications][Applications]]
-  - [[#emacs-application-framework][Emacs Application Framework]]
-    - [[#browser][Browser]]
-      - [[#default-blank-page][Default “Blank” Page]]
-      - [[#default-search-engine][Default Search Engine]]
-      - [[#disable-saving-browsing-history][Disable Saving Browsing History]]
-      - [[#customize-download-path][Customize Download Path]]
-      - [[#enable-adblocker][Enable Adblocker]]
-      - [[#continue-where-you-left-off][Continue Where You Left Off]]
   - [[#calendar][Calendar]]
   - [[#vterm][Vterm]]
   - [[#tracking][Tracking]]
@@ -1272,57 +1264,6 @@ this setting ensures that emacsclient always opens on dashboard rather than scra
 #+end_src
 
 * Applications
-
-** Emacs Application Framework
-#+begin_src emacs-lisp
-  (use-package eaf
-    :load-path "~/.config/emacs/site-lisp/emacs-application-framework"
-    :custom
-                                          ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
-    (eaf-browser-continue-where-left-off t)
-    (eaf-browser-enable-adblocker t)
-    (browse-url-browser-function 'eaf-open-browser)
-    :config
-    (defalias 'browse-web #'eaf-open-browser)) ;; unbind, see more in the Wiki
-
-  (require 'eaf-org-previewer)
-  (require 'eaf-airshare)
-  (require 'eaf-all-the-icons)
-  (require 'eaf-browser)
-#+end_src
-
-*** Browser
-**** Default “Blank” Page
-#+begin_src emacs-lisp
-  (setq eaf-browse-blank-page-url "https://duckduckgo.com")
-#+end_src
-
-**** Default Search Engine
-#+begin_src emacs-lisp
-  (setq eaf-browser-default-search-engine "duckduckgo")
-#+end_src
-
-**** Disable Saving Browsing History
-#+begin_src emacs-lisp
-  (setq eaf-browser-remember-history t)
-#+end_src
-
-**** Customize Download Path
-#+begin_src emacs-lisp
-  (setq eaf-browser-download-path "~/vault/dls/Brave")
-#+end_src
-
-**** Enable Adblocker
-#+begin_src emacs-lisp
-  (setq eaf-browser-enable-adblocker t)
-#+end_src
-
-**** Continue Where You Left Off
-Then all active EAF Browser buffers will be noted down before Emacs is killed, and will be opened again when calling M-x eaf-browser-restore-buffers in a future Emacs session.
-#+begin_src emacs-lisp
-  (setq eaf-browser-continue-where-left-off t)
-#+end_src
-
 ** Calendar
 calfw is a gorgeous calendar UI that is able to show all of my scheduled Org Agenda items.
 #+BEGIN_SRC emacs-lisp
@@ -1527,12 +1468,14 @@ Use [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]] to show notificati
 
   ;; Mode Line display of unread emails
   (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
-#+END_SRC
 
-count - Display the count of unread emails
-subjects - Display the subject of unread emails
-#+BEGIN_SRC emacs-lisp
-  (setq mu4e-alert-email-notification-types '(count subjects))
+  (mu4e-alert-set-default-style 'libnotify)
+  (alert-add-rule :category "mu4e-alert" :style 'fringe :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode))) :continue t)
+  (mu4e-alert-enable-notifications)
+
+  ;; count - Display the count of unread emails
+  ;; subjects - Display the subject of unread emails
+  (setq mu4e-alert-email-notification-types '(count))
 #+END_SRC
 
 * Org Mode

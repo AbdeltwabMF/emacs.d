@@ -794,33 +794,6 @@
                               ("mkv" . "mpv")
                               ("mp4" . "mpv")))
 
-(use-package eaf
-  :load-path "~/.config/emacs/site-lisp/emacs-application-framework"
-  :custom
-                                        ; See https://github.com/emacs-eaf/emacs-application-framework/wiki/Customization
-  (eaf-browser-continue-where-left-off t)
-  (eaf-browser-enable-adblocker t)
-  (browse-url-browser-function 'eaf-open-browser)
-  :config
-  (defalias 'browse-web #'eaf-open-browser)) ;; unbind, see more in the Wiki
-
-(require 'eaf-org-previewer)
-(require 'eaf-airshare)
-(require 'eaf-all-the-icons)
-(require 'eaf-browser)
-
-(setq eaf-browse-blank-page-url "https://duckduckgo.com")
-
-(setq eaf-browser-default-search-engine "duckduckgo")
-
-(setq eaf-browser-remember-history t)
-
-(setq eaf-browser-download-path "~/vault/dls/Brave")
-
-(setq eaf-browser-enable-adblocker t)
-
-(setq eaf-browser-continue-where-left-off t)
-
 (use-package calfw
   :commands cfw:open-org-calendar
   :config
@@ -996,7 +969,13 @@
 ;; Mode Line display of unread emails
 (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
 
-(setq mu4e-alert-email-notification-types '(count subjects))
+(mu4e-alert-set-default-style 'libnotify)
+(alert-add-rule :category "mu4e-alert" :style 'fringe :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode))) :continue t)
+(mu4e-alert-enable-notifications)
+
+;; count - Display the count of unread emails
+;; subjects - Display the subject of unread emails
+(setq mu4e-alert-email-notification-types '(count))
 
 (defun amf/org-mode-setup ()
   (org-indent-mode)
