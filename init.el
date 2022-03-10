@@ -745,7 +745,7 @@
 (use-package keycast)
 
 (use-package pdf-view-restore
-  :after pdf-tools
+  :after pdf-toos
   :config
   (add-hook 'pdf-view-mode-hook 'pdf-view-restore-mode))
 (setq pdf-view-restore-filename "~/.cache/emacs/.pdf-view-restore")
@@ -754,16 +754,15 @@
   :init      ;; tweak dashboard config before loading it
   (setq dashboard-set-heading-icons t)
   (setq dashboard-set-file-icons t)
-  (setq dashboard-banner-logo-title "While any text editor can save your files, only Emacs can save your soul
-")
+  (setq dashboard-banner-logo-title "While any text editor can save your files, only Emacs can save your soul")
   (setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
   ;; (setq dashboard-startup-banner "~/.config/emacs/images/RMS.png")  ;; use custom image as banner
   (setq dashboard-center-content nil) ;; set to 't' for centered content
-  (setq dashboard-items '((recents . 5)
-                          (agenda . 5 )
-                          (bookmarks . 5)
-                          (projects . 5)
-                          (registers . 5)))
+  (setq dashboard-items '((recents . 4)
+                          (agenda . 3 )
+                          (bookmarks . 3)
+                          (projects . 3)
+                          (registers . 3)))
   :config
   (dashboard-setup-startup-hook)
   (dashboard-modify-heading-icons '((recents . "file-text")
@@ -805,26 +804,22 @@
   :config
   (defalias 'browse-web #'eaf-open-browser)) ;; unbind, see more in the Wiki
 
-(require 'eaf-browser)
-(require 'eaf-pdf-viewer)
-(require 'eaf-terminal)
-(require 'eaf-video-player)
-(require 'eaf-markdown-previewer)
 (require 'eaf-org-previewer)
-(require 'eaf-music-player)
-(require 'eaf-rss-reader)
-(require 'eaf-file-manager)
-(require 'eaf-mindmap)
-(require 'eaf-jupyter)
-(require 'eaf-image-viewer)
-(require 'eaf-camera)
-(require 'eaf-system-monitor)
-(require 'eaf-netease-cloud-music)
-(require 'eaf-file-browser)
-(require 'eaf-file-sender)
 (require 'eaf-airshare)
-(require 'eaf-demo)
-(require 'eaf-vue-demo)
+
+(use-package eaf
+  (require 'eaf-browser)
+  (setq eaf-browse-blank-page-url "https://duckduckgo.com")
+
+(setq eaf-browser-default-search-engine "duckduckgo")
+
+(setq eaf-browser-remember-history t)
+
+(setq eaf-browser-download-path "~/vault/dls/Brave")
+
+(setq eaf-browser-enable-adblocker t)
+
+(setq eaf-browser-continue-where-left-off t)
 
 (use-package calfw
   :commands cfw:open-org-calendar
@@ -1056,13 +1051,14 @@
 (setq org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
       '((sequence
          "TODO(t)"           ; A task that is ready to be tackled
+         "DOING(t)"          ; A task that is ready to be tackled
+         "DONE(d)"           ; Task has been completed
          "BLOG(b)"           ; Blog writing assignments
          "GYM(g)"            ; Things to accomplish at the gym
-         "PROJ(p)"           ; A project that contains other tasks
-         "Code(v)"           ; Video assignments
+         "PROJECT(p)"        ; A project that contains other tasks
+         "Code(c)"           ; Code assignments
          "WAIT(w)"           ; Something is holding up this task
          "|"                 ; The pipe necessary to separate "active" states and "inactive" states
-         "DONE(d)"           ; Task has been completed
          "CANCELLED(c)" )))  ; Task has been cancelled
 
 (setq inhibit-compacting-font-caches t)
