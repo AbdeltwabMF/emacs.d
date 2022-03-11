@@ -33,6 +33,55 @@
 (use-package quelpa-use-package
   :ensure t)
 
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+(global-set-key (kbd "C-M-u") 'universal-argument)
+
+(defun amf/evil-hook ()
+  (dolist (mode '(custom-mode
+                  eshell-mode
+                  git-rebase-mode
+                  erc-mode
+                  circe-server-mode
+                  circe-chat-mode
+                  circe-query-mode
+                  sauron-mode
+                  term-mode))
+    (add-to-list 'evil-emacs-state-modes mode)))
+
+(use-package undo-tree
+  :ensure t
+  :init
+  (global-undo-tree-mode)
+  :config
+  ;; (setq undo-tree-auto-save-history 1) ;; you can turn this on
+  ;; Each node in the undo tree should have a timestamp.
+  (setq undo-tree-visualizer-timestamps t)
+  ;; Show a diff window displaying changes between undo nodes.
+  (setq undo-tree-visualizer-diff t))
+
+(use-package evil
+  :init
+  (progn
+    (setq evil-undo-system 'undo-tree)
+    ;; `evil-collection' assumes `evil-want-keybinding' is set to
+    ;; `nil' before loading `evil' and `evil-collection'
+    ;; @see https://github.com/emacs-evil/evil-collection#installation
+    (setq evil-want-keybinding nil)
+    )
+  :config
+  (progn
+    (evil-mode 1)))
+
+  (use-package evil-collection
+    :after evil
+    :ensure t
+    :config
+    (evil-collection-init))
+
+(use-package general)
+(use-package hydra)
+
 ;; Change the user-emacs-directory to keep unwanted things out of ~/.config/emacs
 (setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
       url-history-file (expand-file-name "url/history" user-emacs-directory))
@@ -279,13 +328,11 @@
 ;; Remember and restore the last cursor location of opened files
 (save-place-mode 1)
 
-(use-package multiple-cursors)
+(use-package evil-multiedit)
+(evil-multiedit-default-keybinds)
 
-(global-set-key (kbd "C-c C--") 'mc/edit-lines)
-
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c M-q") 'mc/mark-all-like-this)
+(define-key global-map (kbd "C-/") 'undo)
+(define-key global-map (kbd "C-x C-/") 'redo)
 
 (use-package corfu
   :bind (:map corfu-map
@@ -461,50 +508,6 @@
 (use-package oauth2)
 
 (setq auth-sources '("~/.authinfo.gpg"))
-
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
-(global-set-key (kbd "C-M-u") 'universal-argument)
-
-(defun amf/evil-hook ()
-  (dolist (mode '(custom-mode
-                  eshell-mode
-                  git-rebase-mode
-                  erc-mode
-                  circe-server-mode
-                  circe-chat-mode
-                  circe-query-mode
-                  sauron-mode
-                  term-mode))
-    (add-to-list 'evil-emacs-state-modes mode)))
-
-(use-package undo-tree
-  :ensure t
-  :init
-  (global-undo-tree-mode)
-  :config
-  ;; (setq undo-tree-auto-save-history 1) ;; you can turn this on
-  ;; Each node in the undo tree should have a timestamp.
-  (setq undo-tree-visualizer-timestamps t)
-  ;; Show a diff window displaying changes between undo nodes.
-  (setq undo-tree-visualizer-diff t))
-
-(use-package evil
-  :ensure t
-  :init
-  (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
-  (setq evil-want-keybinding nil)
-  :config
-  (evil-mode 1))
-
-(use-package evil-collection
-  :after evil
-  :ensure t
-  :config
-  (evil-collection-init))
-
-(use-package general)
-(use-package hydra)
 
 (use-package projectile
   :diminish projectile-mode

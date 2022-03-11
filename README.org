@@ -20,6 +20,10 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
   - [[#generate-initel-form-this-org-mode-file][Generate init.el form this org mode file]]
 - [[#startup-performance][Startup Performance]]
 - [[#package-manager][Package Manager]]
+- [[#evil-mode-and-key-binding][Evil Mode and Key Binding]]
+  - [[#esc-cancels-all][ESC Cancels All]]
+  - [[#rebind-c-u][Rebind C-u]]
+  - [[#lets-be-evil][Let’s Be Evil]]
 - [[#keep-it-clean][Keep it Clean]]
 - [[#general-configuration][General Configuration]]
   - [[#user-interface][User Interface]]
@@ -61,10 +65,6 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
   - [[#window-history-with-winner-mode][Window History with winner-mode]]
   - [[#control-buffer-placement][Control Buffer Placement]]
 - [[#credential-management][Credential Management]]
-- [[#evil-mode-and-key-binding][Evil Mode and Key Binding]]
-  - [[#esc-cancels-all][ESC Cancels All]]
-  - [[#rebind-c-u][Rebind C-u]]
-  - [[#lets-be-evil][Let’s Be Evil]]
 - [[#project-management][Project Management]]
   - [[#projectile][Projectile]]
   - [[#counsel-projectile][Counsel Projectile]]
@@ -166,6 +166,74 @@ Set up quelpa for packages not in Elpa/Melpa:
 
   (use-package quelpa-use-package
     :ensure t)
+#+END_SRC
+
+* Evil Mode and Key Binding
+** ESC Cancels All
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+#+END_SRC
+
+** Rebind C-u
+Since I let evil-mode take over C-u for buffer scrolling, I need to re-bind the universal-argument command to another key sequence. I’m choosing C-M-u for this purpose.
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-M-u") 'universal-argument)
+#+END_SRC
+
+** Let’s Be Evil
+Some tips can be found here:
+- https://github.com/noctuid/evil-guide
+- https://nathantypanski.com/blog/2014-08-03-a-vim-like-emacs-config.html
+
+#+BEGIN_SRC emacs-lisp
+  (defun amf/evil-hook ()
+    (dolist (mode '(custom-mode
+                    eshell-mode
+                    git-rebase-mode
+                    erc-mode
+                    circe-server-mode
+                    circe-chat-mode
+                    circe-query-mode
+                    sauron-mode
+                    term-mode))
+      (add-to-list 'evil-emacs-state-modes mode)))
+
+  (use-package undo-tree
+    :ensure t
+    :init
+    (global-undo-tree-mode)
+    :config
+    ;; (setq undo-tree-auto-save-history 1) ;; you can turn this on
+    ;; Each node in the undo tree should have a timestamp.
+    (setq undo-tree-visualizer-timestamps t)
+    ;; Show a diff window displaying changes between undo nodes.
+    (setq undo-tree-visualizer-diff t))
+
+  (use-package evil
+    :init
+    (progn
+      (setq evil-undo-system 'undo-tree)
+      ;; `evil-collection' assumes `evil-want-keybinding' is set to
+      ;; `nil' before loading `evil' and `evil-collection'
+      ;; @see https://github.com/emacs-evil/evil-collection#installation
+      (setq evil-want-keybinding nil)
+      )
+    :config
+    (progn
+      (evil-mode 1)))
+
+    (use-package evil-collection
+      :after evil
+      :ensure t
+      :config
+      (evil-collection-init))
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+  (use-package general)
+  (use-package hydra)
 #+END_SRC
 
 * Keep it Clean
@@ -552,20 +620,13 @@ Once you turn on this mode, Emacs will drop your cursor to the last visited loca
 
 ** Multiple Cursor
 #+BEGIN_SRC emacs-lisp
-  (use-package multiple-cursors)
+  (use-package evil-multiedit)
+  (evil-multiedit-default-keybinds)
 #+END_SRC
 
-When you have an active region that spans multiple lines, the following will add a cursor to each line:
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-c C--") 'mc/edit-lines)
-#+END_SRC
-
-When you want to add multiple cursors not based on continuous lines, but based on keywords in the buffer, use:
-
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
-  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-  (global-set-key (kbd "C-c M-q") 'mc/mark-all-like-this)
+  (define-key global-map (kbd "C-/") 'undo)
+  (define-key global-map (kbd "C-x C-/") 'redo)
 #+END_SRC
 
 * Completion System
@@ -790,68 +851,6 @@ I use pass to manage all of my passwords locally. I also use auth-source-pass as
 The variable auth-sources controls how and where Auth-Source keeps its secrets. The default value is a list of three files: ("~/.authinfo" "~/.authinfo.gpg" "~/.netrc"), but to avoid confusion you should make sure that only one of these files exists and then you should also adjust the value of the variable to only ever use that file,
 #+BEGIN_SRC emacs-lisp
   (setq auth-sources '("~/.authinfo.gpg"))
-#+END_SRC
-
-* Evil Mode and Key Binding
-** ESC Cancels All
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-#+END_SRC
-
-** Rebind C-u
-Since I let evil-mode take over C-u for buffer scrolling, I need to re-bind the universal-argument command to another key sequence. I’m choosing C-M-u for this purpose.
-
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-M-u") 'universal-argument)
-#+END_SRC
-
-** Let’s Be Evil
-Some tips can be found here:
-- https://github.com/noctuid/evil-guide
-- https://nathantypanski.com/blog/2014-08-03-a-vim-like-emacs-config.html
-
-#+BEGIN_SRC emacs-lisp
-  (defun amf/evil-hook ()
-    (dolist (mode '(custom-mode
-                    eshell-mode
-                    git-rebase-mode
-                    erc-mode
-                    circe-server-mode
-                    circe-chat-mode
-                    circe-query-mode
-                    sauron-mode
-                    term-mode))
-      (add-to-list 'evil-emacs-state-modes mode)))
-
-  (use-package undo-tree
-    :ensure t
-    :init
-    (global-undo-tree-mode)
-    :config
-    ;; (setq undo-tree-auto-save-history 1) ;; you can turn this on
-    ;; Each node in the undo tree should have a timestamp.
-    (setq undo-tree-visualizer-timestamps t)
-    ;; Show a diff window displaying changes between undo nodes.
-    (setq undo-tree-visualizer-diff t))
-
-  (use-package evil
-    :ensure t
-    :init
-    (setq evil-want-integration t) ;; This is optional since it's already set to t by default.
-    (setq evil-want-keybinding nil)
-    :config
-    (evil-mode 1))
-
-  (use-package evil-collection
-    :after evil
-    :ensure t
-    :config
-    (evil-collection-init))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package general)
-  (use-package hydra)
 #+END_SRC
 
 * Project Management
