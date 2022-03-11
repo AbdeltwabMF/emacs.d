@@ -81,6 +81,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
     - [[#cc][C/C++]]
     - [[#go][Go]]
     - [[#rust][Rust]]
+    - [[#python][Python]]
     - [[#emacs-lisp][Emacs Lisp]]
     - [[#markdown][Markdown]]
     - [[#html--jsx][HTML & JSX]]
@@ -165,14 +166,6 @@ Set up quelpa for packages not in Elpa/Melpa:
 
   (use-package quelpa-use-package
     :ensure t)
-#+END_SRC
-
-Elpy is available on Melpa, the most straightforward way to install it is to use use-package:
-#+BEGIN_SRC emacs-lisp
-  (use-package elpy
-    :ensure t
-    :init
-    (elpy-enable))
 #+END_SRC
 
 * Keep it Clean
@@ -1012,6 +1005,15 @@ Emacs frontend to GNU Global source code tagging system.
 
   (use-package cargo
     :defer t)
+#+END_SRC
+
+*** Python
+Elpy is available on Melpa, the most straightforward way to install it is to use use-package:
+#+BEGIN_SRC emacs-lisp
+  (use-package elpy
+    :ensure t
+    :init
+    (elpy-enable))
 #+END_SRC
 
 *** Emacs Lisp

@@ -33,11 +33,6 @@
 (use-package quelpa-use-package
   :ensure t)
 
-(use-package elpy
-  :ensure t
-  :init
-  (elpy-enable))
-
 ;; Change the user-emacs-directory to keep unwanted things out of ~/.config/emacs
 (setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
       url-history-file (expand-file-name "url/history" user-emacs-directory))
@@ -607,6 +602,11 @@
 
 (use-package cargo
   :defer t)
+
+(use-package elpy
+  :ensure t
+  :init
+  (elpy-enable))
 
 (add-hook 'emacs-lisp-mode-hook #'flycheck-mode)
 
