@@ -284,6 +284,14 @@
 ;; Remember and restore the last cursor location of opened files
 (save-place-mode 1)
 
+(use-package multiple-cursors)
+
+(global-set-key (kbd "C-c C--") 'mc/edit-lines)
+
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c M-q") 'mc/mark-all-like-this)
+
 (use-package corfu
   :bind (:map corfu-map
               ("C-j" . corfu-next)

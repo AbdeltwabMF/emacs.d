@@ -47,6 +47,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
     - [[#remembering-recently-edited-files][Remembering recently edited files]]
     - [[#remembering-minibuffer-prompt-history][Remembering minibuffer prompt history]]
     - [[#remembering-the-last-place-you-visited-in-a-file][Remembering the last place you visited in a file]]
+  - [[#multiple-cursor][Multiple Cursor]]
 - [[#completion-system][Completion System]]
   - [[#completions-in-regions-with-corfu][Completions in Regions with Corfu]]
   - [[#improved-candidate-filtering-with-orderless][Improved Candidate Filtering with Orderless]]
@@ -554,6 +555,24 @@ Once you turn on this mode, Emacs will drop your cursor to the last visited loca
 #+BEGIN_SRC emacs-lisp
   ;; Remember and restore the last cursor location of opened files
   (save-place-mode 1)
+#+END_SRC
+
+** Multiple Cursor
+#+BEGIN_SRC emacs-lisp
+  (use-package multiple-cursors)
+#+END_SRC
+
+When you have an active region that spans multiple lines, the following will add a cursor to each line:
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-c C--") 'mc/edit-lines)
+#+END_SRC
+
+When you want to add multiple cursors not based on continuous lines, but based on keywords in the buffer, use:
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-c M-q") 'mc/mark-all-like-this)
 #+END_SRC
 
 * Completion System
