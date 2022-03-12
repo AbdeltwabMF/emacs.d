@@ -531,6 +531,8 @@
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
+(global-set-key (kbd "C-x g") 'magit)
+
 (use-package forge
   :ensure t)
 
@@ -551,18 +553,15 @@
 
 (use-package lsp-mode
   :commands lsp
-  :hook ((typescript-mode js2-mode web-mode) . lsp)
+  ;; :hook ((typescript-mode js2-mode web-mode) . lsp)
   :bind (:map lsp-mode-map
               ("TAB" . completion-at-point))
   :custom (lsp-headerline-breadcrumb-enable nil))
 
 (use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode)
-  :config
-  (setq lsp-ui-sideline-enable t)
-  (setq lsp-ui-sideline-show-hover nil)
-  (setq lsp-ui-doc-position 'bottom)
-  (lsp-ui-doc-show))
+  :hook (lsp-mode . lsp-ui-mode))
+
+(use-package lsp-treemacs)
 
 (use-package dap-mode
   :custom
@@ -637,17 +636,34 @@
       (set-face-attribute (car face) nil :weight 'normal :height (cdr face)))))
 
 (use-package web-mode
-  :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
   :config
   (setq-default web-mode-code-indent-offset 2)
   (setq-default web-mode-markup-indent-offset 2)
-  (setq-default web-mode-attribute-indent-offset 2))
+  (setq-default web-mode-attribute-indent-offset 2)
+  (setq-default web-mode-enable-current-element-highlight t)
+  (setq-default web-mode-enable-current-column-highlight t))
 
-;; To enable JSX syntax highlighting in .js/.jsx files
-(setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
+(add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.json\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
 
-;; Enable eslint checker for web-mode
-(flycheck-add-mode 'javascript-eslint 'web-mode)
+(setq web-mode-content-types-alist
+      '(("jsx" . "\\.jsx?\\'")
+        ("tsx" . "\\.tsx?\\'")
+        ("json" . "\\.json\\'")))
+
+(setq gc-cons-threshold (* 100 1024 1024)
+      read-process-output-max (* 1024 1024)
+      create-lockfiles nil) ;; lock files will kill `npm start'
 
 ;; 1. Start the server with `httpd-start'
 ;; 2. Use `impatient-mode' on any buffer
@@ -677,7 +693,20 @@
 
 (use-package indium)
 
+(use-package js2-mode)
+(use-package js2-refactor)
+
+(use-package prettier-js)
+
+(add-hook 'js2-mode-hook 'prettier-js-mode)
+(add-hook 'web-mode-hook 'prettier-js-mode)
+
 (use-package json-mode)
+
+(use-package scss-mode
+  :mode ("\\.scss\\'" . scss-mode)
+  :config (setq css-indent-offset 2))
+(add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
 
 (use-package yaml-mode
   :mode "\\.ya?ml\\'")
@@ -757,7 +786,11 @@
 
 (use-package company
   :init
-  (company-mode t))
+  (company-mode t)
+  :config
+  (setq company-idle-delay 0.0)
+  (setq company-minimum-prefix-length 1))
+
 (add-hook 'after-init-hook 'global-company-mode)
 
 (use-package redacted)

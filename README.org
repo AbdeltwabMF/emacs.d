@@ -91,6 +91,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
       - [[#emmet][Emmet]]
     - [[#javascript][Javascript]]
     - [[#json][JSON]]
+    - [[#scss][SCSS]]
     - [[#yaml][YAML]]
     - [[#solidity][Solidity]]
   - [[#compilation][Compilation]]
@@ -898,6 +899,8 @@ NOTE: Make sure to configure a GitHub token before using this package!
     :custom
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
+  (global-set-key (kbd "C-x g") 'magit)
+
   (use-package forge
     :ensure t)
 #+END_SRC
@@ -935,19 +938,18 @@ Configuration for various programming languages and dev tools that I use.
 #+BEGIN_SRC emacs-lisp
   (use-package lsp-mode
     :commands lsp
-    :hook ((typescript-mode js2-mode web-mode) . lsp)
+    ;; :hook ((typescript-mode js2-mode web-mode) . lsp)
     :bind (:map lsp-mode-map
                 ("TAB" . completion-at-point))
     :custom (lsp-headerline-breadcrumb-enable nil))
 
   (use-package lsp-ui
-    :hook (lsp-mode . lsp-ui-mode)
-    :config
-    (setq lsp-ui-sideline-enable t)
-    (setq lsp-ui-sideline-show-hover nil)
-    (setq lsp-ui-doc-position 'bottom)
-    (lsp-ui-doc-show))
+    :hook (lsp-mode . lsp-ui-mode))
+
+  (use-package lsp-treemacs)
 #+END_SRC
+
+#+RESULTS:
 
 *** Debug Adapter Support
 #+BEGIN_SRC emacs-lisp
@@ -1051,21 +1053,39 @@ Elpy is available on Melpa, the most straightforward way to install it is to use
 #+END_SRC
 
 *** HTML & JSX
-
 **** Web Mode
 #+BEGIN_SRC emacs-lisp
   (use-package web-mode
-    :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
     :config
     (setq-default web-mode-code-indent-offset 2)
     (setq-default web-mode-markup-indent-offset 2)
-    (setq-default web-mode-attribute-indent-offset 2))
+    (setq-default web-mode-attribute-indent-offset 2)
+    (setq-default web-mode-enable-current-element-highlight t)
+    (setq-default web-mode-enable-current-column-highlight t))
 
-  ;; To enable JSX syntax highlighting in .js/.jsx files
-  (setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
+  (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.tsx?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsx?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.json\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.css\\'" . web-mode))
 
-  ;; Enable eslint checker for web-mode
-  (flycheck-add-mode 'javascript-eslint 'web-mode)
+  (setq web-mode-content-types-alist
+        '(("jsx" . "\\.jsx?\\'")
+          ("tsx" . "\\.tsx?\\'")
+          ("json" . "\\.json\\'")))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (setq gc-cons-threshold (* 100 1024 1024)
+        read-process-output-max (* 1024 1024)
+        create-lockfiles nil) ;; lock files will kill `npm start'
 #+END_SRC
 
 **** Live Server
@@ -1108,9 +1128,30 @@ Elpy is available on Melpa, the most straightforward way to install it is to use
   (use-package indium)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (use-package js2-mode)
+  (use-package js2-refactor)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package prettier-js)
+
+  (add-hook 'js2-mode-hook 'prettier-js-mode)
+  (add-hook 'web-mode-hook 'prettier-js-mode)
+#+END_SRC
+
 *** JSON
 #+BEGIN_SRC emacs-lisp
   (use-package json-mode)
+#+END_SRC
+
+*** SCSS
+
+#+BEGIN_SRC emacs-lisp
+  (use-package scss-mode
+    :mode ("\\.scss\\'" . scss-mode)
+    :config (setq css-indent-offset 2))
+  (add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
 #+END_SRC
 
 *** YAML
@@ -1224,9 +1265,14 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :init
-    (company-mode t))
+    (company-mode t)
+    :config
+    (setq company-idle-delay 0.0)
+    (setq company-minimum-prefix-length 1))
+
   (add-hook 'after-init-hook 'global-company-mode)
 #+END_SRC
+
 ** Hide your current text.
 #+BEGIN_SRC emacs-lisp
   (use-package redacted)
