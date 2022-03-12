@@ -643,6 +643,12 @@
   (setq-default web-mode-markup-indent-offset 2)
   (setq-default web-mode-attribute-indent-offset 2))
 
+;; To enable JSX syntax highlighting in .js/.jsx files
+(setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
+
+;; Enable eslint checker for web-mode
+(flycheck-add-mode 'javascript-eslint 'web-mode)
+
 ;; 1. Start the server with `httpd-start'
 ;; 2. Use `impatient-mode' on any buffer
 (use-package impatient-mode)
@@ -666,6 +672,9 @@
 ;; To enable the JSX support, add your major-mode to emmet-jsx-major-modes:
 (add-to-list 'emmet-jsx-major-modes 'your-jsx-major-mode)
 
+;; Enable emmet-mode with web-mode
+(add-hook 'web-mode-hook  'emmet-mode)
+
 (use-package indium)
 
 (use-package json-mode)
@@ -688,6 +697,9 @@
 (use-package flycheck
   :defer t
   :hook (lsp-mode . flycheck-mode))
+
+;; Enable flycheck globally
+(add-hook 'after-init-hook #'global-flycheck-mode)
 
 (use-package yasnippet
   :hook (prog-mode . yas-minor-mode)

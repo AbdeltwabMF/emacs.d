@@ -85,6 +85,10 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
     - [[#emacs-lisp][Emacs Lisp]]
     - [[#markdown][Markdown]]
     - [[#html--jsx][HTML & JSX]]
+      - [[#web-mode][Web Mode]]
+      - [[#live-server][Live Server]]
+      - [[#skewer][Skewer]]
+      - [[#emmet][Emmet]]
     - [[#javascript][Javascript]]
     - [[#json][JSON]]
     - [[#yaml][YAML]]
@@ -1047,6 +1051,8 @@ Elpy is available on Melpa, the most straightforward way to install it is to use
 #+END_SRC
 
 *** HTML & JSX
+
+**** Web Mode
 #+BEGIN_SRC emacs-lisp
   (use-package web-mode
     :mode "(\\.\\(html?\\|ejs\\|tsx\\|jsx\\)\\'"
@@ -1055,13 +1061,26 @@ Elpy is available on Melpa, the most straightforward way to install it is to use
     (setq-default web-mode-markup-indent-offset 2)
     (setq-default web-mode-attribute-indent-offset 2))
 
+  ;; To enable JSX syntax highlighting in .js/.jsx files
+  (setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
+
+  ;; Enable eslint checker for web-mode
+  (flycheck-add-mode 'javascript-eslint 'web-mode)
+#+END_SRC
+
+**** Live Server
+#+BEGIN_SRC emacs-lisp
   ;; 1. Start the server with `httpd-start'
   ;; 2. Use `impatient-mode' on any buffer
   (use-package impatient-mode)
+#+END_SRC
 
+**** Skewer
+#+BEGIN_SRC emacs-lisp
   (use-package skewer-mode)
 #+END_SRC
 
+**** Emmet
 #+BEGIN_SRC emacs-lisp
   (use-package emmet-mode
     :init
@@ -1079,6 +1098,9 @@ Elpy is available on Melpa, the most straightforward way to install it is to use
 
   ;; To enable the JSX support, add your major-mode to emmet-jsx-major-modes:
   (add-to-list 'emmet-jsx-major-modes 'your-jsx-major-mode)
+
+  ;; Enable emmet-mode with web-mode
+  (add-hook 'web-mode-hook  'emmet-mode)
 #+END_SRC
 
 *** Javascript
@@ -1122,7 +1144,11 @@ Set up the compile package and ensure that compilation output automatically scro
   (use-package flycheck
     :defer t
     :hook (lsp-mode . flycheck-mode))
+
+  ;; Enable flycheck globally
+  (add-hook 'after-init-hook #'global-flycheck-mode)
 #+END_SRC
+
 *** Snippets
 #+BEGIN_SRC emacs-lisp
   (use-package yasnippet
