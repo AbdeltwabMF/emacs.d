@@ -84,7 +84,7 @@
 (global-set-key (kbd "C-c t") 'toggle-transparency)
 
 (set-frame-parameter (selected-frame) 'alpha '(90 . 50))
-(add-to-list 'default-frame-alist '(alpha . (100 . 100)))
+(add-to-list 'default-frame-alist '(alpha . (80 . 50)))
 (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
@@ -268,9 +268,23 @@
 
 (use-package general)
 
+;; ESC Cancels All
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
-(global-set-key (kbd "C-M-u") 'universal-argument)
+;; Since I let evil-mode take over C-u for buffer scrolling, I need to re-bind the universal-argument command to another key sequence. I’m choosing C-M-u for this purpose.
+(general-define-key
+ :keymaps '(normal insert emacs)
+ :prefix "C-M"
+ :non-normal-prefix "M-C-SPC"
+ "u" 'universal-argument)
+
+(general-define-key
+ :keymaps '(normal insert emacs)
+ :prefix "SPC"
+ :non-normal-prefix "M-SPC"
+ "/" 'swiper
+ "g" 'counsel-projectile-rg
+ "t t" 'load-theme)
 
 (use-package evil
   :init
@@ -372,11 +386,15 @@
 
 (use-package avy
   :commands (avy-goto-char avy-goto-word-0 avy-goto-line))
-(global-set-key (kbd "C-:") 'avy-goto-char) ;; القفز إلى حرف ما
-(global-set-key (kbd "C-'") 'avy-goto-char-2) ;; القفز إلى حرف باستخدام حرفين
-(global-set-key (kbd "M-g f") 'avy-goto-line) ;; القفز إلى سطر
-(global-set-key (kbd "M-g w") 'avy-goto-word-1) ;; القفز إلى كلمة باستخدام حرفها الأول
-(global-set-key (kbd "M-g e") 'avy-goto-word-0) ;; القفز إلى أي كلمة من كلمات البفر
+
+(general-define-key
+ :keymap '(normal emacs)
+ :prefix "C-c"
+ :properties '(:repeat t :jump t)
+ :non-normal-prefix "M-SPC"
+ "c" 'avy-goto-char
+ "l" 'avy-goto-line
+ "w" 'avy-goto-word-0)
 
 (use-package ivy
   :diminish
