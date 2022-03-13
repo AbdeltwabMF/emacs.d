@@ -282,7 +282,6 @@
  :keymaps '(normal insert emacs)
  :prefix "SPC"
  :non-normal-prefix "M-SPC"
- "/" 'swiper
  "g" 'counsel-projectile-rg
  "t t" 'load-theme)
 

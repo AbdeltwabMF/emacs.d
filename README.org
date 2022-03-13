@@ -12,7 +12,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
 #+BEGIN_QUOTE
 My general working style is to write everything first with pencil and paper, sitting beside a big wastebasket. Then I use Emacs to enter the text into my machine.
 
----Donald E. Knuth
+---  Donald E. Knuth
 #+END_QUOTE
 
 * Table of Contents                                                   :TOC_9:
@@ -526,12 +526,9 @@ Global keybindings
    :keymaps '(normal insert emacs)
    :prefix "SPC"
    :non-normal-prefix "M-SPC"
-   "/" 'swiper
    "g" 'counsel-projectile-rg
    "t t" 'load-theme)
  #+END_SRC
-
- #+RESULTS:
 
 * Evil Mode
 Some tips can be found here:
@@ -717,8 +714,6 @@ The variable aggressive-indent-dont-indent-if lets you customize when you don't 
    "l" 'avy-goto-line
    "w" 'avy-goto-word-0)
 #+END_SRC
-
-#+RESULTS:
 
 * Search with Ivy
 #+BEGIN_SRC emacs-lisp
@@ -1000,8 +995,6 @@ Configuration for various programming languages and dev tools that I use.
 
   (use-package lsp-treemacs)
 #+END_SRC
-
-#+RESULTS:
 
 *** Debug Adapter Support
 #+BEGIN_SRC emacs-lisp
