@@ -6,17 +6,17 @@
 #+language: en
 #+creator: Emacs 27.2 (Org mode 9.4.4)
 
-* Preface
+*** Preface
 GNU Emacs isn’t a text editor, it’s the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
 
 #+BEGIN_QUOTE
 My general working style is to write everything first with pencil and paper, sitting beside a big wastebasket. Then I use Emacs to enter the text into my machine.
 
-    ---Donald E. Knuth
+---Donald E. Knuth
 #+END_QUOTE
 
-* TABLE OF CONTENTS                                                     :TOC_7:
-- [[#preface][Preface]]
+* Table of Contents                                                   :TOC_9:
+    - [[#preface][Preface]]
 - [[#startup-performance][Startup Performance]]
 - [[#package-manager][Package Manager]]
 - [[#evil-mode-and-key-binding][Evil Mode and Key Binding]]
@@ -228,11 +228,11 @@ Some tips can be found here:
     (progn
       (evil-mode 1)))
 
-    (use-package evil-collection
-      :after evil
-      :ensure t
-      :config
-      (evil-collection-init))
+  (use-package evil-collection
+    :after evil
+    :ensure t
+    :config
+    (evil-collection-init))
 #+END_SRC
 
 
