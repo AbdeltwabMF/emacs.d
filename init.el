@@ -4,6 +4,7 @@
 ;; My Emacs configuration in org mode
 
 ;;; Code:
+
 (setq gc-cons-threshold (* 50 1000 1000))
 
 (add-hook 'emacs-startup-hook
@@ -21,6 +22,7 @@
 
 (unless package-archive-contents
   (package-refresh-contents))
+
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 
@@ -32,55 +34,6 @@
 
 (use-package quelpa-use-package
   :ensure t)
-
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
-(global-set-key (kbd "C-M-u") 'universal-argument)
-
-(defun amf/evil-hook ()
-  (dolist (mode '(custom-mode
-                  eshell-mode
-                  git-rebase-mode
-                  erc-mode
-                  circe-server-mode
-                  circe-chat-mode
-                  circe-query-mode
-                  sauron-mode
-                  term-mode))
-    (add-to-list 'evil-emacs-state-modes mode)))
-
-(use-package undo-tree
-  :ensure t
-  :init
-  (global-undo-tree-mode)
-  :config
-  ;; (setq undo-tree-auto-save-history 1) ;; you can turn this on
-  ;; Each node in the undo tree should have a timestamp.
-  (setq undo-tree-visualizer-timestamps t)
-  ;; Show a diff window displaying changes between undo nodes.
-  (setq undo-tree-visualizer-diff t))
-
-(use-package evil
-  :init
-  (progn
-    (setq evil-undo-system 'undo-tree)
-    ;; `evil-collection' assumes `evil-want-keybinding' is set to
-    ;; `nil' before loading `evil' and `evil-collection'
-    ;; @see https://github.com/emacs-evil/evil-collection#installation
-    (setq evil-want-keybinding nil)
-    )
-  :config
-  (progn
-    (evil-mode 1)))
-
-(use-package evil-collection
-  :after evil
-  :ensure t
-  :config
-  (evil-collection-init))
-
-(use-package general)
-(use-package hydra)
 
 ;; Change the user-emacs-directory to keep unwanted things out of ~/.config/emacs
 (setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
@@ -261,19 +214,6 @@
   :config
   (setq alert-default-style 'notifications))
 
-(use-package super-save
-  :defer 1
-  :diminish super-save-mode
-  :config
-  (super-save-mode +1)
-  (setq super-save-auto-save-when-idle t))
-
-;; Revert Dired and other buffers
-(setq global-auto-revert-non-file-buffers t)
-
-;; Revert buffers when the underlying file has changed
-(global-auto-revert-mode 1)
-
 (use-package perspective
   :demand t
   :bind (("C-M-k" . persp-switch)
@@ -311,6 +251,33 @@
 
 (setq tramp-default-method "ssh")
 
+(use-package hydra)
+
+(use-package general)
+
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+(global-set-key (kbd "C-M-u") 'universal-argument)
+
+(use-package evil
+  :init
+  (progn
+    (setq evil-undo-system 'undo-tree)
+    ;; `evil-collection' assumes `evil-want-keybinding' is set to
+    ;; `nil' before loading `evil' and `evil-collection'
+    ;; @see https://github.com/emacs-evil/evil-collection#installation
+    (setq evil-want-keybinding nil)
+    )
+  :config
+  (progn
+    (evil-mode 1)))
+
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :config
+  (evil-collection-init))
+
 (setq-default tab-width 2)
 (setq-default evil-shift-width tab-width)
 
@@ -331,6 +298,19 @@
 ;; Remember and restore the last cursor location of opened files
 (save-place-mode 1)
 
+(use-package super-save
+  :defer 1
+  :diminish super-save-mode
+  :config
+  (super-save-mode +1)
+  (setq super-save-auto-save-when-idle t))
+
+;; Revert Dired and other buffers
+(setq global-auto-revert-non-file-buffers t)
+
+;; Revert buffers when the underlying file has changed
+(global-auto-revert-mode 1)
+
 (use-package evil-multiedit)
 (evil-multiedit-default-keybinds)
 
@@ -349,6 +329,17 @@
  '(and (derived-mode-p 'c++-mode)
        (null (string-match "\\([;{}]\\|\\b\\(if\\|for\\|while\\)\\b\\)"
                            (thing-at-point 'line)))))
+
+(use-package undo-tree
+  :ensure t
+  :init
+  (global-undo-tree-mode)
+  :config
+  ;; (setq undo-tree-auto-save-history 1) ;; you can turn this on
+  ;; Each node in the undo tree should have a timestamp.
+  (setq undo-tree-visualizer-timestamps t)
+  ;; Show a diff window displaying changes between undo nodes.
+  (setq undo-tree-visualizer-diff t))
 
 (use-package corfu
   :bind (:map corfu-map
@@ -404,6 +395,11 @@
          :map minibuffer-local-map
          ("C-r" . 'counsel-minibuffer-history)))
 
+(setq ivy-initial-inputs-alist nil)
+
+(use-package smex)
+(smex-initialize)
+
 (use-package which-key
   :init (which-key-mode)
   :diminish which-key-mode
@@ -428,14 +424,7 @@
 (global-set-key (kbd "C-h v") #'helpful-variable)
 (global-set-key (kbd "C-h k") #'helpful-key)
 
-(setq ivy-initial-inputs-alist nil)
-
-(use-package smex)
-(smex-initialize)
-
 (use-package bufler
-  :disabled
-  :straight t
   :bind (("C-M-j" . bufler-switch-buffer)
          ("C-M-k" . bufler-workspace-frame-set))
   :config
@@ -446,41 +435,41 @@
 
   (setf bufler-groups
         (bufler-defgroups
-         ;; Subgroup collecting all named workspaces.
-         (group (auto-workspace))
-         ;; Subgroup collecting buffers in a projectile project.
-         (group (auto-projectile))
-         ;; Grouping browser windows
-         (group
-          (group-or "Browsers"
-                    (name-match "Vimb" (rx bos "vimb"))
-                    (name-match "Qutebrowser" (rx bos "Qutebrowser"))
-                    (name-match "Chromium" (rx bos "Chromium"))))
-         (group
-          (group-or "Chat"
-                    (mode-match "Telega" (rx bos "telega-"))))
-         (group
-          ;; Subgroup collecting all `help-mode' and `info-mode' buffers.
-          (group-or "Help/Info"
-                    (mode-match "*Help*" (rx bos (or "help-" "helpful-")))
-                    ;; (mode-match "*Helpful*" (rx bos "helpful-"))
-                    (mode-match "*Info*" (rx bos "info-"))))
-         (group
-          ;; Subgroup collecting all special buffers (i.e. ones that are not
-          ;; file-backed), except `magit-status-mode' buffers (which are allowed to fall
-          ;; through to other groups, so they end up grouped with their project buffers).
-          (group-and "*Special*"
-                     (name-match "**Special**"
-                                 (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace" "Pinentry") "*"))
-                     (lambda (buffer)
-                       (unless (or (funcall (mode-match "Magit" (rx bos "magit-status"))
-                                            buffer)
-                                   (funcall (mode-match "Dired" (rx bos "dired"))
-                                            buffer)
-                                   (funcall (auto-file) buffer))
-                         "*Special*"))))
-         ;; Group remaining buffers by major mode.
-         (auto-mode))))
+          ;; Subgroup collecting all named workspaces.
+          (group (auto-workspace))
+          ;; Subgroup collecting buffers in a projectile project.
+          (group (auto-projectile))
+          ;; Grouping browser windows
+          (group
+           (group-or "Browsers"
+                     (name-match "Vimb" (rx bos "vimb"))
+                     (name-match "Qutebrowser" (rx bos "Qutebrowser"))
+                     (name-match "Chromium" (rx bos "Chromium"))))
+          (group
+           (group-or "Chat"
+                     (mode-match "Telega" (rx bos "telega-"))))
+          (group
+           ;; Subgroup collecting all `help-mode' and `info-mode' buffers.
+           (group-or "Help/Info"
+                     (mode-match "*Help*" (rx bos (or "help-" "helpful-")))
+                     ;; (mode-match "*Helpful*" (rx bos "helpful-"))
+                     (mode-match "*Info*" (rx bos "info-"))))
+          (group
+           ;; Subgroup collecting all special buffers (i.e. ones that are not
+           ;; file-backed), except `magit-status-mode' buffers (which are allowed to fall
+           ;; through to other groups, so they end up grouped with their project buffers).
+           (group-and "*Special*"
+                      (name-match "**Special**"
+                                  (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace" "Pinentry") "*"))
+                      (lambda (buffer)
+                        (unless (or (funcall (mode-match "Magit" (rx bos "magit-status"))
+                                             buffer)
+                                    (funcall (mode-match "Dired" (rx bos "dired"))
+                                             buffer)
+                                    (funcall (auto-file) buffer))
+                          "*Special*"))))
+          ;; Group remaining buffers by major mode.
+          (auto-mode))))
 
 (use-package default-text-scale
   :defer 1
@@ -798,8 +787,6 @@
 
 (add-hook 'text-mode-hook #'flyspell-mode)
 
-(use-package google-maps)
-
 (use-package company
   :init
   (company-mode t)
@@ -1062,12 +1049,12 @@
 (with-eval-after-load 'org-faces
   ;; Increase the size of various headings
   (set-face-attribute 'org-document-title nil :font "Cantarell" :weight 'bold :height 1.5)
-  (dolist (face '((org-level-1 . 1.5)
-                  (org-level-2 . 1.4)
-                  (org-level-3 . 1.3)
-                  (org-level-4 . 1.2)
-                  (org-level-5 . 1.1)
-                  (org-level-6 . 1.0)
+  (dolist (face '((org-level-1 . 1.2)
+                  (org-level-2 . 1.18)
+                  (org-level-3 . 1.16)
+                  (org-level-4 . 1.14)
+                  (org-level-5 . 1.12)
+                  (org-level-6 . 1.1)
                   (org-level-7 . 1.0)
                   (org-level-8 . 1.0)))
     (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face))))

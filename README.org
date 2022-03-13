@@ -17,12 +17,9 @@ My general working style is to write everything first with pencil and paper, sit
 
 * Table of Contents                                                   :TOC_9:
     - [[#preface][Preface]]
+- [[#header][Header]]
 - [[#startup-performance][Startup Performance]]
 - [[#package-manager][Package Manager]]
-- [[#evil-mode-and-key-binding][Evil Mode and Key Binding]]
-  - [[#esc-cancels-all][ESC Cancels All]]
-  - [[#rebind-c-u][Rebind C-u]]
-  - [[#lets-be-evil][Let’s Be Evil]]
 - [[#keep-it-clean][Keep it Clean]]
 - [[#general-configuration][General Configuration]]
   - [[#user-interface][User Interface]]
@@ -35,41 +32,44 @@ My general working style is to write everything first with pencil and paper, sit
     - [[#enable-mode-diminishing][Enable Mode Diminishing]]
     - [[#doom-modeline][Doom Modeline]]
   - [[#notifications][Notifications]]
-  - [[#auto-saving-changed-files][Auto-Saving Changed Files]]
-  - [[#auto-reverting-changed-files][Auto-Reverting Changed Files]]
   - [[#work-spaces][Work spaces]]
   - [[#highlight-matching-braces][Highlight Matching Braces]]
   - [[#displaying-world-time][Displaying World Time]]
   - [[#pinentry][Pinentry]]
   - [[#tramp][TRAMP]]
+- [[#general-key-bindings][General Key Bindings]]
+- [[#evil-mode][Evil Mode]]
 - [[#editing-configuration][Editing Configuration]]
   - [[#tab-widths][Tab Widths]]
-  - [[#use-spaces-instead-of-tabs-for-indentation][Use spaces instead of tabs for indentation]]
-  - [[#automatically-clean-whitespace][Automatically clean whitespace]]
+  - [[#use-spaces-instead-of-tabs-for-indentation][Use Spaces instead of Tabs for Indentation]]
+  - [[#automatically-clean-whitespace][Automatically Clean Whitespace]]
   - [[#history][History]]
-    - [[#remembering-recently-edited-files][Remembering recently edited files]]
-    - [[#remembering-minibuffer-prompt-history][Remembering minibuffer prompt history]]
-    - [[#remembering-the-last-place-you-visited-in-a-file][Remembering the last place you visited in a file]]
+    - [[#remembering-recently-edited-files][Remembering Recently Edited Files]]
+    - [[#remembering-minibuffer-prompt-history][Remembering Minibuffer Prompt History]]
+    - [[#remembering-the-last-place-you-visited-in-a-file][Remembering The Last Place You Visited in a File]]
+  - [[#auto-saving-changed-files][Auto-Saving Changed Files]]
+  - [[#auto-reverting-changed-files][Auto-Reverting Changed Files]]
   - [[#multiple-cursor][Multiple Cursor]]
   - [[#indentation][Indentation]]
+  - [[#undo-tree][Undo Tree]]
 - [[#completion-system][Completion System]]
   - [[#completions-in-regions-with-corfu][Completions in Regions with Corfu]]
   - [[#improved-candidate-filtering-with-orderless][Improved Candidate Filtering with Orderless]]
 - [[#jumping-with-avy][Jumping with Avy]]
-- [[#ivy][Ivy]]
+- [[#search-with-ivy][Search with Ivy]]
   - [[#making-m-x-great-again][Making M-x Great Again!]]
-- [[#buffer-management-with-bufler][Buffer Management with Bufler]]
+- [[#functional-environment][Functional Environment]]
+- [[#buffer-management][Buffer Management]]
 - [[#window-management][Window Management]]
   - [[#frame-scaling--zooming][Frame Scaling / Zooming]]
-  - [[#window-selection-with-ace-window][Window Selection with ace-window]]
-  - [[#window-history-with-winner-mode][Window History with winner-mode]]
+  - [[#window-selection-with-ace-window][Window Selection with Ace Window]]
+  - [[#window-history-with-winner-mode][Window History with Winner Mode]]
   - [[#control-buffer-placement][Control Buffer Placement]]
 - [[#credential-management][Credential Management]]
 - [[#project-management][Project Management]]
   - [[#projectile][Projectile]]
   - [[#counsel-projectile][Counsel Projectile]]
   - [[#magit][Magit]]
-    - [[#magit-todos][magit-todos]]
 - [[#development][Development]]
   - [[#git][Git]]
     - [[#git-link][git-link]]
@@ -101,12 +101,11 @@ My general working style is to write everything first with pencil and paper, sit
     - [[#smart-parens][Smart Parens]]
     - [[#rainbow-mode][Rainbow Mode]]
 - [[#writing][Writing]]
-  - [[#darkroom-for-distraction-free-writing][Darkroom for distraction-free writing]]
-  - [[#spell-checking][Spell-checking]]
-  - [[#translation][Translation]]
-  - [[#auto-complete][Auto complete]]
-  - [[#hide-your-current-text][Hide your current text.]]
-  - [[#show-current-command-and-its-key-in-the-mode-line][Show current command and its key in the mode line]]
+  - [[#darkroom][Darkroom]]
+  - [[#spell-checking][Spell Checking]]
+  - [[#auto-complete][Auto Complete]]
+  - [[#hide-your-current-text][Hide Your Current Text.]]
+  - [[#show-current-command-in-the-mode-line][Show Current Command in the Mode Line]]
 - [[#e-book][E-Book]]
   - [[#pdf-view-restore][Pdf View Restore]]
 - [[#dashboard][Dashboard]]
@@ -121,14 +120,12 @@ My general working style is to write everything first with pencil and paper, sit
     - [[#emms][EMMS]]
   - [[#mail][Mail]]
 - [[#org-mode][Org Mode]]
-  - [[#automatically-create-table-of-contents][Automatically Create Table of Contents]]
+  - [[#create-table-of-contents][Create Table of Contents]]
   - [[#org-todo-keywords][Org Todo Keywords]]
-  - [[#this-mode-causes-significant-slowdown][This mode causes significant slowdown!]]
-  - [[#footer][Footer]]
+  - [[#enhancement][Enhancement]]
+- [[#footer][Footer]]
 
-* Startup Performance
-Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time.
-The default is 800 kilobytes.  Measured in bytes.
+* Header
 #+BEGIN_SRC emacs-lisp
   ;;; init.el --- Emacs Rice
 
@@ -136,6 +133,12 @@ The default is 800 kilobytes.  Measured in bytes.
   ;; My Emacs configuration in org mode
 
   ;;; Code:
+#+END_SRC
+
+* Startup Performance
+Make startup faster by reducing the frequency of garbage collection and then use a hook to measure Emacs startup time.
+The default is 800 kilobytes.  Measured in bytes.
+#+BEGIN_SRC emacs-lisp
   (setq gc-cons-threshold (* 50 1000 1000))
 
   (add-hook 'emacs-startup-hook
@@ -157,6 +160,7 @@ Initialize package sources
 
   (unless package-archive-contents
     (package-refresh-contents))
+
   (unless (package-installed-p 'use-package)
     (package-install 'use-package))
 
@@ -173,74 +177,6 @@ Set up quelpa for packages not in Elpa/Melpa:
     :ensure t)
 #+END_SRC
 
-* Evil Mode and Key Binding
-** ESC Cancels All
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-#+END_SRC
-
-** Rebind C-u
-Since I let evil-mode take over C-u for buffer scrolling, I need to re-bind the universal-argument command to another key sequence. I’m choosing C-M-u for this purpose.
-
-#+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "C-M-u") 'universal-argument)
-#+END_SRC
-
-** Let’s Be Evil
-Some tips can be found here:
-- https://github.com/noctuid/evil-guide
-- https://nathantypanski.com/blog/2014-08-03-a-vim-like-emacs-config.html
-
-#+BEGIN_SRC emacs-lisp
-  (defun amf/evil-hook ()
-    (dolist (mode '(custom-mode
-                    eshell-mode
-                    git-rebase-mode
-                    erc-mode
-                    circe-server-mode
-                    circe-chat-mode
-                    circe-query-mode
-                    sauron-mode
-                    term-mode))
-      (add-to-list 'evil-emacs-state-modes mode)))
-
-  (use-package undo-tree
-    :ensure t
-    :init
-    (global-undo-tree-mode)
-    :config
-    ;; (setq undo-tree-auto-save-history 1) ;; you can turn this on
-    ;; Each node in the undo tree should have a timestamp.
-    (setq undo-tree-visualizer-timestamps t)
-    ;; Show a diff window displaying changes between undo nodes.
-    (setq undo-tree-visualizer-diff t))
-
-  (use-package evil
-    :init
-    (progn
-      (setq evil-undo-system 'undo-tree)
-      ;; `evil-collection' assumes `evil-want-keybinding' is set to
-      ;; `nil' before loading `evil' and `evil-collection'
-      ;; @see https://github.com/emacs-evil/evil-collection#installation
-      (setq evil-want-keybinding nil)
-      )
-    :config
-    (progn
-      (evil-mode 1)))
-
-  (use-package evil-collection
-    :after evil
-    :ensure t
-    :config
-    (evil-collection-init))
-#+END_SRC
-
-
-#+BEGIN_SRC emacs-lisp
-  (use-package general)
-  (use-package hydra)
-#+END_SRC
-
 * Keep it Clean
 I don’t want a bunch of transient files showing up as untracked in the Git repo so I move them all to another location.
 #+BEGIN_SRC emacs-lisp
@@ -255,7 +191,6 @@ I don’t want a bunch of transient files showing up as untracked in the Git rep
 If you're watching this channel, you're probably interested in writing your own Emacs configuration mostly by hand without using Emacs' customization UI. However, even if you avoid using the customization UI, some settings may cause customization variables to be added to your init.el file.
 
 To avoid having Emacs place those variables into your hand-crafted configuration file, you can use this snippet:
-
 #+BEGIN_SRC emacs-lisp
   (setq custom-file
         (if (boundp 'server-socket-dir)
@@ -381,7 +316,6 @@ Different platforms need different default font sizes, and Fantasque Sans Mono i
   (set-fontset-font "fontset-default" 'arabic (font-spec :family "Janna LT" :height 110))
 #+END_SRC
 
-
 *** Emojis in buffers
 Emojify is an Emacs extension to display emojis. It can display github style emojis like :smile: or plain ascii ones like :).
 #+BEGIN_SRC emacs-lisp
@@ -495,25 +429,6 @@ alert is a great library for showing notifications from other packages in a vari
     (setq alert-default-style 'notifications))
 #+END_SRC
 
-** Auto-Saving Changed Files
-#+BEGIN_SRC emacs-lisp
-  (use-package super-save
-    :defer 1
-    :diminish super-save-mode
-    :config
-    (super-save-mode +1)
-    (setq super-save-auto-save-when-idle t))
-#+END_SRC
-
-** Auto-Reverting Changed Files
-#+BEGIN_SRC emacs-lisp
-  ;; Revert Dired and other buffers
-  (setq global-auto-revert-non-file-buffers t)
-
-  ;; Revert buffers when the underlying file has changed
-  (global-auto-revert-mode 1)
-#+END_SRC
-
 ** Work spaces
 #+BEGIN_SRC emacs-lisp
   (use-package perspective
@@ -568,6 +483,53 @@ Set default connection mode to SSH
 #+BEGIN_SRC emacs-lisp
   (setq tramp-default-method "ssh")
 #+END_SRC
+* General Key Bindings
+Family of short bindings with a common prefix - a Hydra.
+#+BEGIN_SRC emacs-lisp
+  (use-package hydra)
+#+END_SRC
+
+General key bindings
+#+BEGIN_SRC emacs-lisp
+  (use-package general)
+#+END_SRC
+
+ESC Cancels All
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+#+END_SRC
+
+Rebind C-u
+Since I let evil-mode take over C-u for buffer scrolling, I need to re-bind the universal-argument command to another key sequence. I’m choosing C-M-u for this purpose.
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "C-M-u") 'universal-argument)
+#+END_SRC
+
+* Evil Mode
+Some tips can be found here:
+- https://github.com/noctuid/evil-guide
+- https://nathantypanski.com/blog/2014-08-03-a-vim-like-emacs-config.html
+#+BEGIN_SRC emacs-lisp
+  (use-package evil
+    :init
+    (progn
+      (setq evil-undo-system 'undo-tree)
+      ;; `evil-collection' assumes `evil-want-keybinding' is set to
+      ;; `nil' before loading `evil' and `evil-collection'
+      ;; @see https://github.com/emacs-evil/evil-collection#installation
+      (setq evil-want-keybinding nil)
+      )
+    :config
+    (progn
+      (evil-mode 1)))
+
+  (use-package evil-collection
+    :after evil
+    :ensure t
+    :config
+    (evil-collection-init))
+#+END_SRC
+
 * Editing Configuration
 ** Tab Widths
 Default to an indentation size of 2 spaces since it’s the norm for pretty much every language I use.
@@ -576,12 +538,12 @@ Default to an indentation size of 2 spaces since it’s the norm for pretty much
   (setq-default evil-shift-width tab-width)
 #+END_SRC
 
-** Use spaces instead of tabs for indentation
+** Use Spaces instead of Tabs for Indentation
 #+BEGIN_SRC emacs-lisp
   (setq-default indent-tabs-mode nil)
 #+END_SRC
 
-** Automatically clean whitespace
+** Automatically Clean Whitespace
 #+BEGIN_SRC emacs-lisp
   (use-package ws-butler
     :hook ((text-mode . ws-butler-mode)
@@ -594,17 +556,15 @@ Default to an indentation size of 2 spaces since it’s the norm for pretty much
 #+END_SRC
 
 ** History
-*** Remembering recently edited files
+*** Remembering Recently Edited Files
 When you do a lot of work with Emacs, you will probably want to get back to files you recently edited. Instead of using find-file to go hunt those files down again, you can enable recentf-mode to have Emacs remember the files you edited most recently:
-
-
 #+BEGIN_SRC emacs-lisp
   (recentf-mode 1)
 #+END_SRC
 
 After enabling this mode, you can use the M-x recentf-open-files command to be shown a list of recent files which can be selected by typing the relevant number. This command isn't bound to a key by default, so I recommend doing that if you want to use it regularly!
 
-*** Remembering minibuffer prompt history
+*** Remembering Minibuffer Prompt History
 One thing you will do a lot in Emacs is enter text into minibuffer prompts. Everything from M-x, isearch, the describe-* commands, and even the shell modes will receive a lot of input from you over time.
 
 You'll quickly realize that it would be helpful for Emacs to remember the things you've entered into these prompts the next time you use them. That's where the savehist-mode comes in!
@@ -618,12 +578,31 @@ I also like to set the history-length to a reasonable number to reduce the impac
   (savehist-mode 1)
 #+END_SRC
 
-*** Remembering the last place you visited in a file
+*** Remembering The Last Place You Visited in a File
 Sometimes it's convenient for Emacs to remember the last location you were at when you visited a particular file. The save-place-mode can help with that!
 Once you turn on this mode, Emacs will drop your cursor to the last visited location in any file that you open.
 #+BEGIN_SRC emacs-lisp
   ;; Remember and restore the last cursor location of opened files
   (save-place-mode 1)
+#+END_SRC
+
+** Auto-Saving Changed Files
+#+BEGIN_SRC emacs-lisp
+  (use-package super-save
+    :defer 1
+    :diminish super-save-mode
+    :config
+    (super-save-mode +1)
+    (setq super-save-auto-save-when-idle t))
+#+END_SRC
+
+** Auto-Reverting Changed Files
+#+BEGIN_SRC emacs-lisp
+  ;; Revert Dired and other buffers
+  (setq global-auto-revert-non-file-buffers t)
+
+  ;; Revert buffers when the underlying file has changed
+  (global-auto-revert-mode 1)
 #+END_SRC
 
 ** Multiple Cursor
@@ -657,6 +636,20 @@ The variable aggressive-indent-dont-indent-if lets you customize when you don't 
    '(and (derived-mode-p 'c++-mode)
          (null (string-match "\\([;{}]\\|\\b\\(if\\|for\\|while\\)\\b\\)"
                              (thing-at-point 'line)))))
+#+END_SRC
+
+** Undo Tree
+#+BEGIN_SRC emacs-lisp
+  (use-package undo-tree
+    :ensure t
+    :init
+    (global-undo-tree-mode)
+    :config
+    ;; (setq undo-tree-auto-save-history 1) ;; you can turn this on
+    ;; Each node in the undo tree should have a timestamp.
+    (setq undo-tree-visualizer-timestamps t)
+    ;; Show a diff window displaying changes between undo nodes.
+    (setq undo-tree-visualizer-diff t))
 #+END_SRC
 
 * Completion System
@@ -693,7 +686,7 @@ The variable aggressive-indent-dont-indent-if lets you customize when you don't 
   (global-set-key (kbd "M-g e") 'avy-goto-word-0) ;; القفز إلى أي كلمة من كلمات البفر
 #+END_SRC
 
-* Ivy
+* Search with Ivy
 #+BEGIN_SRC emacs-lisp
   (use-package ivy
     :diminish
@@ -724,13 +717,30 @@ The variable aggressive-indent-dont-indent-if lets you customize when you don't 
            ("C-x C-f" . counsel-find-file)
            :map minibuffer-local-map
            ("C-r" . 'counsel-minibuffer-history)))
+#+END_SRC
 
+** Making M-x Great Again!
+The following line removes the annoying ‘^’ in things like counsel-M-x and other ivy/counsel prompts.  The default ‘^’ string means that if you type something immediately after this string only completion candidates that begin with what you typed are shown.  Most of the time, I’m searching for a command without knowing what it begins with though.
+#+BEGIN_SRC emacs-lisp
+  (setq ivy-initial-inputs-alist nil)
+#+END_SRC
+
+Smex is a package the makes M-x remember our history.  Now M-x will show our last used commands first.
+#+BEGIN_SRC emacs-lisp
+  (use-package smex)
+  (smex-initialize)
+#+END_SRC
+
+* Functional Environment
+#+BEGIN_SRC emacs-lisp
   (use-package which-key
     :init (which-key-mode)
     :diminish which-key-mode
     :config
     (setq which-key-idle-delay 1))
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   (use-package helpful
     :custom
     (counsel-describe-function-function #'helpful-callable)
@@ -750,24 +760,10 @@ The variable aggressive-indent-dont-indent-if lets you customize when you don't 
   (global-set-key (kbd "C-h k") #'helpful-key)
 #+END_SRC
 
-** Making M-x Great Again!
-The following line removes the annoying ‘^’ in things like counsel-M-x and other ivy/counsel prompts.  The default ‘^’ string means that if you type something immediately after this string only completion candidates that begin with what you typed are shown.  Most of the time, I’m searching for a command without knowing what it begins with though.
-#+BEGIN_SRC emacs-lisp
-  (setq ivy-initial-inputs-alist nil)
-#+END_SRC
-
-Smex is a package the makes M-x remember our history.  Now M-x will show our last used commands first.
-#+BEGIN_SRC emacs-lisp
-  (use-package smex)
-  (smex-initialize)
-#+END_SRC
-
-* Buffer Management with Bufler
+* Buffer Management
 Bufler is an excellent package by alphapapa which enables you to automatically group all of your Emacs buffers into workspaces by defining a series of grouping rules. Once you have your groups defined (or use the default configuration which is quite good already), you can use the bufler-workspace-frame-set command to focus your current Emacs frame on a particular workspace so that bufler-switch-buffer will only show buffers from that workspace. In my case, this allows me to dedicate an EXWM workspace to a specific Bufler workspace so that only see the buffers I care about in that EXWM workspace.
 #+BEGIN_SRC emacs-lisp
   (use-package bufler
-    :disabled
-    :straight t
     :bind (("C-M-j" . bufler-switch-buffer)
            ("C-M-k" . bufler-workspace-frame-set))
     :config
@@ -778,41 +774,41 @@ Bufler is an excellent package by alphapapa which enables you to automatically g
 
     (setf bufler-groups
           (bufler-defgroups
-           ;; Subgroup collecting all named workspaces.
-           (group (auto-workspace))
-           ;; Subgroup collecting buffers in a projectile project.
-           (group (auto-projectile))
-           ;; Grouping browser windows
-           (group
-            (group-or "Browsers"
-                      (name-match "Vimb" (rx bos "vimb"))
-                      (name-match "Qutebrowser" (rx bos "Qutebrowser"))
-                      (name-match "Chromium" (rx bos "Chromium"))))
-           (group
-            (group-or "Chat"
-                      (mode-match "Telega" (rx bos "telega-"))))
-           (group
-            ;; Subgroup collecting all `help-mode' and `info-mode' buffers.
-            (group-or "Help/Info"
-                      (mode-match "*Help*" (rx bos (or "help-" "helpful-")))
-                      ;; (mode-match "*Helpful*" (rx bos "helpful-"))
-                      (mode-match "*Info*" (rx bos "info-"))))
-           (group
-            ;; Subgroup collecting all special buffers (i.e. ones that are not
-            ;; file-backed), except `magit-status-mode' buffers (which are allowed to fall
-            ;; through to other groups, so they end up grouped with their project buffers).
-            (group-and "*Special*"
-                       (name-match "**Special**"
-                                   (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace" "Pinentry") "*"))
-                       (lambda (buffer)
-                         (unless (or (funcall (mode-match "Magit" (rx bos "magit-status"))
-                                              buffer)
-                                     (funcall (mode-match "Dired" (rx bos "dired"))
-                                              buffer)
-                                     (funcall (auto-file) buffer))
-                           "*Special*"))))
-           ;; Group remaining buffers by major mode.
-           (auto-mode))))
+            ;; Subgroup collecting all named workspaces.
+            (group (auto-workspace))
+            ;; Subgroup collecting buffers in a projectile project.
+            (group (auto-projectile))
+            ;; Grouping browser windows
+            (group
+             (group-or "Browsers"
+                       (name-match "Vimb" (rx bos "vimb"))
+                       (name-match "Qutebrowser" (rx bos "Qutebrowser"))
+                       (name-match "Chromium" (rx bos "Chromium"))))
+            (group
+             (group-or "Chat"
+                       (mode-match "Telega" (rx bos "telega-"))))
+            (group
+             ;; Subgroup collecting all `help-mode' and `info-mode' buffers.
+             (group-or "Help/Info"
+                       (mode-match "*Help*" (rx bos (or "help-" "helpful-")))
+                       ;; (mode-match "*Helpful*" (rx bos "helpful-"))
+                       (mode-match "*Info*" (rx bos "info-"))))
+            (group
+             ;; Subgroup collecting all special buffers (i.e. ones that are not
+             ;; file-backed), except `magit-status-mode' buffers (which are allowed to fall
+             ;; through to other groups, so they end up grouped with their project buffers).
+             (group-and "*Special*"
+                        (name-match "**Special**"
+                                    (rx bos "*" (or "Messages" "Warnings" "scratch" "Backtrace" "Pinentry") "*"))
+                        (lambda (buffer)
+                          (unless (or (funcall (mode-match "Magit" (rx bos "magit-status"))
+                                               buffer)
+                                      (funcall (mode-match "Dired" (rx bos "dired"))
+                                               buffer)
+                                      (funcall (auto-file) buffer))
+                            "*Special*"))))
+            ;; Group remaining buffers by major mode.
+            (auto-mode))))
 #+END_SRC
 
 * Window Management
@@ -825,7 +821,7 @@ The keybindings for this are C+M+- and C+M+=.
     (default-text-scale-mode))
 #+END_SRC
 
-** Window Selection with ace-window
+** Window Selection with Ace Window
 ace-window helps with easily switching between windows based on a predefined set of keys used to identify each.
 #+BEGIN_SRC emacs-lisp
   (use-package ace-window
@@ -838,7 +834,7 @@ ace-window helps with easily switching between windows based on a predefined set
     (ace-window-display-mode 1))
 #+END_SRC
 
-** Window History with winner-mode
+** Window History with Winner Mode
 #+BEGIN_SRC emacs-lisp
   (use-package winner
     :after evil
@@ -863,7 +859,6 @@ Emacs’ default buffer placement algorithm is pretty disruptive if you like set
 
 * Credential Management
 I use pass to manage all of my passwords locally. I also use auth-source-pass as the primary auth-source provider so that all passwords are stored in a single place.
-
 #+BEGIN_SRC emacs-lisp
   (use-package password-store
     :config
@@ -930,9 +925,7 @@ NOTE: Make sure to configure a GitHub token before using this package!
     :ensure t)
 #+END_SRC
 
-*** magit-todos
 This is an interesting extension to Magit that shows a TODOs section in your git status buffer containing all lines with TODO (or other similar words) in files contained within the repo. More information at the GitHub repo.
-
 #+BEGIN_SRC emacs-lisp
   (use-package magit-todos
     :defer t)
@@ -1239,7 +1232,7 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
            js2-mode))
 #+END_SRC
 * Writing
-** Darkroom for distraction-free writing
+** Darkroom
 #+BEGIN_SRC emacs-lisp
   (use-package darkroom
     :commands darkroom-mode
@@ -1263,7 +1256,7 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
       (amf/enter-focus-mode)))
 #+END_SRC
 
-** Spell-checking
+** Spell Checking
 #+BEGIN_SRC emacs-lisp
   (use-package flyspell-correct
     :ensure t
@@ -1281,12 +1274,7 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
   (add-hook 'text-mode-hook #'flyspell-mode)
 #+END_SRC
 
-** Translation
-#+BEGIN_SRC emacs-lisp
-  (use-package google-maps)
-#+END_SRC
-
-** Auto complete
+** Auto Complete
 #+BEGIN_SRC emacs-lisp
   (use-package company
     :init
@@ -1298,14 +1286,15 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
   (add-hook 'after-init-hook 'global-company-mode)
 #+END_SRC
 
-** Hide your current text.
+** Hide Your Current Text.
 #+BEGIN_SRC emacs-lisp
   (use-package redacted)
 
   ;; Enable `read-only-mode' to ensure that we don't change what we can't read.
   (add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1))))
 #+END_SRC
-** Show current command and its key in the mode line
+
+** Show Current Command in the Mode Line
 keycast-mode displays the command and event in the mode-line and keycast-log-mode displays them in a dedicated frame.
 #+begin_src emacs-lisp
   (use-package keycast)
@@ -1610,12 +1599,12 @@ Use [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]] to show notificati
   (with-eval-after-load 'org-faces
     ;; Increase the size of various headings
     (set-face-attribute 'org-document-title nil :font "Cantarell" :weight 'bold :height 1.5)
-    (dolist (face '((org-level-1 . 1.5)
-                    (org-level-2 . 1.4)
-                    (org-level-3 . 1.3)
-                    (org-level-4 . 1.2)
-                    (org-level-5 . 1.1)
-                    (org-level-6 . 1.0)
+    (dolist (face '((org-level-1 . 1.2)
+                    (org-level-2 . 1.18)
+                    (org-level-3 . 1.16)
+                    (org-level-4 . 1.14)
+                    (org-level-5 . 1.12)
+                    (org-level-6 . 1.1)
                     (org-level-7 . 1.0)
                     (org-level-8 . 1.0)))
       (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face))))
@@ -1640,11 +1629,14 @@ Use [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]] to show notificati
 
   (use-package visual-fill-column
     :hook (org-mode . amf/org-mode-visual-fill))
+#+END_SRC
 
+Org mode Timer
+#+BEGIN_SRC emacs-lisp
   (setq org-clock-sound "~/.local/share/sounds/notification.wav")
 #+END_SRC
 
-** Automatically Create Table of Contents
+** Create Table of Contents
 Toc-org helps you to have an up-to-date table of contents in org files without exporting (useful useful for README files on GitHub).  Use :TOC: to create the table.
 #+BEGIN_SRC emacs-lisp
   (use-package toc-org
@@ -1669,14 +1661,15 @@ This lets us create the various TODO tags that we can use in Org.
            "CANCELLED(c)" )))  ; Task has been cancelled
 #+END_SRC
 
-** This mode causes significant slowdown!
+** Enhancement
+This mode causes significant slowdown!
 I have looked into the matter in the past, and from what I understand the usual cause
 of this is relates to a deeper rooted issue involving fonts and font-lock reliant packages
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-compacting-font-caches t)
 #+END_SRC
 
-** Footer
+* Footer
 #+BEGIN_SRC emacs-lisp
   (provide 'init)
   ;;; init.el ends here
