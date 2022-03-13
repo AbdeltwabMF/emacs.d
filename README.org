@@ -1,7 +1,7 @@
 #+title: Emacs Rice
 #+date: <2022-03-06 Sun>
 #+property: header-args:emacs-lisp :tangle init.el
-#+options: toc:7
+#+options: toc:9
 #+author: Abd El-Twab M. Fakhry
 #+language: en
 #+creator: Emacs 27.2 (Org mode 9.4.4)
@@ -9,15 +9,14 @@
 * Preface
 GNU Emacs isn’t a text editor, it’s the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
 
-** Generate init.el form this org mode file
-- M-x toc-org-insert-toc
-- Move the cursor up to the very top of the file and then:
-  -  C-c C-c for local setup refresh
-  -  C-c C-v t for tangle init.el
+#+BEGIN_VERSE
+  My general working style is to write everything first with pencil and paper, sitting beside a big wastebasket. Then I use Emacs to enter the text into my machine.
+
+    ---Donald E. Knuth
+#+END_VERSE
 
 * TABLE OF CONTENTS                                                     :TOC_7:
 - [[#preface][Preface]]
-  - [[#generate-initel-form-this-org-mode-file][Generate init.el form this org mode file]]
 - [[#startup-performance][Startup Performance]]
 - [[#package-manager][Package Manager]]
 - [[#evil-mode-and-key-binding][Evil Mode and Key Binding]]
@@ -52,6 +51,7 @@ GNU Emacs isn’t a text editor, it’s the ultimate productivity environment fo
     - [[#remembering-minibuffer-prompt-history][Remembering minibuffer prompt history]]
     - [[#remembering-the-last-place-you-visited-in-a-file][Remembering the last place you visited in a file]]
   - [[#multiple-cursor][Multiple Cursor]]
+  - [[#indentation][Indentation]]
 - [[#completion-system][Completion System]]
   - [[#completions-in-regions-with-corfu][Completions in Regions with Corfu]]
   - [[#improved-candidate-filtering-with-orderless][Improved Candidate Filtering with Orderless]]
@@ -398,6 +398,9 @@ display correctly:
 #+BEGIN_SRC emacs-lisp
   (use-package all-the-icons
     :if (display-graphic-p))
+
+  (use-package all-the-icons-completion)
+  (all-the-icons-completion-mode)
 #+END_SRC
 
 ** Mode Line
@@ -632,6 +635,28 @@ Once you turn on this mode, Emacs will drop your cursor to the last visited loca
 #+BEGIN_SRC emacs-lisp
   (define-key global-map (kbd "C-/") 'undo)
   (define-key global-map (kbd "C-x C-/") 'redo)
+#+END_SRC
+
+** Indentation
+#+BEGIN_SRC emacs-lisp
+  (use-package aggressive-indent)
+  (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+  (add-hook 'css-mode-hook #'aggressive-indent-mode)
+#+END_SRC
+
+You can use this hook on any mode you want, aggressive-indent is not exclusive to emacs-lisp code. In fact, if you want to turn it on for every programming mode, you can do something like:
+#+BEGIN_SRC emacs-lisp
+  (global-aggressive-indent-mode 1)
+  (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+#+END_SRC
+
+The variable aggressive-indent-dont-indent-if lets you customize when you don't want indentation to happen. For instance, if you think it's annoying that lines jump around in c++-mode because you haven't typed the ; yet, you could add the following clause:
+#+BEGIN_SRC emacs-lisp
+  (add-to-list
+   'aggressive-indent-dont-indent-if
+   '(and (derived-mode-p 'c++-mode)
+         (null (string-match "\\([;{}]\\|\\b\\(if\\|for\\|while\\)\\b\\)"
+                             (thing-at-point 'line)))))
 #+END_SRC
 
 * Completion System

@@ -182,6 +182,9 @@
 (use-package all-the-icons
   :if (display-graphic-p))
 
+(use-package all-the-icons-completion)
+(all-the-icons-completion-mode)
+
 (setq display-time-format "%l:%M %p %b %y"
       display-time-default-load-average nil)
 
@@ -333,6 +336,19 @@
 
 (define-key global-map (kbd "C-/") 'undo)
 (define-key global-map (kbd "C-x C-/") 'redo)
+
+(use-package aggressive-indent)
+(add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+(add-hook 'css-mode-hook #'aggressive-indent-mode)
+
+(global-aggressive-indent-mode 1)
+(add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+
+(add-to-list
+ 'aggressive-indent-dont-indent-if
+ '(and (derived-mode-p 'c++-mode)
+       (null (string-match "\\([;{}]\\|\\b\\(if\\|for\\|while\\)\\b\\)"
+                           (thing-at-point 'line)))))
 
 (use-package corfu
   :bind (:map corfu-map
