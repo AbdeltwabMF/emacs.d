@@ -818,6 +818,17 @@
 
 (use-package keycast)
 
+(use-package pdf-tools
+  :config (pdf-tools-install))
+
+(use-package org-noter)
+
+(use-package org-pdftools
+  :hook (org-mode . org-pdftools-setup-link))
+
+(use-package org-noter-pdftools
+  :after org-noter)
+
 (use-package pdf-view-restore
   :after pdf-toos
   :config

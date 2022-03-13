@@ -108,6 +108,8 @@ My general working style is to write everything first with pencil and paper, sit
   - [[#hide-your-current-text][Hide Your Current Text.]]
   - [[#show-current-command-in-the-mode-line][Show Current Command in the Mode Line]]
 - [[#e-book][E-Book]]
+  - [[#pdf-tools][Pdf Tools]]
+  - [[#org-pdftools][Org Pdftools]]
   - [[#pdf-view-restore][Pdf View Restore]]
 - [[#dashboard][Dashboard]]
   - [[#page-break-lines][Page Break Lines]]
@@ -1327,6 +1329,23 @@ keycast-mode displays the command and event in the mode-line and keycast-log-mod
 #+END_SRC
 
 * E-Book
+** Pdf Tools
+#+begin_src emacs-lisp
+  (use-package pdf-tools
+    :config (pdf-tools-install))
+#+end_src
+
+** Org Pdftools
+#+begin_src emacs-lisp
+  (use-package org-noter)
+
+  (use-package org-pdftools
+    :hook (org-mode . org-pdftools-setup-link))
+
+  (use-package org-noter-pdftools
+    :after org-noter)
+#+end_src
+
 ** Pdf View Restore
 Support for opening last known pdf position in pdf-view-mode provided by pdf-tools.
 #+begin_src emacs-lisp
