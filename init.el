@@ -272,11 +272,7 @@
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
 ;; Since I let evil-mode take over C-u for buffer scrolling, I need to re-bind the universal-argument command to another key sequence. I’m choosing C-M-u for this purpose.
-(general-define-key
- :keymaps '(normal insert emacs)
- :prefix "C-M"
- :non-normal-prefix "M-C-SPC"
- "u" 'universal-argument)
+(global-set-key (kbd "C-M-u") 'universal-argument)
 
 (general-define-key
  :keymaps '(normal insert emacs)
@@ -866,22 +862,23 @@
 (setq pdf-view-restore-filename "~/.cache/emacs/.pdf-view-restore")
 
 (use-package dashboard
-  :init      ;; tweak dashboard config before loading it
-  (setq dashboard-set-heading-icons t)
-  (setq dashboard-set-file-icons t)
-  (setq dashboard-banner-logo-title "While any text editor can save your files, only Emacs can save your soul")
-  (setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
-  ;; (setq dashboard-startup-banner "~/.config/emacs/images/RMS.png")  ;; use custom image as banner
-  (setq dashboard-center-content nil) ;; set to 't' for centered content
-  (setq dashboard-items '((recents . 4)
-                          (agenda . 3 )
-                          (bookmarks . 3)
-                          (projects . 3)
-                          (registers . 3)))
-  :config
-  (dashboard-setup-startup-hook)
-  (dashboard-modify-heading-icons '((recents . "file-text")
-                                    (bookmarks . "book"))))
+    :init      ;; tweak dashboard config before loading it
+    (setq dashboard-set-heading-icons t)
+    (setq dashboard-set-file-icons t)
+    (setq dashboard-banner-logo-title "While any text editor can save your files, only Emacs can save your soul")
+    (setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+    ;; (setq dashboard-startup-banner "~/.config/emacs/images/RMS.png")  ;; use custom image as banner
+    (setq dashboard-center-content nil) ;; set to 't' for centered content
+    (setq dashboard-items '((recents . 4)
+                            (agenda . 3 )
+                            (bookmarks . 3)
+                            (projects . 3)
+                            (registers . 3)))
+    :config
+    (dashboard-setup-startup-hook)
+    (dashboard-modify-heading-icons '((recents . "file-text")
+                                      (bookmarks . "book"))))
+(dashboard-return)
 
 (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
 

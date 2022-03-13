@@ -512,22 +512,18 @@ General keybindings helper
 
 Global keybindings
 #+BEGIN_SRC emacs-lisp
-  ;; ESC Cancels All
-  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+    ;; ESC Cancels All
+    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
-  ;; Since I let evil-mode take over C-u for buffer scrolling, I need to re-bind the universal-argument command to another key sequence. I’m choosing C-M-u for this purpose.
-  (general-define-key
-   :keymaps '(normal insert emacs)
-   :prefix "C-M"
-   :non-normal-prefix "M-C-SPC"
-   "u" 'universal-argument)
+    ;; Since I let evil-mode take over C-u for buffer scrolling, I need to re-bind the universal-argument command to another key sequence. I’m choosing C-M-u for this purpose.
+    (global-set-key (kbd "C-M-u") 'universal-argument)
 
-  (general-define-key
-   :keymaps '(normal insert emacs)
-   :prefix "SPC"
-   :non-normal-prefix "M-SPC"
-   "g" 'counsel-projectile-rg
-   "t t" 'load-theme)
+    (general-define-key
+     :keymaps '(normal insert emacs)
+     :prefix "SPC"
+     :non-normal-prefix "M-SPC"
+     "g" 'counsel-projectile-rg
+     "t t" 'load-theme)
  #+END_SRC
 
 * Evil Mode
@@ -1383,7 +1379,7 @@ Support for opening last known pdf position in pdf-view-mode provided by pdf-too
 * Dashboard
 Emacs dashboard is an extensible startup screen showing you recent files, bookmarks, agenda items and an emacs banner.
 configuring dashboard
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package dashboard
     :init      ;; tweak dashboard config before loading it
     (setq dashboard-set-heading-icons t)
@@ -1401,13 +1397,14 @@ configuring dashboard
     (dashboard-setup-startup-hook)
     (dashboard-modify-heading-icons '((recents . "file-text")
                                       (bookmarks . "book"))))
-#+end_src
+(dashboard-return)
+#+END_SRC
 
 dashboard in emacsclient
 this setting ensures that emacsclient always opens on dashboard rather than scratch.
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
-#+end_src
+#+END_SRC
 
 ** Page Break Lines
 #+begin_src emacs-lisp
