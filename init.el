@@ -696,6 +696,21 @@
 ;; Enable emmet-mode with web-mode
 (add-hook 'web-mode-hook  'emmet-mode)
 
+(use-package auctex-latexmk)
+(auctex-latexmk-setup)
+
+(setq auctex-latexmk-inherit-TeX-PDF-mode t)
+
+(use-package company-math)
+;; global activation of the unicode symbol completion
+(add-to-list 'company-backends 'company-math-symbols-unicode)
+
+(use-package latex-preview-pane)
+
+;; Refresh Preview (bound to M-p)
+;; Open in External Program (Bound to M-P)
+(latex-preview-pane-enable)
+
 (use-package indium)
 
 (use-package js2-mode)

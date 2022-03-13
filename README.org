@@ -84,11 +84,12 @@ My general working style is to write everything first with pencil and paper, sit
     - [[#python][Python]]
     - [[#emacs-lisp][Emacs Lisp]]
     - [[#markdown][Markdown]]
-    - [[#html--jsx][HTML & JSX]]
+    - [[#html][HTML]]
       - [[#web-mode][Web Mode]]
       - [[#live-server][Live Server]]
       - [[#skewer][Skewer]]
       - [[#emmet][Emmet]]
+    - [[#latex][LaTeX]]
     - [[#javascript][Javascript]]
     - [[#json][JSON]]
     - [[#scss][SCSS]]
@@ -1070,7 +1071,7 @@ Elpy is available on Melpa, the most straightforward way to install it is to use
         (set-face-attribute (car face) nil :weight 'normal :height (cdr face)))))
 #+END_SRC
 
-*** HTML & JSX
+*** HTML
 **** Web Mode
 #+BEGIN_SRC emacs-lisp
   (use-package web-mode
@@ -1141,6 +1142,32 @@ Elpy is available on Melpa, the most straightforward way to install it is to use
   (add-hook 'web-mode-hook  'emmet-mode)
 #+END_SRC
 
+*** LaTeX
+#+BEGIN_SRC emacs-lisp
+  (use-package auctex-latexmk)
+  (auctex-latexmk-setup)
+#+END_SRC
+
+By using M-x TeX-command-master (or C-c C-c), you can use LatexMk command to compile TeX source.
+If you would like LatexMk to pass the -pdf flag when TeX-PDF-mode is active add
+#+BEGIN_SRC emacs-lisp
+  (setq auctex-latexmk-inherit-TeX-PDF-mode t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package company-math)
+  ;; global activation of the unicode symbol completion
+  (add-to-list 'company-backends 'company-math-symbols-unicode)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package latex-preview-pane)
+
+  ;; Refresh Preview (bound to M-p)
+  ;; Open in External Program (Bound to M-P)
+  (latex-preview-pane-enable)
+#+END_SRC
+
 *** Javascript
 #+BEGIN_SRC emacs-lisp
   (use-package indium)
@@ -1164,7 +1191,6 @@ Elpy is available on Melpa, the most straightforward way to install it is to use
 #+END_SRC
 
 *** SCSS
-
 #+BEGIN_SRC emacs-lisp
   (use-package scss-mode
     :mode ("\\.scss\\'" . scss-mode)
@@ -1296,9 +1322,10 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
 
 ** Show Current Command in the Mode Line
 keycast-mode displays the command and event in the mode-line and keycast-log-mode displays them in a dedicated frame.
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package keycast)
-#+END_src
+#+END_SRC
+
 * E-Book
 ** Pdf View Restore
 Support for opening last known pdf position in pdf-view-mode provided by pdf-tools.
