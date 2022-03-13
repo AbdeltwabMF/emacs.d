@@ -9,11 +9,11 @@
 * Preface
 GNU Emacs isn’t a text editor, it’s the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
 
-#+BEGIN_VERSE
-  My general working style is to write everything first with pencil and paper, sitting beside a big wastebasket. Then I use Emacs to enter the text into my machine.
+#+BEGIN_QUOTE
+My general working style is to write everything first with pencil and paper, sitting beside a big wastebasket. Then I use Emacs to enter the text into my machine.
 
     ---Donald E. Knuth
-#+END_VERSE
+#+END_QUOTE
 
 * TABLE OF CONTENTS                                                     :TOC_7:
 - [[#preface][Preface]]
