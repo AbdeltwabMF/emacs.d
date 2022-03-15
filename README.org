@@ -507,7 +507,12 @@ Family of short bindings with a common prefix - a Hydra.
 
 General keybindings helper
 #+BEGIN_SRC emacs-lisp
-  (use-package general)
+  (use-package general
+    :config
+    (general-override-mode)
+    (general-create-definer leader-spc
+      :keymaps 'override
+      :prefix "SPC"))
 #+END_SRC
 
 Global keybindings
@@ -1616,6 +1621,10 @@ Useful mu4e manual pages:
 
     ;; Run mu4e in the background to sync mail periodically
     (mu4e t))
+
+  (leader-spc 'normal
+    :keymaps 'override
+    "m" 'mu4e)
 #+END_SRC
 
 Use [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]] to show notifications when e-mail comes in:

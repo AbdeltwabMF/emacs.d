@@ -266,7 +266,12 @@
 
 (use-package hydra)
 
-(use-package general)
+(use-package general
+  :config
+  (general-override-mode)
+  (general-create-definer leader-spc
+    :keymaps 'override
+    :prefix "SPC"))
 
 ;; ESC Cancels All
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -1058,6 +1063,10 @@
 
   ;; Run mu4e in the background to sync mail periodically
   (mu4e t))
+
+(leader-spc 'normal
+  :keymaps 'override
+  "m" 'mu4e)
 
 (use-package mu4e-alert
   :after mu4e
