@@ -517,19 +517,19 @@ General keybindings helper
 
 Global keybindings
 #+BEGIN_SRC emacs-lisp
-    ;; ESC Cancels All
-    (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+  ;; ESC Cancels All
+  (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
-    ;; Since I let evil-mode take over C-u for buffer scrolling, I need to re-bind the universal-argument command to another key sequence. I’m choosing C-M-u for this purpose.
-    (global-set-key (kbd "C-M-u") 'universal-argument)
+  ;; Since I let evil-mode take over C-u for buffer scrolling, I need to re-bind the universal-argument command to another key sequence. I’m choosing C-M-u for this purpose.
+  (global-set-key (kbd "C-M-u") 'universal-argument)
 
-    (general-define-key
-     :keymaps '(normal insert emacs)
-     :prefix "SPC"
-     :non-normal-prefix "M-SPC"
-     "g" 'counsel-projectile-rg
-     "t t" 'load-theme)
- #+END_SRC
+  (general-define-key
+   :keymaps '(normal insert emacs)
+   :prefix "SPC"
+   :non-normal-prefix "M-SPC"
+   "g" 'counsel-projectile-rg
+   "t t" 'load-theme)
+#+END_SRC
 
 * Evil Mode
 Some tips can be found here:
@@ -1254,10 +1254,9 @@ Set up the compile package and ensure that compilation output automatically scro
 *** Syntax checking with Flycheck
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
-    :defer t
+    :init (global-flycheck-mode)
     :hook (lsp-mode . flycheck-mode))
 
-  ;; Enable flycheck globally
   (add-hook 'after-init-hook #'global-flycheck-mode)
 #+END_SRC
 
@@ -1402,7 +1401,7 @@ configuring dashboard
     (dashboard-setup-startup-hook)
     (dashboard-modify-heading-icons '((recents . "file-text")
                                       (bookmarks . "book"))))
-(dashboard-return)
+  (dashboard-return)
 #+END_SRC
 
 dashboard in emacsclient

@@ -775,10 +775,9 @@
     (add-hook 'after-save-hook #'recompile nil t)))
 
 (use-package flycheck
-  :defer t
+  :init (global-flycheck-mode)
   :hook (lsp-mode . flycheck-mode))
 
-;; Enable flycheck globally
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
 (use-package yasnippet
@@ -867,22 +866,22 @@
 (setq pdf-view-restore-filename "~/.cache/emacs/.pdf-view-restore")
 
 (use-package dashboard
-    :init      ;; tweak dashboard config before loading it
-    (setq dashboard-set-heading-icons t)
-    (setq dashboard-set-file-icons t)
-    (setq dashboard-banner-logo-title "While any text editor can save your files, only Emacs can save your soul")
-    (setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
-    ;; (setq dashboard-startup-banner "~/.config/emacs/images/RMS.png")  ;; use custom image as banner
-    (setq dashboard-center-content nil) ;; set to 't' for centered content
-    (setq dashboard-items '((recents . 4)
-                            (agenda . 3 )
-                            (bookmarks . 3)
-                            (projects . 3)
-                            (registers . 3)))
-    :config
-    (dashboard-setup-startup-hook)
-    (dashboard-modify-heading-icons '((recents . "file-text")
-                                      (bookmarks . "book"))))
+  :init      ;; tweak dashboard config before loading it
+  (setq dashboard-set-heading-icons t)
+  (setq dashboard-set-file-icons t)
+  (setq dashboard-banner-logo-title "While any text editor can save your files, only Emacs can save your soul")
+  (setq dashboard-startup-banner 'logo) ;; use standard emacs logo as banner
+  ;; (setq dashboard-startup-banner "~/.config/emacs/images/RMS.png")  ;; use custom image as banner
+  (setq dashboard-center-content nil) ;; set to 't' for centered content
+  (setq dashboard-items '((recents . 4)
+                          (agenda . 3 )
+                          (bookmarks . 3)
+                          (projects . 3)
+                          (registers . 3)))
+  :config
+  (dashboard-setup-startup-hook)
+  (dashboard-modify-heading-icons '((recents . "file-text")
+                                    (bookmarks . "book"))))
 (dashboard-return)
 
 (setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
