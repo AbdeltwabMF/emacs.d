@@ -1142,6 +1142,8 @@
 
 (setq org-clock-sound "~/.local/share/sounds/notification.wav")
 
+(use-package org-present)
+
 (use-package toc-org
   :commands toc-org-enable
   :init (add-hook 'org-mode-hook 'toc-org-enable))

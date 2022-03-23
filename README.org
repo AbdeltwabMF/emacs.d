@@ -1710,6 +1710,11 @@ Org mode Timer
   (setq org-clock-sound "~/.local/share/sounds/notification.wav")
 #+END_SRC
 
+Precise behaviour of org-present during start and quit is controlled from hooks. The following will enlarge text, show images, hide the cursor and make the buffer read-only:
+#+BEGIN_SRC emacs-lisp
+  (use-package org-present)
+#+END_SRC
+
 ** Create Table of Contents
 Toc-org helps you to have an up-to-date table of contents in org files without exporting (useful useful for README files on GitHub).  Use :TOC: to create the table.
 #+BEGIN_SRC emacs-lisp
