@@ -1083,15 +1083,14 @@
 ;; On Mac OSX you can set style to
 ;; 1. notifier      - Notifications using the `terminal-notifier' program, requires `terminal-notifier' to be in PATH
 ;; 1. growl         - Notifications using the `growl' program, requires `growlnotify' to be in PATH
-(mu4e-alert-set-default-style 'notifications)
+;; (mu4e-alert-set-default-style 'notifications)
 (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
 
 ;; Mode Line display of unread emails
 (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
 
-(mu4e-alert-set-default-style 'libnotify)
 (alert-add-rule :category "mu4e-alert" :style 'fringe :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode))) :continue t)
-(mu4e-alert-enable-notifications)
+;; (mu4e-alert-enable-notifications)
 
 ;; count - Display the count of unread emails
 ;; subjects - Display the subject of unread emails
