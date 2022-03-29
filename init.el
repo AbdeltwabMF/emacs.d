@@ -29,12 +29,6 @@
 (require 'use-package)
 (setq use-package-always-ensure t)
 
-(use-package quelpa
-  :ensure t)
-
-(use-package quelpa-use-package
-  :ensure t)
-
 ;; Change the user-emacs-directory to keep unwanted things out of ~/.config/emacs
 (setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
       url-history-file (expand-file-name "url/history" user-emacs-directory))
@@ -164,7 +158,6 @@
   :hook (doom-modeline-mode . minions-mode))
 
 (use-package doom-modeline
-  :ensure t
   :hook (after-init . doom-modeline-init)
   :custom-face
   (mode-line ((t (:height 0.90))))
@@ -276,9 +269,6 @@
 ;; ESC Cancels All
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
-;; Since I let evil-mode take over C-u for buffer scrolling, I need to re-bind the universal-argument command to another key sequence. I’m choosing C-M-u for this purpose.
-(global-set-key (kbd "C-M-u") 'universal-argument)
-
 (general-define-key
  :keymaps '(normal insert emacs)
  :prefix "SPC"
@@ -286,27 +276,7 @@
  "g" 'counsel-projectile-rg
  "t t" 'load-theme)
 
-(use-package evil
-  :init
-  (progn
-    (setq evil-undo-system 'undo-tree)
-    ;; `evil-collection' assumes `evil-want-keybinding' is set to
-    ;; `nil' before loading `evil' and `evil-collection'
-    ;; @see https://github.com/emacs-evil/evil-collection#installation
-    (setq evil-want-keybinding nil)
-    )
-  :config
-  (progn
-    (evil-mode 1)))
-
-(use-package evil-collection
-  :after evil
-  :ensure t
-  :config
-  (evil-collection-init))
-
 (setq-default tab-width 2)
-(setq-default evil-shift-width tab-width)
 
 (setq-default indent-tabs-mode nil)
 
@@ -337,9 +307,6 @@
 
 ;; Revert buffers when the underlying file has changed
 (global-auto-revert-mode 1)
-
-(use-package evil-multiedit)
-(evil-multiedit-default-keybinds)
 
 (define-key global-map (kbd "C-/") 'undo)
 (define-key global-map (kbd "C-x C-/") 'redo)
@@ -459,11 +426,6 @@
   :bind (("C-M-j" . bufler-switch-buffer)
          ("C-M-k" . bufler-workspace-frame-set))
   :config
-  (evil-collection-define-key 'normal 'bufler-list-mode-map
-    (kbd "RET")   'bufler-list-buffer-switch
-    (kbd "M-RET") 'bufler-list-buffer-peek
-    "D"           'bufler-list-buffer-kill)
-
   (setf bufler-groups
         (bufler-defgroups
           ;; Subgroup collecting all named workspaces.
@@ -517,11 +479,8 @@
   (ace-window-display-mode 1))
 
 (use-package winner
-  :after evil
   :config
-  (winner-mode)
-  (define-key evil-window-map "u" 'winner-undo)
-  (define-key evil-window-map "U" 'winner-redo))
+  (winner-mode))
 
 ;; (setq display-buffer-base-action
 ;;       '(display-buffer-reuse-mode-window
@@ -587,9 +546,29 @@
   :ensure t
   :bind ("C-c d" . docker))
 
+(use-package dockerfile-mode)
+(add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
+(use-package docker-compose-mode)
+
+(use-package lsp-docker)
+
+(defvar lsp-docker-client-packages
+  '(lsp-css lsp-clients lsp-bash lsp-go lsp-pyls lsp-html lsp-typescript
+            lsp-terraform lsp-clangd))
+
+(setq lsp-docker-client-configs
+      '((:server-id bash-ls :docker-server-id bashls-docker :server-command "bash-language-server start")
+        (:server-id clangd :docker-server-id clangd-docker :server-command "clangd")
+        (:server-id css-ls :docker-server-id cssls-docker :server-command "css-languageserver --stdio")
+        (:server-id dockerfile-ls :docker-server-id dockerfilels-docker :server-command "docker-langserver --stdio")
+        (:server-id gopls :docker-server-id gopls-docker :server-command "gopls")
+        (:server-id html-ls :docker-server-id htmls-docker :server-command "html-languageserver --stdio")
+        (:server-id pyls :docker-server-id pyls-docker :server-command "pyls")
+        (:server-id ts-ls :docker-server-id tsls-docker :server-command "typescript-language-server --stdio")))
+
 (use-package lsp-mode
   :commands lsp
-  ;; :hook ((typescript-mode js2-mode web-mode) . lsp)
+  :hook ((typescript-mode js2-mode web-mode) . lsp)
   :bind (:map lsp-mode-map
               ("TAB" . completion-at-point))
   :custom (lsp-headerline-breadcrumb-enable nil))
@@ -726,6 +705,12 @@
 
 ;; Enable emmet-mode with web-mode
 (add-hook 'web-mode-hook  'emmet-mode)
+
+(general-define-key
+ :keymaps '(normal emacs)
+ :prefix "SPC"
+ :non-normal-prefix "M-SPC"
+ "w" 'emmet-wrap-wait-markup)
 
 (use-package auctex-latexmk)
 (auctex-latexmk-setup)
@@ -893,22 +878,15 @@
 (use-package peep-dired)
 
 (with-eval-after-load 'dired
-  ;;(define-key dired-mode-map (kbd "M-p") 'peep-dired)
-  (evil-define-key 'normal dired-mode-map (kbd "h") 'dired-up-directory)
-  (evil-define-key 'normal dired-mode-map (kbd "l") 'dired-open-file) ; use dired-find-file instead if not using dired-open package
-  (evil-define-key 'normal peep-dired-mode-map (kbd "j") 'peep-dired-next-file)
-  (evil-define-key 'normal peep-dired-mode-map (kbd "k") 'peep-dired-prev-file))
-
-(add-hook 'peep-dired-hook 'evil-normalize-keymaps)
-;; Get file icons in dired
-(add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
-;; With dired-open plugin, you can launch external programs for certain extensions
-;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
-(setq dired-open-extensions '(("gif" . "sxiv")
-                              ("jpg" . "sxiv")
-                              ("png" . "sxiv")
-                              ("mkv" . "mpv")
-                              ("mp4" . "mpv")))
+  ;; Get file icons in dired
+  (add-hook 'dired-mode-hook 'all-the-icons-dired-mode)
+  ;; With dired-open plugin, you can launch external programs for certain extensions
+  ;; For example, I set all .png files to open in 'sxiv' and all .mp4 files to open in 'mpv'
+  (setq dired-open-extensions '(("gif" . "sxiv")
+                                ("jpg" . "sxiv")
+                                ("png" . "sxiv")
+                                ("mkv" . "mpv")
+                                ("mp4" . "mpv"))))
 
 (use-package calfw
   :commands cfw:open-org-calendar
@@ -927,11 +905,9 @@
     (setq cfw:org-agenda-schedule-args '(:timestamp))))
 
 (use-package vterm
-  :after evil-collection
   :commands vterm
   :config
-  (setq vterm-max-scrollback 1000000)
-  (advice-add 'evil-collection-vterm-insert :before #'vterm-reset-cursor-point))
+  (setq vterm-max-scrollback 1000000))
 
 (use-package tracking
   :defer t
@@ -954,11 +930,11 @@
 
 (use-package mu4e
   :ensure nil
-  :defer 20 ;; Wait until 20 seconds after startup
+  :defer 60 ;; Wait until 20 seconds after startup
   :config
 
   ;; Refresh mail using isync every 10 minutes
-  (setq mu4e-update-interval (* 5 60))
+  (setq mu4e-update-interval (* 25 60))
   (setq mu4e-get-mail-command "mbsync -a -c ~/.config/isync/mbsyncrc")
   (setq mu4e-maildir "~/.local/share/Mail")
 
@@ -1069,32 +1045,15 @@
 
 (use-package mu4e-alert
   :after mu4e
-  :config
-  ;; Show notifications for mails already notified
-  (setq mu4e-alert-notify-repeated-mails nil)
+  :hook ((after-init . mu4e-alert-enable-notifications)
+         (after-init . mu4e-alert-enable-mode-line-display)))
 
-  (mu4e-alert-enable-notifications))
+(defun mu4e-alert-set-default-style (value)
+  (let ((notification-style (if (consp value) (eval value) value)))
+    (alert-add-rule :category "mu4e-alert" :style notification-style)
+    (setq-default mu4e-alert-style notification-style)))
 
-;; Choose the style you prefer for desktop notifications
-;; If you are on Linux you can use
-;; 1. notifications - Emacs lisp implementation of the Desktop Notifications API
-;; 2. libnotify     - Notifications using the `notify-send' program, requires `notify-send' to be in PATH
-;;
-;; On Mac OSX you can set style to
-;; 1. notifier      - Notifications using the `terminal-notifier' program, requires `terminal-notifier' to be in PATH
-;; 1. growl         - Notifications using the `growl' program, requires `growlnotify' to be in PATH
-;; (mu4e-alert-set-default-style 'notifications)
-(add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
-
-;; Mode Line display of unread emails
-(add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
-
-(alert-add-rule :category "mu4e-alert" :style 'fringe :predicate (lambda (_) (string-match-p "^mu4e-" (symbol-name major-mode))) :continue t)
-;; (mu4e-alert-enable-notifications)
-
-;; count - Display the count of unread emails
-;; subjects - Display the subject of unread emails
-(setq mu4e-alert-email-notification-types '(count))
+(mu4e-alert-set-default-style 'notifications)
 
 (defun amf/org-mode-setup ()
   (org-indent-mode)
@@ -1150,13 +1109,13 @@
 
 (setq org-todo-keywords        ; This overwrites the default Doom org-todo-keywords
       '((sequence
-         "TODO(t)"           ; A task that is ready to be tackled
-         "DOING(t)"          ; A task that is ready to be tackled
+         "TODO(t)"           ; A task that is considered
+         "DOING(t)"          ; A task that is accomplish now
          "DONE(d)"           ; Task has been completed
-         "BLOG(b)"           ; Blog writing assignments
-         "GYM(g)"            ; Things to accomplish at the gym
-         "PROJECT(p)"        ; A project that contains other tasks
-         "Code(c)"           ; Code assignments
+         "IMPORTANT(I)"      ; A task with very high priority
+         "READY(g)"          ; A task that is ready to be tackled
+         "DRAFT(p)"          ; A task that is drafted
+         "ARCHIVE(c)"        ; Archive for later on
          "WAIT(w)"           ; Something is holding up this task
          "|"                 ; The pipe necessary to separate "active" states and "inactive" states
          "CANCELLED(c)" )))  ; Task has been cancelled
