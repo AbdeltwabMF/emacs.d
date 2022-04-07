@@ -257,6 +257,10 @@
 
 (setq tramp-default-method "ssh")
 
+(use-package exec-path-from-shell)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+
 (use-package hydra)
 
 (use-package general
@@ -308,8 +312,11 @@
 ;; Revert buffers when the underlying file has changed
 (global-auto-revert-mode 1)
 
-(define-key global-map (kbd "C-/") 'undo)
-(define-key global-map (kbd "C-x C-/") 'redo)
+(use-package multiple-cursors)
+(global-set-key (kbd "C-M-x") 'mc/edit-lines)
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 (use-package aggressive-indent)
 (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
@@ -334,6 +341,9 @@
   (setq undo-tree-visualizer-timestamps t)
   ;; Show a diff window displaying changes between undo nodes.
   (setq undo-tree-visualizer-diff t))
+
+(define-key global-map (kbd "C-/") 'undo)
+(define-key global-map (kbd "C-x C-/") 'redo)
 
 (use-package corfu
   :bind (:map corfu-map
@@ -749,6 +759,31 @@
 
 (use-package solidity-mode)
 
+(use-package color-identifiers-mode)
+(add-hook 'after-init-hook 'global-color-identifiers-mode)
+
+;; To make the variables stand out, you can turn off highlighting for all other keywords in supported modes using a code like:
+(defun myfunc-color-identifiers-mode-hook ()
+  (let ((faces '(font-lock-comment-face font-lock-comment-delimiter-face font-lock-constant-face font-lock-type-face font-lock-function-name-face font-lock-variable-name-face font-lock-keyword-face font-lock-string-face font-lock-builtin-face font-lock-preprocessor-face font-lock-warning-face font-lock-doc-face font-lock-negation-char-face font-lock-regexp-grouping-construct font-lock-regexp-grouping-backslash)))
+    (dolist (face faces)
+      (face-remap-add-relative face '((:foreground "" :weight normal :slant normal)))))
+  (face-remap-add-relative 'font-lock-keyword-face '((:weight bold)))
+  (face-remap-add-relative 'font-lock-comment-face '((:slant italic)))
+  (face-remap-add-relative 'font-lock-builtin-face '((:weight bold)))
+  (face-remap-add-relative 'font-lock-preprocessor-face '((:weight bold)))
+  (face-remap-add-relative 'font-lock-function-name-face '((:slant italic)))
+  (face-remap-add-relative 'font-lock-string-face '((:slant italic)))
+  (face-remap-add-relative 'font-lock-constant-face '((:weight bold))))
+(add-hook 'color-identifiers-mode-hook 'myfunc-color-identifiers-mode-hook)
+
+(use-package visual-regexp)
+(define-key global-map (kbd "C-c r") 'vr/replace)
+(define-key global-map (kbd "C-c q") 'vr/query-replace)
+;; if you use multiple-cursors, this is for you:
+(define-key global-map (kbd "C-c m") 'vr/mc-mark)
+
+(use-package format-all)
+
 (use-package compile
   :custom
   (compilation-scroll-output t))
@@ -769,9 +804,6 @@
   :hook (prog-mode . yas-minor-mode)
   :config
   (yas-reload-all))
-
-(use-package smartparens
-  :hook (prog-mode . smartparens-mode))
 
 (use-package rainbow-mode
   :defer t
@@ -930,11 +962,11 @@
 
 (use-package mu4e
   :ensure nil
-  :defer 60 ;; Wait until 20 seconds after startup
+  :defer 60 ;; Wait until 60 seconds after startup
   :config
 
   ;; Refresh mail using isync every 10 minutes
-  (setq mu4e-update-interval (* 25 60))
+  (setq mu4e-update-interval (* 10 60))
   (setq mu4e-get-mail-command "mbsync -a -c ~/.config/isync/mbsyncrc")
   (setq mu4e-maildir "~/.local/share/Mail")
 
@@ -1067,7 +1099,7 @@
 
 (with-eval-after-load 'org-faces
   ;; Increase the size of various headings
-  (set-face-attribute 'org-document-title nil :font "Cantarell" :weight 'bold :height 1.5)
+  (set-face-attribute 'org-document-title nil :font "Fantasque Sans Mono" :weight 'bold :height 1.5)
   (dolist (face '((org-level-1 . 1.2)
                   (org-level-2 . 1.18)
                   (org-level-3 . 1.16)
@@ -1076,7 +1108,7 @@
                   (org-level-6 . 1.1)
                   (org-level-7 . 1.0)
                   (org-level-8 . 1.0)))
-    (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face))))
+    (set-face-attribute (car face) nil :font "Fantasque Sans Mono" :weight 'regular :height (cdr face))))
 
 (use-package org
   :hook (org-mode . amf/org-mode-setup)
