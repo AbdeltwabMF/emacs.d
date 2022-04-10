@@ -203,6 +203,9 @@ Clean up Emacs’ user interface, make it more minimal.
   (setq inhibit-startup-message t)
   (setq visible-bell t)
 
+  (use-package beacon)
+  (beacon-mode 1)
+
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
   (tooltip-mode -1)
@@ -1022,6 +1025,15 @@ Emacs frontend to GNU Global source code tagging system.
            (lambda () (require 'ccls) (lsp))))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (use-package disaster)
+  (define-key c-mode-base-map (kbd "C-c a") 'disaster)
+#+END_SRC
+
+#+RESULTS:
+: disaster
+
+
 *** Go
 #+BEGIN_SRC emacs-lisp
   (use-package go-mode
@@ -1242,6 +1254,16 @@ If you would like LatexMk to pass the -pdf flag when TeX-PDF-mode is active add
   (add-hook 'color-identifiers-mode-hook 'myfunc-color-identifiers-mode-hook)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (use-package symbol-overlay)
+  (global-set-key (kbd "M-i") 'symbol-overlay-put)
+  (global-set-key (kbd "M-n") 'symbol-overlay-switch-forward)
+  (global-set-key (kbd "M-p") 'symbol-overlay-switch-backward)
+  (global-set-key (kbd "<f7>") 'symbol-overlay-mode)
+  (global-set-key (kbd "<f8>") 'symbol-overlay-remove-all)
+#+END_SRC
+
+
 ** Regular Expression
 #+BEGIN_SRC emacs-lisp
   (use-package visual-regexp)
@@ -1254,6 +1276,8 @@ If you would like LatexMk to pass the -pdf flag when TeX-PDF-mode is active add
 ** Format
 #+BEGIN_SRC emacs-lisp
   (use-package format-all)
+  (add-hook 'prog-mode-hook 'format-all-mode)
+  (setq format-all-show-errors 'errors)
 #+END_SRC
 
 ** Compilation

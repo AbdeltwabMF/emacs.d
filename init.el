@@ -46,6 +46,9 @@
 (setq inhibit-startup-message t)
 (setq visible-bell t)
 
+(use-package beacon)
+(beacon-mode 1)
+
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
@@ -620,6 +623,9 @@
   :hook ((c-mode c++-mode objc-mode cuda-mode) .
          (lambda () (require 'ccls) (lsp))))
 
+(use-package disaster)
+(define-key c-mode-base-map (kbd "C-c a") 'disaster)
+
 (use-package go-mode
   :hook (go-mode . lsp-deferred))
 
@@ -776,6 +782,13 @@
   (face-remap-add-relative 'font-lock-constant-face '((:weight bold))))
 (add-hook 'color-identifiers-mode-hook 'myfunc-color-identifiers-mode-hook)
 
+(use-package symbol-overlay)
+(global-set-key (kbd "M-i") 'symbol-overlay-put)
+(global-set-key (kbd "M-n") 'symbol-overlay-switch-forward)
+(global-set-key (kbd "M-p") 'symbol-overlay-switch-backward)
+(global-set-key (kbd "<f7>") 'symbol-overlay-mode)
+(global-set-key (kbd "<f8>") 'symbol-overlay-remove-all)
+
 (use-package visual-regexp)
 (define-key global-map (kbd "C-c r") 'vr/replace)
 (define-key global-map (kbd "C-c q") 'vr/query-replace)
@@ -783,6 +796,8 @@
 (define-key global-map (kbd "C-c m") 'vr/mc-mark)
 
 (use-package format-all)
+(add-hook 'prog-mode-hook 'format-all-mode)
+(setq format-all-show-errors 'errors)
 
 (use-package compile
   :custom
