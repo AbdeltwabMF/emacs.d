@@ -362,6 +362,8 @@
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
 
+(server-mode 1)
+
 (use-package hydra)
 
 (use-package general
@@ -1098,13 +1100,13 @@
   ;; load mu4e-context configuration
   (setq mu4e-contexts
         (list
-         ;; Work
+         ;; work
          (make-mu4e-context
-          :name "Work"
+          :name "work"
           :match-func
           (lambda (msg)
             (when msg
-              (string-prefix-p "/Work" (mu4e-message-field msg :maildir))))
+              (string-prefix-p "/work" (mu4e-message-field msg :maildir))))
           :vars '((user-mail-address . "abdeltwab.m.fakhry@gmail.com")
                   (user-full-name    . "Abd El-Twab M. Fakhry")
 
@@ -1112,20 +1114,20 @@
                   (smtpmail-smtp-service . 465)
                   (smtpmail-stream-type  . ssl)
 
-                  (mu4e-sent-folder       . "/Work/[Gmail]/Sent Mail")
-                  (mu4e-spam-folder       . "/Work/[Gmail]/Spam")
-                  (mu4e-trash-folder      . "/Work/[Gmail]/Trash")
-                  (mu4e-starred-folder    . "/Work/[Gmail]/Starred")
-                  (mu4e-scheduled-folder  . "/Work/[Gmail]/Scheduled")
-                  (mu4e-drafts-folder     . "/Work/[Gmail]/Drafts")))
+                  (mu4e-sent-folder       . "/work/[Gmail]/Sent Mail")
+                  (mu4e-spam-folder       . "/work/[Gmail]/Spam")
+                  (mu4e-trash-folder      . "/work/[Gmail]/Trash")
+                  (mu4e-starred-folder    . "/work/[Gmail]/Starred")
+                  (mu4e-scheduled-folder  . "/work/[Gmail]/Scheduled")
+                  (mu4e-drafts-folder     . "/work/[Gmail]/Drafts")))
 
          ;; University account
          (make-mu4e-context
-          :name "Uni"
+          :name "azhar"
           :match-func
           (lambda (msg)
             (when msg
-              (string-prefix-p "/Uni" (mu4e-message-field msg :maildir))))
+              (string-prefix-p "/azhar" (mu4e-message-field msg :maildir))))
           :vars '((user-mail-address . "AbdEl-TwabFakhry.2020@azhar.edu.eg")
                   (user-full-name    . "Abd El-Twab M. Fakhry")
 
@@ -1133,28 +1135,28 @@
                   (smtpmail-smtp-service . 587)
                   (smtpmail-stream-type  . ssl)
 
-                  (mu4e-inbox-folder     . "/Uni/Inbox")
-                  (mu4e-sent-folder      . "/Uni/Sent Items")
-                  (mu4e-spam-folder      . "/Uni/Spambox")
-                  (mu4e-trash-folder     . "/Uni/Trash")
-                  (mu4e-drafts-folder    . "/Uni/Drafts")))))
+                  (mu4e-inbox-folder     . "/azhar/Inbox")
+                  (mu4e-sent-folder      . "/azhar/Sent Items")
+                  (mu4e-spam-folder      . "/azhar/Spambox")
+                  (mu4e-trash-folder     . "/azhar/Trash")
+                  (mu4e-drafts-folder    . "/azhar/Drafts")))))
 
   ;; Mail dir
   (setq mu4e-maildir-shortcuts
-        '(("/Work/Inbox" 				     . ?i)
-          ("/Work/[Gmail]/Sent Mail" . ?s)
-          ("/Work/[Gmail]/Spam"      . ?p)
-          ("/Work/[Gmail]/Trash"     . ?t)
-          ("/Work/[Gmail]/Starred"   . ?r)
-          ("/Work/[Gmail]/Scheduled" . ?c)
+        '(("/work/Inbox" 				     . ?i)
+          ("/work/[Gmail]/Sent Mail" . ?s)
+          ("/work/[Gmail]/Spam"      . ?p)
+          ("/work/[Gmail]/Trash"     . ?t)
+          ("/work/[Gmail]/Starred"   . ?r)
+          ("/work/[Gmail]/Scheduled" . ?c)
 
-          ("/Uni/Inbox"        . ?u)
-          ("/Uni/Sent Items"   . ?n)
-          ("/Uni/Spambox"      . ?m)
-          ("/Uni/Trash"        . ?h)))
+          ("/azhar/Inbox"        . ?u)
+          ("/azhar/Sent Items"   . ?n)
+          ("/azhar/Spambox"      . ?m)
+          ("/azhar/Trash"        . ?h)))
 
   ;; You can create bookmarks to show merged views of folders across accounts:
-  (add-to-list 'mu4e-bookmarks '("m:/Uni/Inbox or m:/Work/Inbox" "All Inboxes" ?i))
+  (add-to-list 'mu4e-bookmarks '("m:/azhar/Inbox or m:/work/Inbox" "All Inboxes" ?i))
 
   ;; Display options
   (setq mu4e-view-show-images t)
