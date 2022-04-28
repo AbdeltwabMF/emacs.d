@@ -1616,6 +1616,7 @@ calfw is a gorgeous calendar UI that is able to show all of my scheduled Org Age
 vterm enables the use of fully-fledged terminal applications within Emacs so that I don’t need an external terminal emulator.
 #+BEGIN_SRC emacs-lisp
   (use-package vterm
+    :load-path  "~/.config/emacs/site-lisp/emacs-libvterm"
     :commands vterm
     :config
     (setq vterm-max-scrollback 1000000))

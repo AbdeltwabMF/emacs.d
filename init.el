@@ -1061,6 +1061,7 @@
     (setq cfw:org-agenda-schedule-args '(:timestamp))))
 
 (use-package vterm
+  :load-path  "~/.config/emacs/site-lisp/emacs-libvterm"
   :commands vterm
   :config
   (setq vterm-max-scrollback 1000000))
