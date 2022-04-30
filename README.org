@@ -1295,6 +1295,8 @@ By using M-x TeX-command-master (or C-c C-c), you can use LatexMk command to com
 If you would like LatexMk to pass the -pdf flag when TeX-PDF-mode is active add
 #+BEGIN_SRC emacs-lisp
   (setq auctex-latexmk-inherit-TeX-PDF-mode t)
+  (setq-default Tex-engine 'luatex)
+  (setq-default TeX-PDF-mode t)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -1852,13 +1854,9 @@ Precise behaviour of org-present during start and quit is controlled from hooks.
 #+BEGIN_SRC emacs-lisp
   (use-package org-jira)
   (setq jiralib-url "https://abdeltwabmf.atlassian.net")
-  (setq org-jira-download "~/vault/dox/org/jira")
-  (setq org-jira-working-dir "~/vault/dox/org/jira")
-  #+END_SRC
-
-  #+RESULTS:
-  : ~/vault/dox/org/jira
-
+  (setq org-jira-download "~/vault/documents/org/jira")
+  (setq org-jira-working-dir "~/vault/documents/org/jira")
+#+END_SRC
 
 ** Create Table of Contents
 Toc-org helps you to have an up-to-date table of contents in org files without exporting (useful useful for README files on GitHub).  Use :TOC: to create the table.

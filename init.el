@@ -841,6 +841,8 @@
 (auctex-latexmk-setup)
 
 (setq auctex-latexmk-inherit-TeX-PDF-mode t)
+(setq-default Tex-engine 'luatex)
+(setq-default TeX-PDF-mode t)
 
 (use-package company-math)
 ;; global activation of the unicode symbol completion
@@ -1262,8 +1264,8 @@
 
 (use-package org-jira)
 (setq jiralib-url "https://abdeltwabmf.atlassian.net")
-(setq org-jira-download "~/vault/dox/org/jira")
-(setq org-jira-working-dir "~/vault/dox/org/jira")
+(setq org-jira-download "~/vault/documents/org/jira")
+(setq org-jira-working-dir "~/vault/documents/org/jira")
 
 (use-package toc-org
   :commands toc-org-enable
