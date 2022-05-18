@@ -648,16 +648,40 @@
   :defer t)
 
 (use-package pdf-tools
-  :ensure t
+  :init
+  (load-path "~/.config/emacs/site-lisp/pdf-tools")
   :config
   (pdf-tools-install)
-  (setq-default pdf-view-display-size 'fit-page)
-  (setq pdf-annot-activate-created-annotations t)
+  (setq-default pdf-view-display-size 'fit-width)
   (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
   (define-key pdf-view-mode-map (kbd "C-r") 'isearch-backward)
-  (add-hook 'pdf-view-mode-hook (lambda ()
-                                  (amf/pdf-midnite-amber))) ; automatically turns on midnight-mode for pdfs
-  )
+  (setq pdf-misc-print-programm "/usr/bin/lp")
+  (setq-default pdf-view-display-size (quote fit-page))
+  (setq pdf-view-incompatible-modes
+        (quote
+         (linum-relative-mode helm-linum-relative-mode nlinum-mode nlinum-hl-mode nlinum-relative-mode yalinum-mode)))
+  :custom
+  (pdf-annot-activate-created-annotations t "automatically annotate highlights"))
+
+(setq  lpr-command "lp"
+       lpr-printer-switch "-d"
+       lpr-switches (quote ("-o fit-to-page=true" "-o sides=two-sided-long-edge" "-o Resolution=600" "-n 1 -o page-ranges=1-"))
+       )
+
+(setq thumbs-conversion-program "/usr/bin/convert")
+(setq ps-print-header nil)
+
+(add-hook 'image-mode-hook
+          (lambda ()
+            (auto-revert-mode)
+            (auto-image-file-mode)))
+
+(setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+      TeX-view-program-list '(("PDF Tools" TeX-pdf-tools-sync-view))
+      TeX-source-correlate-start-server t)
+
+(add-hook 'TeX-after-compilation-finished-functions
+          #'TeX-revert-document-buffer)
 
 (use-package org-noter)
 
@@ -666,6 +690,8 @@
 
 (use-package org-noter-pdftools
   :after org-noter)
+
+(use-package org-pdfview)
 
 (use-package pdf-view-restore
   :after pdf-toos
@@ -1013,7 +1039,6 @@
             (setq TeX-parse-self t)
                                         ; (setq-default TeX-master "paper.tex")
             (setq reftex-plug-into-AUCTeX t)
-            (pdf-tools-install)
             (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
                   TeX-source-correlate-start-server t)
             ;; Update PDF buffers after successful LaTeX runs
