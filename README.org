@@ -1,4 +1,4 @@
-#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+options: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headlin
 #+options: author:t broken-links:nil c:nil creator:nil
 #+options: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
 #+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
@@ -13,7 +13,6 @@
 #+exclude_tags: noexport
 #+creator: Emacs 28.1 (Org mode 9.5.2)
 #+cite_export:
-
 
 * Preface
 GNU Emacs isn’t a text editor, it’s the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
@@ -1978,6 +1977,13 @@ Useful mu4e manual pages:
     ;; Run mu4e in the background to sync mail periodically
     (mu4e t))
 #+END_SRC
+
+#+begin_src emacs-lisp
+(use-package mu4e-marker-icons
+  :init (mu4e-marker-icons-mode 1))
+#+end_src
+
+#+RESULTS:
 
 Use [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]] to show notifications when e-mail comes in:
 #+BEGIN_SRC emacs-lisp

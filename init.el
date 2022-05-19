@@ -1381,6 +1381,9 @@
   ;; Run mu4e in the background to sync mail periodically
   (mu4e t))
 
+(use-package mu4e-marker-icons
+  :init (mu4e-marker-icons-mode 1))
+
 (use-package mu4e-alert
   :hook ((after-init . mu4e-alert-enable-notifications)
          (after-init . mu4e-alert-enable-mode-line-display)))
