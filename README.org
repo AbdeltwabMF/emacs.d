@@ -15,7 +15,7 @@
 #+cite_export:
 
 
-*** Preface
+* Preface
 GNU Emacs isn’t a text editor, it’s the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
 
 #+BEGIN_QUOTE
@@ -25,7 +25,7 @@ My general working style is to write everything first with pencil and paper, sit
 #+END_QUOTE
 
 * Table of Contents                                                   :TOC_9:
-    - [[#preface][Preface]]
+- [[#preface][Preface]]
 - [[#header][Header]]
 - [[#startup-performance][Startup Performance]]
 - [[#package-manager][Package Manager]]
@@ -255,8 +255,8 @@ Set frame transparency and maximize windows by default.
            '(90 . 50) '(100 . 100)))))
   (global-set-key (kbd "C-c t") 'toggle-transparency)
 
-  (set-frame-parameter (selected-frame) 'alpha '(100 . 50))
-  (add-to-list 'default-frame-alist '(alpha . (80 . 50)))
+  (set-frame-parameter (selected-frame) 'alpha '(100 . 100))
+  (add-to-list 'default-frame-alist '(alpha . (100 . 100)))
   (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+END_SRC
@@ -280,7 +280,7 @@ Don’t warn for large files (shows up when launching videos)
   (setq large-file-warning-threshold nil)
 #+END_SRC
 
-Don’t warn for following symlinked files
+Don’t warn for following symbolically linked files
 #+BEGIN_SRC emacs-lisp
   (setq vc-follow-symlinks t)
 #+END_SRC
@@ -404,7 +404,7 @@ A nice gallery of Emacs themes can be found at https://emacsthemes.com/.
   (use-package gruvbox-theme
     :ensure t
     :config
-    (load-theme 'gruvbox-light-soft t))
+    (load-theme 'gruvbox-light-medium t))
 #+END_SRC
 
 ** Font
@@ -1869,11 +1869,11 @@ Useful mu4e manual pages:
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e
     :ensure nil
-    :defer 60 ;; Wait until 60 seconds after startup
+    :defer 10 ;; Wait until 10 seconds after startup
     :config
 
     ;; Refresh mail using isync every 10 minutes
-    (setq mu4e-update-interval (* 10 60))
+    (setq mu4e-update-interval (* 2 60))
     (setq mu4e-get-mail-command "mbsync -a -c ~/.config/isync/mbsyncrc")
     (setq mu4e-maildir "~/.local/share/Mail")
 
@@ -1977,25 +1977,15 @@ Useful mu4e manual pages:
 
     ;; Run mu4e in the background to sync mail periodically
     (mu4e t))
-
-  (leader-spc 'normal
-    :keymaps 'override
-    "m" 'mu4e)
 #+END_SRC
 
 Use [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]] to show notifications when e-mail comes in:
 #+BEGIN_SRC emacs-lisp
   (use-package mu4e-alert
-    :after mu4e
     :hook ((after-init . mu4e-alert-enable-notifications)
            (after-init . mu4e-alert-enable-mode-line-display)))
 
-  (defun mu4e-alert-set-default-style (value)
-    (let ((notification-style (if (consp value) (eval value) value)))
-      (alert-add-rule :category "mu4e-alert" :style notification-style)
-      (setq-default mu4e-alert-style notification-style)))
-
-  (mu4e-alert-set-default-style 'notifications)
+  (mu4e-alert-set-default-style 'libnotify)
 #+END_SRC
 
 * Org Mode
@@ -2098,6 +2088,7 @@ of this is relates to a deeper rooted issue involving fonts and font-lock relian
 
 * Footer
 #+BEGIN_SRC emacs-lisp
+  (server-mode t)
   (provide 'init)
   ;;; init.el ends here
 #+END_SRC

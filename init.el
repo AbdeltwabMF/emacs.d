@@ -80,8 +80,8 @@
          '(90 . 50) '(100 . 100)))))
 (global-set-key (kbd "C-c t") 'toggle-transparency)
 
-(set-frame-parameter (selected-frame) 'alpha '(100 . 50))
-(add-to-list 'default-frame-alist '(alpha . (80 . 50)))
+(set-frame-parameter (selected-frame) 'alpha '(100 . 100))
+(add-to-list 'default-frame-alist '(alpha . (100 . 100)))
 (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
@@ -208,7 +208,7 @@
 (use-package gruvbox-theme
   :ensure t
   :config
-  (load-theme 'gruvbox-light-soft t))
+  (load-theme 'gruvbox-light-medium t))
 
 ;; Set the font face based on platform
 (pcase system-type
@@ -1272,11 +1272,11 @@
 
 (use-package mu4e
   :ensure nil
-  :defer 60 ;; Wait until 60 seconds after startup
+  :defer 10 ;; Wait until 10 seconds after startup
   :config
 
   ;; Refresh mail using isync every 10 minutes
-  (setq mu4e-update-interval (* 10 60))
+  (setq mu4e-update-interval (* 2 60))
   (setq mu4e-get-mail-command "mbsync -a -c ~/.config/isync/mbsyncrc")
   (setq mu4e-maildir "~/.local/share/Mail")
 
@@ -1381,21 +1381,11 @@
   ;; Run mu4e in the background to sync mail periodically
   (mu4e t))
 
-(leader-spc 'normal
-  :keymaps 'override
-  "m" 'mu4e)
-
 (use-package mu4e-alert
-  :after mu4e
   :hook ((after-init . mu4e-alert-enable-notifications)
          (after-init . mu4e-alert-enable-mode-line-display)))
 
-(defun mu4e-alert-set-default-style (value)
-  (let ((notification-style (if (consp value) (eval value) value)))
-    (alert-add-rule :category "mu4e-alert" :style notification-style)
-    (setq-default mu4e-alert-style notification-style)))
-
-(mu4e-alert-set-default-style 'notifications)
+(mu4e-alert-set-default-style 'libnotify)
 
 (defun amf/org-mode-setup ()
   (org-indent-mode)
@@ -1469,5 +1459,6 @@
 
 (setq inhibit-compacting-font-caches t)
 
+(server-mode t)
 (provide 'init)
 ;;; init.el ends here
