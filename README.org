@@ -255,7 +255,7 @@ Set frame transparency and maximize windows by default.
            '(90 . 50) '(100 . 100)))))
   (global-set-key (kbd "C-c t") 'toggle-transparency)
 
-  (set-frame-parameter (selected-frame) 'alpha '(90 . 50))
+  (set-frame-parameter (selected-frame) 'alpha '(100 . 50))
   (add-to-list 'default-frame-alist '(alpha . (80 . 50)))
   (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
   (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -435,10 +435,13 @@ Different platforms need different default font sizes, and Fantasque Sans Mono i
 #+END_SRC
 
 إعداد الخط للنصوص العربية
+الخط العربي
 #+BEGIN_SRC emacs-lisp
                                           ; (set-fontset-font "fontset-default" 'arabic (font-spec :family "Janna LT" :height 110))
   (set-fontset-font "fontset-default" 'arabic (font-spec :family "Amiri Quran" :height 110))
 #+END_SRC
+
+#+RESULTS:
 
 *** Emojis in buffers
 Emojify is an Emacs extension to display emojis. It can display github style emojis like :smile: or plain ascii ones like :).

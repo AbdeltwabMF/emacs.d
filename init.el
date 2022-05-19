@@ -80,7 +80,7 @@
          '(90 . 50) '(100 . 100)))))
 (global-set-key (kbd "C-c t") 'toggle-transparency)
 
-(set-frame-parameter (selected-frame) 'alpha '(90 . 50))
+(set-frame-parameter (selected-frame) 'alpha '(100 . 50))
 (add-to-list 'default-frame-alist '(alpha . (80 . 50)))
 (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
@@ -648,8 +648,6 @@
   :defer t)
 
 (use-package pdf-tools
-  :init
-  (load-path "~/.config/emacs/site-lisp/pdf-tools")
   :config
   (pdf-tools-install)
   (setq-default pdf-view-display-size 'fit-width)
