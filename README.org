@@ -435,7 +435,6 @@ Different platforms need different default font sizes, and Fantasque Sans Mono i
 #+END_SRC
 
 إعداد الخط للنصوص العربية
-الخط العربي
 #+BEGIN_SRC emacs-lisp
                                           ; (set-fontset-font "fontset-default" 'arabic (font-spec :family "Janna LT" :height 110))
   (set-fontset-font "fontset-default" 'arabic (font-spec :family "Amiri Quran" :height 110))
