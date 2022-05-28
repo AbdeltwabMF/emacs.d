@@ -79,7 +79,7 @@ My general working style is to write everything first with pencil and paper, sit
   - [[#projectile][Projectile]]
   - [[#counsel-projectile][Counsel Projectile]]
   - [[#magit][Magit]]
-- [[#-e-book][* E-Book]]
+- [[#e-book][E-Book]]
   - [[#pdf-tools][Pdf Tools]]
   - [[#org-pdftools][Org Pdftools]]
   - [[#pdf-view-restore][Pdf View Restore]]
@@ -135,7 +135,6 @@ My general working style is to write everything first with pencil and paper, sit
     - [[#emms][EMMS]]
   - [[#mail][Mail]]
 - [[#org-mode][Org Mode]]
-  - [[#jira][Jira]]
   - [[#create-table-of-contents][Create Table of Contents]]
   - [[#org-todo-keywords][Org Todo Keywords]]
   - [[#enhancement][Enhancement]]
@@ -182,6 +181,11 @@ Initialize package sources
 
   (require 'use-package)
   (setq use-package-always-ensure t)
+
+      ;;; Install quelpa for external repo fetching
+  (use-package quelpa-use-package
+    :init (setq quelpa-update-melpa-p nil)
+    :config (quelpa-use-package-activate-advice))
 #+END_SRC
 
 * Keep it Clean
@@ -239,26 +243,26 @@ Improve scrolling.
   (setq undo-outer-limit 104857600) ;; set the size of output in bytes
 #+END_SRC
 
-Set frame transparency and maximize windows by default.
-#+BEGIN_SRC emacs-lisp
-  (defun toggle-transparency ()
-    (interactive)
-    (let ((alpha (frame-parameter nil 'alpha)))
-      (set-frame-parameter
-       nil 'alpha
-       (if (eql (cond ((numberp alpha) alpha)
-                      ((numberp (cdr alpha)) (cdr alpha))
-                      ;; Also handle undocumented (<active> <inactive>) form.
-                      ((numberp (cadr alpha)) (cadr alpha)))
-                100)
-           '(90 . 50) '(100 . 100)))))
-  (global-set-key (kbd "C-c t") 'toggle-transparency)
+# Set frame transparency and maximize windows by default.
+# #+BEGIN_SRC emacs-lisp
+#   (defun toggle-transparency ()
+#     (interactive)
+#     (let ((alpha (frame-parameter nil 'alpha)))
+#       (set-frame-parameter
+#        nil 'alpha
+#        (if (eql (cond ((numberp alpha) alpha)
+#                       ((numberp (cdr alpha)) (cdr alpha))
+#                       ;; Also handle undocumented (<active> <inactive>) form.
+#                       ((numberp (cadr alpha)) (cadr alpha)))
+#                 100)
+#            '(90 . 50) '(100 . 100)))))
+#   (global-set-key (kbd "C-c t") 'toggle-transparency)
 
-  (set-frame-parameter (selected-frame) 'alpha '(100 . 100))
-  (add-to-list 'default-frame-alist '(alpha . (100 . 100)))
-  (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
-  (add-to-list 'default-frame-alist '(fullscreen . maximized))
-#+END_SRC
+#   (set-frame-parameter (selected-frame) 'alpha '(100 . 100))
+#   (add-to-list 'default-frame-alist '(alpha . (100 . 100)))
+#   (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
+#   (add-to-list 'default-frame-alist '(fullscreen . maximized))
+# #+END_SRC
 
 Enable line numbers and customize their format.
 #+BEGIN_SRC emacs-lisp
@@ -287,105 +291,6 @@ Don’t warn for following symbolically linked files
 Don’t warn when advice is added for functions
 #+BEGIN_SRC emacs-lisp
   (setq ad-redefinition-action 'accept)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package treemacs
-    :defer t
-    :init
-    (with-eval-after-load 'winum
-      (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
-    :config
-    (progn
-      (setq treemacs-collapse-dirs                   (if treemacs-python-executable 3 0)
-            treemacs-deferred-git-apply-delay        0.5
-            treemacs-directory-name-transformer      #'identity
-            treemacs-display-in-side-window          t
-            treemacs-eldoc-display                   'simple
-            treemacs-file-event-delay                5000
-            treemacs-file-extension-regex            treemacs-last-period-regex-value
-            treemacs-file-follow-delay               0.2
-            treemacs-file-name-transformer           #'identity
-            treemacs-follow-after-init               t
-            treemacs-expand-after-init               t
-            treemacs-find-workspace-method           'find-for-file-or-pick-first
-            treemacs-git-command-pipe                ""
-            treemacs-goto-tag-strategy               'refetch-index
-            treemacs-indentation                     2
-            treemacs-indentation-string              " "
-            treemacs-is-never-other-window           nil
-            treemacs-max-git-entries                 5000
-            treemacs-missing-project-action          'ask
-            treemacs-move-forward-on-expand          nil
-            treemacs-no-png-images                   nil
-            treemacs-no-delete-other-windows         t
-            treemacs-project-follow-cleanup          nil
-            treemacs-persist-file                    (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
-            treemacs-position                        'left
-            treemacs-read-string-input               'from-child-frame
-            treemacs-recenter-distance               0.1
-            treemacs-recenter-after-file-follow      nil
-            treemacs-recenter-after-tag-follow       nil
-            treemacs-recenter-after-project-jump     'always
-            treemacs-recenter-after-project-expand   'on-distance
-            treemacs-litter-directories              '("/node_modules" "/.venv" "/.cask")
-            treemacs-show-cursor                     nil
-            treemacs-show-hidden-files               t
-            treemacs-silent-filewatch                nil
-            treemacs-silent-refresh                  nil
-            treemacs-sorting                         'alphabetic-asc
-            treemacs-select-when-already-in-treemacs 'move-back
-            treemacs-space-between-root-nodes        t
-            treemacs-tag-follow-cleanup              t
-            treemacs-tag-follow-delay                1.5
-            treemacs-text-scale                      nil
-            treemacs-user-mode-line-format           nil
-            treemacs-user-header-line-format         nil
-            treemacs-wide-toggle-width               70
-            treemacs-width                           35
-            treemacs-width-increment                 1
-            treemacs-width-is-initially-locked       t
-            treemacs-workspace-switch-cleanup        nil)
-
-      ;; The default width and height of the icons is 22 pixels. If you are
-      ;; using a Hi-DPI display, uncomment this to double the icon size.
-      ;;(treemacs-resize-icons 44)
-
-      (treemacs-follow-mode t)
-      (treemacs-filewatch-mode t)
-      (treemacs-fringe-indicator-mode 'always)
-
-      (pcase (cons (not (null (executable-find "git")))
-                   (not (null treemacs-python-executable)))
-        (`(t . t)
-         (treemacs-git-mode 'deferred))
-        (`(t . _)
-         (treemacs-git-mode 'simple)))
-
-      (treemacs-hide-gitignored-files-mode nil))
-    :bind
-    (:map global-map
-          ("M-0"       . treemacs-select-window)
-          ("C-x t 1"   . treemacs-delete-other-windows)
-          ("C-x t t"   . treemacs)
-          ("C-x t d"   . treemacs-select-directory)
-          ("C-x t B"   . treemacs-bookmark)
-          ("C-x t C-t" . treemacs-find-file)
-          ("C-x t M-t" . treemacs-find-tag)))
-
-  (use-package treemacs-projectile
-    :after (treemacs projectile)
-    :ensure t)
-
-  (use-package treemacs-icons-dired
-    :hook (dired-mode . treemacs-icons-dired-enable-once)
-    :ensure t)
-
-  (use-package treemacs-magit
-    :after (treemacs magit)
-    :ensure t)
-
-  (lsp-treemacs-sync-mode 1)
 #+END_SRC
 
 ** Theme
@@ -1041,7 +946,7 @@ This is an interesting extension to Magit that shows a TODOs section in your git
     :defer t)
 #+END_SRC
 
-* * E-Book
+* E-Book
 ** Pdf Tools
 #+BEGIN_SRC emacs-lisp
   (use-package pdf-tools
@@ -1979,11 +1884,9 @@ Useful mu4e manual pages:
 #+END_SRC
 
 #+begin_src emacs-lisp
-(use-package mu4e-marker-icons
-  :init (mu4e-marker-icons-mode 1))
+  (use-package mu4e-marker-icons
+    :init (mu4e-marker-icons-mode 1))
 #+end_src
-
-#+RESULTS:
 
 Use [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]] to show notifications when e-mail comes in:
 #+BEGIN_SRC emacs-lisp
@@ -1992,6 +1895,7 @@ Use [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]] to show notificati
            (after-init . mu4e-alert-enable-mode-line-display)))
 
   (mu4e-alert-set-default-style 'libnotify)
+  (setq mu4e-alert-email-notification-types '(count))
 #+END_SRC
 
 * Org Mode
@@ -2051,13 +1955,13 @@ Precise behaviour of org-present during start and quit is controlled from hooks.
   (use-package org-present)
 #+END_SRC
 
-** Jira
-#+BEGIN_SRC emacs-lisp
-  (use-package org-jira)
-  (setq jiralib-url "https://abdeltwabmf.atlassian.net")
-  (setq org-jira-download "~/vault/documents/org/jira")
-  (setq org-jira-working-dir "~/vault/documents/org/jira")
-#+END_SRC
+# ** Jira
+# #+BEGIN_SRC emacs-lisp
+#   (use-package org-jira)
+#   (setq jiralib-url "https://abdeltwabmf.atlassian.net")
+#   (setq org-jira-download "~/vault/documents/org/jira")
+#   (setq org-jira-working-dir "~/vault/documents/org/jira")
+# #+END_SRC
 
 ** Create Table of Contents
 Toc-org helps you to have an up-to-date table of contents in org files without exporting (useful useful for README files on GitHub).  Use :TOC: to create the table.
