@@ -248,10 +248,6 @@
 
 (setq tramp-default-method "ssh")
 
-(use-package exec-path-from-shell)
-(when (memq window-system '(mac ns x))
-  (exec-path-from-shell-initialize))
-
 (server-mode 1)
 
 (use-package hydra)
@@ -579,7 +575,7 @@
 (use-package org-noter-pdftools
   :after org-noter)
 
-(use-package org-pdfview)
+;; (use-package org-pdfview)
 
 (use-package pdf-view-restore
   :after pdf-toos
@@ -673,10 +669,6 @@
 (add-hook 'java-mode-hook #'lsp)
 
 (use-package autodisass-java-bytecode)
-
-(use-package jdee)
-(custom-set-variables
- '(jdee-server-dir "~/.local/opt/jars"))
 
 (use-package rust-mode
   :mode "\\.rs\\'"
@@ -1162,7 +1154,7 @@
 
 (use-package mu4e
   :ensure nil
-  :defer 10 ;; Wait until 10 seconds after startup
+  :defer 20 ;; Wait until 10 seconds after startup
   :config
 
   ;; Refresh mail using isync every 10 minutes
@@ -1348,6 +1340,6 @@
 
 (setq inhibit-compacting-font-caches t)
 
-(server-mode t)
-(provide 'init)
-;;; init.el ends here
+;; (server-mode t)
+ (provide 'init)
+ ;;; init.el ends here
