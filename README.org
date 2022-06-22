@@ -976,8 +976,6 @@ This is an interesting extension to Magit that shows a TODOs section in your git
               (auto-image-file-mode)))
 #+END_SRC
 
-#+RESULTS:
-
 Make pdf-tools a pdf default:
 #+BEGIN_SRC emacs-lisp
   (setq TeX-view-program-selection '((output-pdf "PDF Tools"))
