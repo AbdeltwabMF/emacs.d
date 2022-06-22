@@ -14,7 +14,7 @@
 #+creator: Emacs 28.1 (Org mode 9.5.2)
 #+cite_export:
 
-* Preface
+*** Preface
 GNU Emacs isn’t a text editor, it’s the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
 
 #+BEGIN_QUOTE
@@ -24,7 +24,7 @@ My general working style is to write everything first with pencil and paper, sit
 #+END_QUOTE
 
 * Table of Contents                                                   :TOC_9:
-- [[#preface][Preface]]
+    - [[#preface][Preface]]
 - [[#header][Header]]
 - [[#startup-performance][Startup Performance]]
 - [[#package-manager][Package Manager]]
@@ -950,7 +950,8 @@ This is an interesting extension to Magit that shows a TODOs section in your git
 #+BEGIN_SRC emacs-lisp
   (use-package pdf-tools
     :config
-    (pdf-tools-install)
+    ;;(pdf-tools-install)
+    (pdf-loader-install)
     (setq-default pdf-view-display-size 'fit-width)
     (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
     (define-key pdf-view-mode-map (kbd "C-r") 'isearch-backward)
@@ -1870,7 +1871,7 @@ Useful mu4e manual pages:
 
     ;; Adding a signature to your emails
     ;; You can set the mu4e-compose-signature variable to a string for the signature to include in your e-mails!
-    (setq mu4e-compose-signature "https://abdeltwabmf.github.io")
+    (setq mu4e-compose-signature "Abd El-Twab MF\nSoftware Engineer\nws: https://abdeltwabmf.github.io")
 
     ;; Automatically Sign Every Email
     ;; You can automatically sign every e-mail using the message-send-hook:

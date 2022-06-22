@@ -535,7 +535,8 @@
 
 (use-package pdf-tools
   :config
-  (pdf-tools-install)
+  ;;(pdf-tools-install)
+  (pdf-loader-install)
   (setq-default pdf-view-display-size 'fit-width)
   (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
   (define-key pdf-view-mode-map (kbd "C-r") 'isearch-backward)
@@ -1254,7 +1255,7 @@
 
   ;; Adding a signature to your emails
   ;; You can set the mu4e-compose-signature variable to a string for the signature to include in your e-mails!
-  (setq mu4e-compose-signature "https://abdeltwabmf.github.io")
+  (setq mu4e-compose-signature "Abd El-Twab MF\nSoftware Engineer\nws: https://abdeltwabmf.github.io")
 
   ;; Automatically Sign Every Email
   ;; You can automatically sign every e-mail using the message-send-hook:
