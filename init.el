@@ -1255,7 +1255,8 @@
 
   ;; Adding a signature to your emails
   ;; You can set the mu4e-compose-signature variable to a string for the signature to include in your e-mails!
-  (setq mu4e-compose-signature "Abd El-Twab MF\nSoftware Engineer\nws: https://abdeltwabmf.github.io")
+  (setq mu4e-compose-signature
+        "Abd El-Twab M. Fakhry\nSoftware Engineer | Competitive Programmer\nws: http://abdeltwabmf.me/\nm: 01127030951")
 
   ;; Automatically Sign Every Email
   ;; You can automatically sign every e-mail using the message-send-hook:
