@@ -59,9 +59,9 @@
 (tooltip-mode -1)
 (set-fringe-mode 10)
 (menu-bar-mode -1)
-(global-hl-line-mode +1) ;; إبراز السطر الحالي
-(global-visual-line-mode 1) ;; الأسطر هي الأسطر المرئية، يُشبه خيار إلتفاف الأسطر في باقي المحررات
-(blink-cursor-mode -1) ;; إيقاف وميض مؤشر الكتابة
+(global-hl-line-mode +1)
+(global-visual-line-mode 1)
+(blink-cursor-mode -1)
 
 (setq scroll-conservatively 101) ;; value greater than 100 gets rid of half page jumping
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
@@ -69,7 +69,7 @@
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 (setq scroll-step 1) ;; keyboard scroll one line at a time
 (setq use-dialog-box nil) ;; Don't pop up UI dialogs when prompting
-(setq isearch-allow-scroll t) ;; السماح بالسكرول دون الخروج من عملية البحث الحالية
+(setq isearch-allow-scroll t)
 (setq undo-outer-limit 104857600) ;; set the size of output in bytes
 
 (global-display-line-numbers-mode t)
@@ -227,7 +227,6 @@
   :config
   (set-face-attribute 'show-paren-match-expression nil :background "#363e4a")
   (show-paren-mode 1))
-
 (electric-pair-mode 1) ;; إغلاق تلقائي للأقواس
 
 (setq display-time-world-list
@@ -277,7 +276,7 @@
   :hook ((text-mode . ws-butler-mode)
          (prog-mode . ws-butler-mode)))
 
-(delete-selection-mode +1) ;; حذف النص المُحدد عند إدراج نص جديد
+(delete-selection-mode +1)
 
 (recentf-mode 1)
 
@@ -1044,17 +1043,17 @@
     (amf/enter-focus-mode)))
 
 (use-package flyspell-correct
-    :ensure t
-    :config
-    ;; set ivy as correcting interface
-    (define-key flyspell-mode-map (kbd "C-;") 'flyspell-correct-wrapper))
+  :ensure t
+  :config
+  ;; set ivy as correcting interface
+  (define-key flyspell-mode-map (kbd "C-;") 'flyspell-correct-wrapper))
 
-  (use-package flyspell-correct-ivy
-    :ensure t)
+(use-package flyspell-correct-ivy
+  :ensure t)
 
-  (use-package flymake)
-  (setq ispell-program-name "aspell") ; could be ispell as well, depending on your preferences
-  (setq ispell-dictionary "american") ; this can obviously be set to any language your spell-checking program supports
+(use-package flymake)
+(setq ispell-program-name "aspell") ; could be ispell as well, depending on your preferences
+(setq ispell-dictionary "american") ; this can obviously be set to any language your spell-checking program supports
 
 (add-hook 'text-mode-hook #'flyspell-mode)
 
@@ -1111,6 +1110,21 @@
                                 ("png" . "sxiv")
                                 ("mkv" . "mpv")
                                 ("mp4" . "mpv"))))
+
+(use-package calfw
+  :commands cfw:open-org-calendar
+  :config
+  (setq cfw:fchar-junction ?╋
+        cfw:fchar-vertical-line ?┃
+        cfw:fchar-horizontal-line ?━
+        cfw:fchar-left-junction ?┣
+        cfw:fchar-right-junction ?┫
+        cfw:fchar-top-junction ?┯
+        cfw:fchar-top-left-corner ?┏
+        cfw:fchar-top-right-corner ?┓)
+  (use-package calfw-org
+    :config
+    (setq cfw:org-agenda-schedule-args '(:timestamp))))
 
 (use-package vterm
   :load-path  "~/.config/emacs/site-lisp/emacs-libvterm"
@@ -1411,5 +1425,5 @@
 (setq inhibit-compacting-font-caches t)
 
 ;; (server-mode t)
- (provide 'init)
+(provide 'init)
  ;;; init.el ends here

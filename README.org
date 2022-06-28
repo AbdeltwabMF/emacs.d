@@ -4,7 +4,6 @@
 #+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
 #+options: timestamp:t title:t toc:t todo:t |:t
 #+title: Emacs For Enthusiast Developer
-#+date:
 #+author: Abd El-Twab M. Fakhry
 #+email: abdeltwab.m.fakhry@gmail.com
 #+property: header-args:emacs-lisp :tangle init.el
@@ -15,7 +14,7 @@
 #+cite_export:
 
 * Preface
-GNU Emacs isn’t a text editor, it’s the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
+GNU Emacs isn't a text editor, it's the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
 
 #+BEGIN_QUOTE
 My general working style is to write everything first with pencil and paper, sitting beside a big wastebasket. Then I use Emacs to enter the text into my machine.
@@ -189,7 +188,7 @@ Initialize package sources
 #+END_SRC
 
 * Keep it Clean
-I don’t want a bunch of transient files showing up as untracked in the Git repo so I move them all to another location.
+I don't want a bunch of transient files showing up as untracked in the Git repo so I move them all to another location.
 #+BEGIN_SRC emacs-lisp
   ;; Change the user-emacs-directory to keep unwanted things out of ~/.config/emacs
   (setq user-emacs-directory (expand-file-name "~/.cache/emacs/")
@@ -213,7 +212,7 @@ To avoid having Emacs place those variables into your hand-crafted configuration
 
 * General Configuration
 ** User Interface
-Clean up Emacs’ user interface, make it more minimal.
+Clean up Emacs user interface, make it more minimal.
 #+BEGIN_SRC emacs-lisp
   (setq inhibit-startup-message t)
   (setq visible-bell t)
@@ -226,9 +225,9 @@ Clean up Emacs’ user interface, make it more minimal.
   (tooltip-mode -1)
   (set-fringe-mode 10)
   (menu-bar-mode -1)
-  (global-hl-line-mode +1) ;; إبراز السطر الحالي
-  (global-visual-line-mode 1) ;; الأسطر هي الأسطر المرئية، يُشبه خيار إلتفاف الأسطر في باقي المحررات
-  (blink-cursor-mode -1) ;; إيقاف وميض مؤشر الكتابة
+  (global-hl-line-mode +1)
+  (global-visual-line-mode 1)
+  (blink-cursor-mode -1)
 #+END_SRC
 
 Improve scrolling.
@@ -239,7 +238,7 @@ Improve scrolling.
   (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
   (setq scroll-step 1) ;; keyboard scroll one line at a time
   (setq use-dialog-box nil) ;; Don't pop up UI dialogs when prompting
-  (setq isearch-allow-scroll t) ;; السماح بالسكرول دون الخروج من عملية البحث الحالية
+  (setq isearch-allow-scroll t)
   (setq undo-outer-limit 104857600) ;; set the size of output in bytes
 #+END_SRC
 
@@ -338,9 +337,7 @@ Different platforms need different default font sizes, and Fantasque Sans Mono i
                       :weight 'light)
 #+END_SRC
 
-#+RESULTS:
 
-إعداد الخط للنصوص العربية
 #+BEGIN_SRC emacs-lisp
                                           ; (set-fontset-font "fontset-default" 'arabic (font-spec :family "Janna LT" :height 110))
   (set-fontset-font "fontset-default" 'arabic (font-spec :family "Amiri Quran" :height 110))
@@ -477,7 +474,6 @@ alert is a great library for showing notifications from other packages in a vari
     :config
     (set-face-attribute 'show-paren-match-expression nil :background "#363e4a")
     (show-paren-mode 1))
-
   (electric-pair-mode 1) ;; إغلاق تلقائي للأقواس
 #+END_SRC
 
@@ -572,7 +568,7 @@ Default to an indentation size of 2 spaces since it’s the norm for pretty much
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-  (delete-selection-mode +1) ;; حذف النص المُحدد عند إدراج نص جديد
+  (delete-selection-mode +1)
 #+END_SRC
 
 ** History
@@ -745,7 +741,7 @@ The variable aggressive-indent-dont-indent-if lets you customize when you don't 
 #+END_SRC
 
 ** Making M-x Great Again!
-The following line removes the annoying ‘^’ in things like counsel-M-x and other ivy/counsel prompts.  The default ‘^’ string means that if you type something immediately after this string only completion candidates that begin with what you typed are shown.  Most of the time, I’m searching for a command without knowing what it begins with though.
+The following line removes the annoying in things like counsel-M-x and other ivy/counsel prompts. The default string means that if you type something immediately after this string only completion candidates that begin with what you typed are shown. Most of the time, I'm searching for a command without knowing what it begins with though.
 #+BEGIN_SRC emacs-lisp
   (setq ivy-initial-inputs-alist nil)
 #+END_SRC
@@ -1608,18 +1604,18 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
 
 ** Spell Checking
 #+BEGIN_SRC emacs-lisp
-    (use-package flyspell-correct
-      :ensure t
-      :config
-      ;; set ivy as correcting interface
-      (define-key flyspell-mode-map (kbd "C-;") 'flyspell-correct-wrapper))
+  (use-package flyspell-correct
+    :ensure t
+    :config
+    ;; set ivy as correcting interface
+    (define-key flyspell-mode-map (kbd "C-;") 'flyspell-correct-wrapper))
 
-    (use-package flyspell-correct-ivy
-      :ensure t)
+  (use-package flyspell-correct-ivy
+    :ensure t)
 
-    (use-package flymake)
-    (setq ispell-program-name "aspell") ; could be ispell as well, depending on your preferences
-    (setq ispell-dictionary "american") ; this can obviously be set to any language your spell-checking program supports
+  (use-package flymake)
+  (setq ispell-program-name "aspell") ; could be ispell as well, depending on your preferences
+  (setq ispell-dictionary "american") ; this can obviously be set to any language your spell-checking program supports
 
   (add-hook 'text-mode-hook #'flyspell-mode)
 #+END_SRC
@@ -1705,10 +1701,9 @@ this setting ensures that emacsclient always opens on dashboard rather than scra
 
 * Applications
 ** Calendar
-
 calfw is a gorgeous calendar UI that is able to show all of my scheduled Org Agenda items.
 #+BEGIN_SRC emacs-lisp
-   (use-package calfw
+  (use-package calfw
     :commands cfw:open-org-calendar
     :config
     (setq cfw:fchar-junction ?╋
@@ -1719,7 +1714,6 @@ calfw is a gorgeous calendar UI that is able to show all of my scheduled Org Age
           cfw:fchar-top-junction ?┯
           cfw:fchar-top-left-corner ?┏
           cfw:fchar-top-right-corner ?┓)
-
     (use-package calfw-org
       :config
       (setq cfw:org-agenda-schedule-args '(:timestamp))))
@@ -1766,7 +1760,7 @@ vterm enables the use of fully-fledged terminal applications within Emacs so tha
 
 ** Mail
 Mail in Emacs with mu4e
-mu4e is the best mail interface I’ve ever used because it’s fast and makes it really easy to power through a huge e-mail backlog. Love the ability to capture links to emails with org-mode too.
+mu4e is the best mail interface I've ever used because it's fast and makes it really easy to power through a huge e-mail backlog. Love the ability to capture links to emails with org-mode too.
 
 Useful mu4e manual pages:
 - [[https://www.djcbsoftware.nl/code/mu/mu4e/MSGV-Keybindings.html#MSGV-Keybindings][Key bindings]]
@@ -2080,7 +2074,7 @@ of this is relates to a deeper rooted issue involving fonts and font-lock relian
 
 * Footer
 #+BEGIN_SRC emacs-lisp
- ;; (server-mode t)
+  ;; (server-mode t)
   (provide 'init)
-  ;;; init.el ends here
+   ;;; init.el ends here
 #+END_SRC
