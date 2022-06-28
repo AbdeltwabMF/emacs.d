@@ -119,7 +119,7 @@
 (set-face-attribute 'variable-pitch nil
                     ;; :font "Cantarell"
                     :font "Linux Biolinum"
-                    :height 100
+                    :height 110
                     :weight 'light)
 
 ; (set-fontset-font "fontset-default" 'arabic (font-spec :family "Janna LT" :height 110))
@@ -1044,17 +1044,17 @@
     (amf/enter-focus-mode)))
 
 (use-package flyspell-correct
-  :ensure t
-  :config
-  ;; set ivy as correcting interface
-  (define-key flyspell-mode-map (kbd "C-;") 'flyspell-correct-wrapper))
+    :ensure t
+    :config
+    ;; set ivy as correcting interface
+    (define-key flyspell-mode-map (kbd "C-;") 'flyspell-correct-wrapper))
 
-(use-package flyspell-correct-ivy
-  :ensure t)
+  (use-package flyspell-correct-ivy
+    :ensure t)
 
-(use-package flymake)
-(setq ispell-program-name "aspell") ; could be ispell as well, depending on your preferences
-(setq ispell-dictionary "american") ; this can obviously be set to any language your spell-checking program supports
+  (use-package flymake)
+  (setq ispell-program-name "aspell") ; could be ispell as well, depending on your preferences
+  (setq ispell-dictionary "american") ; this can obviously be set to any language your spell-checking program supports
 
 (add-hook 'text-mode-hook #'flyspell-mode)
 
@@ -1111,22 +1111,6 @@
                                 ("png" . "sxiv")
                                 ("mkv" . "mpv")
                                 ("mp4" . "mpv"))))
-
-(use-package calfw
-  :commands cfw:open-org-calendar
-  :config
-  (setq cfw:fchar-junction ?╋
-        cfw:fchar-vertical-line ?┃
-        cfw:fchar-horizontal-line ?━
-        cfw:fchar-left-junction ?┣
-        cfw:fchar-right-junction ?┫
-        cfw:fchar-top-junction ?┯
-        cfw:fchar-top-left-corner ?┏
-        cfw:fchar-top-right-corner ?┓)
-
-  (use-package calfw-org
-    :config
-    (setq cfw:org-agenda-schedule-args '(:timestamp))))
 
 (use-package vterm
   :load-path  "~/.config/emacs/site-lisp/emacs-libvterm"
@@ -1311,17 +1295,101 @@
   (add-hook 'org-mode-hook #'org-bullets-mode)
   (setq inhibit-compacting-font-caches t))
 
-(defun amf/org-mode-visual-fill ()
-  (setq visual-fill-column-width 0
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
-
-(use-package visual-fill-column
-  :hook (org-mode . amf/org-mode-visual-fill))
-
 (setq org-clock-sound "~/.local/share/sounds/notification.wav")
 
 (use-package org-present)
+
+;; Install visual-fill-column
+(unless (package-installed-p 'visual-fill-column)
+  (package-install 'visual-fill-column))
+
+;; Configure fill width
+(setq visual-fill-column-width 130
+      visual-fill-column-center-text t)
+
+(defun amf/org-present-start ()
+  ;; Tweak font sizes
+  (setq-local face-remapping-alist '((default (:height 1.2) default)
+                                     (header-line (:height 4.4) variable-pitch)
+                                     (org-document-title (:height 4.5) variable-pitch)
+                                     (org-code (:height 1.1)  default)
+                                     (org-verbatim (:height 1.1) default)
+                                     (org-block (:height 1.1) default)
+                                     (org-block-begin-line (:height 0.7) default)))
+
+  ;; Set a blank header line string to create blank space at the top
+  (setq header-line-format " ")
+  (display-line-numbers-mode 0)
+
+  ;; Let the desktop background show through
+  (set-frame-parameter (selected-frame) 'alpha '(90 . 100))
+  (add-to-list 'default-frame-alist '(alpha . (90 . 90)))
+
+  ;; Center the presentation and wrap lines
+  (visual-fill-column-mode 1)
+  (visual-line-mode 1))
+
+(defun amf/org-present-end ()
+  ;; Reset font customizations
+  (setq-local face-remapping-alist '((default default default)))
+
+  ;; Set a blank header line string to create blank space at the top
+  (setq header-line-format nil)
+  (display-line-numbers-mode 1)
+
+  ;; Let the desktop background show through
+  (set-frame-parameter (selected-frame) 'alpha '(100 . 100))
+  (add-to-list 'default-frame-alist '(alpha . (100 . 100)))
+
+  ;; Stop centering the document
+  (visual-fill-column-mode 0)
+  (visual-line-mode 0))
+
+;; Register hooks with org-present
+(add-hook 'org-present-mode-hook 'amf/org-present-start)
+(add-hook 'org-present-mode-quit-hook 'amf/org-present-end)
+
+
+;; Load org-faces to make sure we can set appropriate faces
+(require 'org-faces)
+
+;; Hide emphasis markers on formatted text
+(setq org-hide-emphasis-markers t)
+
+;; Resize Org headings
+(dolist (face '((org-level-1 . 1.7)
+                (org-level-2 . 1.5)
+                (org-level-3 . 1.3)
+                (org-level-4 . 1.1)
+                (org-level-5 . 1.0)
+                (org-level-6 . 1.0)
+                (org-level-7 . 1.0)
+                (org-level-8 . 1.0)))
+  (set-face-attribute (car face) nil :font "Fantasque Sans Mono" :weight 'medium :height (cdr face)))
+
+;; Make the document title a bit bigger
+(set-face-attribute 'org-document-title nil :font "Fantasque Sans Mono" :weight 'bold :height 1.5)
+
+;; Make sure certain org faces use the fixed-pitch face when variable-pitch-mode is on
+(set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
+(set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+(set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+(set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+
+(defun amf/org-present-prepare-slide (buffer-name heading)
+  ;; Show only top-level headlines
+  (org-overview)
+
+  ;; Unfold the current entry
+  (org-show-entry)
+
+  ;; Show only direct subheadings of the slide but don't expand them
+  (org-show-children))
+(add-hook 'org-present-after-navigate-functions 'amf/org-present-prepare-slide)
 
 (use-package toc-org
   :commands toc-org-enable

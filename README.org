@@ -4,9 +4,9 @@
 #+options: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
 #+options: timestamp:t title:t toc:t todo:t |:t
 #+title: Emacs For Enthusiast Developer
-#+date: \today
+#+date:
 #+author: Abd El-Twab M. Fakhry
-#+email: amf@arTPad
+#+email: abdeltwab.m.fakhry@gmail.com
 #+property: header-args:emacs-lisp :tangle init.el
 #+language: en
 #+select_tags: export
@@ -14,7 +14,7 @@
 #+creator: Emacs 28.1 (Org mode 9.5.2)
 #+cite_export:
 
-*** Preface
+* Preface
 GNU Emacs isn’t a text editor, it’s the ultimate productivity environment for hackers. This document contains the core parts of my Emacs configuration which drive the workflow I use every day.
 
 #+BEGIN_QUOTE
@@ -23,8 +23,8 @@ My general working style is to write everything first with pencil and paper, sit
 ---  Donald E. Knuth
 #+END_QUOTE
 
-* Table of Contents                                                   :TOC_9:
-    - [[#preface][Preface]]
+* Table of Contents :TOC_9:
+- [[#preface][Preface]]
 - [[#header][Header]]
 - [[#startup-performance][Startup Performance]]
 - [[#package-manager][Package Manager]]
@@ -134,6 +134,7 @@ My general working style is to write everything first with pencil and paper, sit
     - [[#emms][EMMS]]
   - [[#mail][Mail]]
 - [[#org-mode][Org Mode]]
+  - [[#org-presentation][Org presentation]]
   - [[#create-table-of-contents][Create Table of Contents]]
   - [[#org-todo-keywords][Org Todo Keywords]]
   - [[#enhancement][Enhancement]]
@@ -333,9 +334,11 @@ Different platforms need different default font sizes, and Fantasque Sans Mono i
   (set-face-attribute 'variable-pitch nil
                       ;; :font "Cantarell"
                       :font "Linux Biolinum"
-                      :height 100
+                      :height 110
                       :weight 'light)
 #+END_SRC
+
+#+RESULTS:
 
 إعداد الخط للنصوص العربية
 #+BEGIN_SRC emacs-lisp
@@ -1605,18 +1608,18 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
 
 ** Spell Checking
 #+BEGIN_SRC emacs-lisp
-  (use-package flyspell-correct
-    :ensure t
-    :config
-    ;; set ivy as correcting interface
-    (define-key flyspell-mode-map (kbd "C-;") 'flyspell-correct-wrapper))
+    (use-package flyspell-correct
+      :ensure t
+      :config
+      ;; set ivy as correcting interface
+      (define-key flyspell-mode-map (kbd "C-;") 'flyspell-correct-wrapper))
 
-  (use-package flyspell-correct-ivy
-    :ensure t)
+    (use-package flyspell-correct-ivy
+      :ensure t)
 
-  (use-package flymake)
-  (setq ispell-program-name "aspell") ; could be ispell as well, depending on your preferences
-  (setq ispell-dictionary "american") ; this can obviously be set to any language your spell-checking program supports
+    (use-package flymake)
+    (setq ispell-program-name "aspell") ; could be ispell as well, depending on your preferences
+    (setq ispell-dictionary "american") ; this can obviously be set to any language your spell-checking program supports
 
   (add-hook 'text-mode-hook #'flyspell-mode)
 #+END_SRC
@@ -1702,9 +1705,10 @@ this setting ensures that emacsclient always opens on dashboard rather than scra
 
 * Applications
 ** Calendar
+
 calfw is a gorgeous calendar UI that is able to show all of my scheduled Org Agenda items.
 #+BEGIN_SRC emacs-lisp
-  (use-package calfw
+   (use-package calfw
     :commands cfw:open-org-calendar
     :config
     (setq cfw:fchar-junction ?╋
@@ -1935,33 +1939,111 @@ Use [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]] to show notificati
     :config
     (add-hook 'org-mode-hook #'org-bullets-mode)
     (setq inhibit-compacting-font-caches t))
-
-  (defun amf/org-mode-visual-fill ()
-    (setq visual-fill-column-width 0
-          visual-fill-column-center-text t)
-    (visual-fill-column-mode 1))
-
-  (use-package visual-fill-column
-    :hook (org-mode . amf/org-mode-visual-fill))
 #+END_SRC
+
 
 Org mode Timer
 #+BEGIN_SRC emacs-lisp
   (setq org-clock-sound "~/.local/share/sounds/notification.wav")
 #+END_SRC
 
+** Org presentation
 Precise behaviour of org-present during start and quit is controlled from hooks. The following will enlarge text, show images, hide the cursor and make the buffer read-only:
 #+BEGIN_SRC emacs-lisp
   (use-package org-present)
-#+END_SRC
 
-# ** Jira
-# #+BEGIN_SRC emacs-lisp
-#   (use-package org-jira)
-#   (setq jiralib-url "https://abdeltwabmf.atlassian.net")
-#   (setq org-jira-download "~/vault/documents/org/jira")
-#   (setq org-jira-working-dir "~/vault/documents/org/jira")
-# #+END_SRC
+  ;; Install visual-fill-column
+  (unless (package-installed-p 'visual-fill-column)
+    (package-install 'visual-fill-column))
+
+  ;; Configure fill width
+  (setq visual-fill-column-width 130
+        visual-fill-column-center-text t)
+
+  (defun amf/org-present-start ()
+    ;; Tweak font sizes
+    (setq-local face-remapping-alist '((default (:height 1.2) default)
+                                       (header-line (:height 4.4) variable-pitch)
+                                       (org-document-title (:height 4.5) variable-pitch)
+                                       (org-code (:height 1.1)  default)
+                                       (org-verbatim (:height 1.1) default)
+                                       (org-block (:height 1.1) default)
+                                       (org-block-begin-line (:height 0.7) default)))
+
+    ;; Set a blank header line string to create blank space at the top
+    (setq header-line-format " ")
+    (display-line-numbers-mode 0)
+
+    ;; Let the desktop background show through
+    (set-frame-parameter (selected-frame) 'alpha '(90 . 100))
+    (add-to-list 'default-frame-alist '(alpha . (90 . 90)))
+
+    ;; Center the presentation and wrap lines
+    (visual-fill-column-mode 1)
+    (visual-line-mode 1))
+
+  (defun amf/org-present-end ()
+    ;; Reset font customizations
+    (setq-local face-remapping-alist '((default default default)))
+
+    ;; Set a blank header line string to create blank space at the top
+    (setq header-line-format nil)
+    (display-line-numbers-mode 1)
+
+    ;; Let the desktop background show through
+    (set-frame-parameter (selected-frame) 'alpha '(100 . 100))
+    (add-to-list 'default-frame-alist '(alpha . (100 . 100)))
+
+    ;; Stop centering the document
+    (visual-fill-column-mode 0)
+    (visual-line-mode 0))
+
+  ;; Register hooks with org-present
+  (add-hook 'org-present-mode-hook 'amf/org-present-start)
+  (add-hook 'org-present-mode-quit-hook 'amf/org-present-end)
+
+
+  ;; Load org-faces to make sure we can set appropriate faces
+  (require 'org-faces)
+
+  ;; Hide emphasis markers on formatted text
+  (setq org-hide-emphasis-markers t)
+
+  ;; Resize Org headings
+  (dolist (face '((org-level-1 . 1.7)
+                  (org-level-2 . 1.5)
+                  (org-level-3 . 1.3)
+                  (org-level-4 . 1.1)
+                  (org-level-5 . 1.0)
+                  (org-level-6 . 1.0)
+                  (org-level-7 . 1.0)
+                  (org-level-8 . 1.0)))
+    (set-face-attribute (car face) nil :font "Fantasque Sans Mono" :weight 'medium :height (cdr face)))
+
+  ;; Make the document title a bit bigger
+  (set-face-attribute 'org-document-title nil :font "Fantasque Sans Mono" :weight 'bold :height 1.5)
+
+  ;; Make sure certain org faces use the fixed-pitch face when variable-pitch-mode is on
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-formula nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch)
+
+  (defun amf/org-present-prepare-slide (buffer-name heading)
+    ;; Show only top-level headlines
+    (org-overview)
+
+    ;; Unfold the current entry
+    (org-show-entry)
+
+    ;; Show only direct subheadings of the slide but don't expand them
+    (org-show-children))
+  (add-hook 'org-present-after-navigate-functions 'amf/org-present-prepare-slide)
+#+END_SRC
 
 ** Create Table of Contents
 Toc-org helps you to have an up-to-date table of contents in org files without exporting (useful useful for README files on GitHub).  Use :TOC: to create the table.
