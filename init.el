@@ -1059,13 +1059,12 @@
 (add-hook 'text-mode-hook #'flyspell-mode)
 
 (use-package company
-    :init
-    (company-mode t)
-    :config
-    (setq company-idle-delay 0.0)
-    (setq company-minimum-prefix-length 1))
-jsiaochsahci
-  (add-hook 'after-init-hook 'global-company-mode)
+  :init
+  (company-mode t)
+  :config
+  (setq company-idle-delay 0.0)
+  (setq company-minimum-prefix-length 1))
+(add-hook 'after-init-hook 'global-company-mode)
 
 (use-package keycast)
 
