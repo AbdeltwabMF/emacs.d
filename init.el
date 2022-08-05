@@ -62,6 +62,7 @@
 (global-hl-line-mode +1)
 (global-visual-line-mode 1)
 (blink-cursor-mode -1)
+(global-unset-key (kbd "C-z"))
 
 (setq scroll-conservatively 101) ;; value greater than 100 gets rid of half page jumping
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
@@ -1058,18 +1059,13 @@
 (add-hook 'text-mode-hook #'flyspell-mode)
 
 (use-package company
-  :init
-  (company-mode t)
-  :config
-  (setq company-idle-delay 0.0)
-  (setq company-minimum-prefix-length 1))
-
-(add-hook 'after-init-hook 'global-company-mode)
-
-(use-package redacted)
-
-;; Enable `read-only-mode' to ensure that we don't change what we can't read.
-(add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1))))
+    :init
+    (company-mode t)
+    :config
+    (setq company-idle-delay 0.0)
+    (setq company-minimum-prefix-length 1))
+jsiaochsahci
+  (add-hook 'after-init-hook 'global-company-mode)
 
 (use-package keycast)
 

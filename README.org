@@ -119,7 +119,6 @@ My general working style is to write everything first with pencil and paper, sit
   - [[#darkroom][Darkroom]]
   - [[#spell-checking][Spell Checking]]
   - [[#auto-complete][Auto Complete]]
-  - [[#hide-your-current-text][Hide Your Current Text.]]
   - [[#show-current-command-in-the-mode-line][Show Current Command in the Mode Line]]
 - [[#dashboard][Dashboard]]
   - [[#page-break-lines][Page Break Lines]]
@@ -228,6 +227,7 @@ Clean up Emacs user interface, make it more minimal.
   (global-hl-line-mode +1)
   (global-visual-line-mode 1)
   (blink-cursor-mode -1)
+  (global-unset-key (kbd "C-z"))
 #+END_SRC
 
 Improve scrolling.
@@ -1628,16 +1628,8 @@ Sets the background of HTML color strings in buffers to be the color mentioned.
     :config
     (setq company-idle-delay 0.0)
     (setq company-minimum-prefix-length 1))
-
+jsiaochsahci
   (add-hook 'after-init-hook 'global-company-mode)
-#+END_SRC
-
-** Hide Your Current Text.
-#+BEGIN_SRC emacs-lisp
-  (use-package redacted)
-
-  ;; Enable `read-only-mode' to ensure that we don't change what we can't read.
-  (add-hook 'redacted-mode-hook (lambda () (read-only-mode (if redacted-mode 1 -1))))
 #+END_SRC
 
 ** Show Current Command in the Mode Line
