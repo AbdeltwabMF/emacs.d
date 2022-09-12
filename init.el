@@ -384,6 +384,23 @@
          :map minibuffer-local-map
          ("C-r" . 'counsel-minibuffer-history)))
 
+(require 'find-func)
+;; Enable bookmarks and recentf
+(setq ivy-use-virtual-buffers t)
+
+;; Example setting for ivy-views
+(setq ivy-views
+      `(("dutch + notes {}"
+         (vert
+          (file "dutch.org")
+          (buffer "notes")))
+        ("ivy.el {}"
+         (horz
+          (file ,(find-library-name "ivy"))
+          (buffer "*scratch*")))))
+(global-set-key (kbd "C-c v") 'ivy-push-view)
+(global-set-key (kbd "C-c V") 'ivy-pop-view)
+
 (setq ivy-initial-inputs-alist nil)
 
 (use-package smex)

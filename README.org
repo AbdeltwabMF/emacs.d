@@ -725,6 +725,28 @@ You can use this hook on any mode you want, aggressive-indent is not exclusive t
            ("C-r" . 'counsel-minibuffer-history)))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+  (require 'find-func)
+  ;; Enable bookmarks and recentf
+  (setq ivy-use-virtual-buffers t)
+
+  ;; Example setting for ivy-views
+  (setq ivy-views
+        `(("dutch + notes {}"
+           (vert
+            (file "dutch.org")
+            (buffer "notes")))
+          ("ivy.el {}"
+           (horz
+            (file ,(find-library-name "ivy"))
+            (buffer "*scratch*")))))
+  (global-set-key (kbd "C-c v") 'ivy-push-view)
+  (global-set-key (kbd "C-c V") 'ivy-pop-view)
+#+END_SRC
+
+#+RESULTS:
+: ivy-pop-view
+
 ** Making M-x Great Again!
 The following line removes the annoying in things like counsel-M-x and other ivy/counsel prompts. The default string means that if you type something immediately after this string only completion candidates that begin with what you typed are shown. Most of the time, I'm searching for a command without knowing what it begins with though.
 #+BEGIN_SRC emacs-lisp
