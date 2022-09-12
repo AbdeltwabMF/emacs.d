@@ -86,19 +86,15 @@ My general working style is to write everything first with pencil and paper, sit
     - [[#git-link][git-link]]
   - [[#docker][Docker]]
   - [[#languages][Languages]]
-    - [[#language-server-support][Language Server Support]]
-    - [[#debug-adapter-support][Debug Adapter Support]]
-    - [[#meta-lisp][Meta Lisp]]
     - [[#cc][C/C++]]
+      - [[#compiling-and-running-c-code][Compiling and running C++ Code]]
     - [[#go][Go]]
     - [[#java][Java]]
     - [[#rust][Rust]]
     - [[#python][Python]]
-    - [[#emacs-lisp][Emacs Lisp]]
     - [[#markdown][Markdown]]
     - [[#html][HTML]]
       - [[#web-mode][Web Mode]]
-      - [[#live-server][Live Server]]
       - [[#skewer][Skewer]]
       - [[#emmet][Emmet]]
     - [[#latex][LaTeX]]
@@ -392,7 +388,6 @@ The diminish package hides pesky minor modes from the modelines.
     :custom
     (doom-modeline-height 26)
     (doom-modeline-bar-width 6)
-    (doom-modeline-lsp t)
     (doom-modeline-github nil)
 
     ;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
@@ -633,7 +628,6 @@ Once you turn on this mode, Emacs will drop your cursor to the last visited loca
 ** Indentation
 #+BEGIN_SRC emacs-lisp
   (use-package aggressive-indent)
-  (add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
   (add-hook 'css-mode-hook #'aggressive-indent-mode)
 #+END_SRC
 
@@ -641,15 +635,6 @@ You can use this hook on any mode you want, aggressive-indent is not exclusive t
 #+BEGIN_SRC emacs-lisp
   (global-aggressive-indent-mode 1)
   (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
-#+END_SRC
-
-The variable aggressive-indent-dont-indent-if lets you customize when you don't want indentation to happen. For instance, if you think it's annoying that lines jump around in c++-mode because you haven't typed the ; yet, you could add the following clause:
-#+BEGIN_SRC emacs-lisp
-  (add-to-list
-   'aggressive-indent-dont-indent-if
-   '(and (derived-mode-p 'c++-mode)
-         (null (string-match "\\([;{}]\\|\\b\\(if\\|for\\|while\\)\\b\\)"
-                             (thing-at-point 'line)))))
 #+END_SRC
 
 ** Undo Tree
@@ -949,7 +934,7 @@ This is an interesting extension to Magit that shows a TODOs section in your git
 #+BEGIN_SRC emacs-lisp
   (use-package pdf-tools
     :config
-    ;;(pdf-tools-install)
+    ;; (pdf-tools-install)
     (pdf-loader-install)
     (setq-default pdf-view-display-size 'fit-width)
     (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
@@ -975,6 +960,8 @@ This is an interesting extension to Magit that shows a TODOs section in your git
               (auto-revert-mode)
               (auto-image-file-mode)))
 #+END_SRC
+
+#+RESULTS:
 
 Make pdf-tools a pdf default:
 #+BEGIN_SRC emacs-lisp
@@ -1032,67 +1019,9 @@ Configuration for various programming languages and dev tools that I use.
   (use-package dockerfile-mode)
   (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
   (use-package docker-compose-mode)
-
-  (use-package lsp-docker)
-
-  (defvar lsp-docker-client-packages
-    '(lsp-css lsp-clients lsp-bash lsp-go lsp-pyls lsp-html lsp-typescript
-              lsp-terraform lsp-clangd))
-
-  (setq lsp-docker-client-configs
-        '((:server-id bash-ls :docker-server-id bashls-docker :server-command "bash-language-server start")
-          (:server-id clangd :docker-server-id clangd-docker :server-command "clangd")
-          (:server-id css-ls :docker-server-id cssls-docker :server-command "css-languageserver --stdio")
-          (:server-id dockerfile-ls :docker-server-id dockerfilels-docker :server-command "docker-langserver --stdio")
-          (:server-id gopls :docker-server-id gopls-docker :server-command "gopls")
-          (:server-id html-ls :docker-server-id htmls-docker :server-command "html-languageserver --stdio")
-          (:server-id pyls :docker-server-id pyls-docker :server-command "pyls")
-          (:server-id ts-ls :docker-server-id tsls-docker :server-command "typescript-language-server --stdio")))
 #+END_SRC
 
 ** Languages
-*** Language Server Support
-#+BEGIN_SRC emacs-lisp
-  (use-package lsp-mode
-    :commands lsp
-    :hook ((typescript-mode js2-mode web-mode) . lsp)
-    :bind (:map lsp-mode-map
-                ("TAB" . completion-at-point))
-    :custom (lsp-headerline-breadcrumb-enable nil))
-
-  (use-package lsp-ui
-    :hook (lsp-mode . lsp-ui-mode))
-
-  (use-package lsp-treemacs)
-#+END_SRC
-
-*** Debug Adapter Support
-#+BEGIN_SRC emacs-lisp
-  (use-package dap-mode
-    :custom
-    (lsp-enable-dap-auto-configure nil)
-    :config
-    (dap-ui-mode 1)
-    (dap-tooltip-mode 1)
-    (require 'dap-node)
-    (dap-node-setup))
-#+END_SRC
-
-*** Meta Lisp
-Here are packages that are useful across different Lisp and Scheme implementations:
-#+BEGIN_SRC emacs-lisp
-  (use-package lispy
-    :hook ((emacs-lisp-mode . lispy-mode)
-           (scheme-mode . lispy-mode)))
-
-  (use-package lispyville
-    :hook ((lispy-mode . lispyville-mode))
-    :config
-    (lispyville-set-key-theme '(operators c-w additional
-                                          additional-movement slurp/barf-cp
-                                          prettify)))
-#+END_SRC
-
 *** C/C++
 Emacs frontend to GNU Global source code tagging system.
 #+BEGIN_SRC emacs-lisp
@@ -1101,40 +1030,50 @@ Emacs frontend to GNU Global source code tagging system.
     :config
     (add-hook 'c-mode-common-hook
               (lambda ()
-                (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+                (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
                   (ggtags-mode 1)))))
+
+  (define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
+  (define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
+  (define-key ggtags-mode-map (kbd "C-c g r") 'ggtags-find-reference)
+  (define-key ggtags-mode-map (kbd "C-c g f") 'ggtags-find-file)
+  (define-key ggtags-mode-map (kbd "C-c g c") 'ggtags-create-tags)
+  (define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
+
+  (define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark)
 #+END_SRC
 
+Provides syntax highlight of the latest C++ language.
 #+BEGIN_SRC emacs-lisp
-  (use-package ccls
-    :hook ((c-mode c++-mode objc-mode cuda-mode) .
-           (lambda () (require 'ccls) (lsp))))
+  (use-package modern-cpp-font-lock
+    :ensure t)
 #+END_SRC
 
+**** Compiling and running C++ Code
 #+BEGIN_SRC emacs-lisp
-  (use-package disaster)
-  (define-key c-mode-base-map (kbd "C-c a") 'disaster)
+  (defun code-compile ()
+    (interactive)
+    (unless (file-exists-p "Makefile")
+      (set (make-local-variable 'compile-command)
+           (let ((file (file-name-nondirectory buffer-file-name)))
+             (format "%s -o %s %s"
+                     (if  (equal (file-name-extension file) "cpp") "g++" "gcc" )
+                     (file-name-sans-extension file)
+                     file)))
+      (compile compile-command)))
+
+  (global-set-key [f9] 'code-compile)
 #+END_SRC
 
 *** Go
 #+BEGIN_SRC emacs-lisp
-  (use-package go-mode
-    :hook (go-mode . lsp-deferred))
+  (use-package go-mode)
 #+END_SRC
 
 *** Java
 #+BEGIN_SRC emacs-lisp
-  (use-package lsp-java)
-  (add-hook 'java-mode-hook #'lsp)
-
   (use-package autodisass-java-bytecode)
 #+END_SRC
-
-# #+BEGIN_SRC emacs-lisp
-#   (use-package jdee)
-#   (custom-set-variables
-#    '(jdee-server-dir "~/.local/opt/jars"))
-# #+END_SRC
 
 *** Rust
 #+BEGIN_SRC emacs-lisp
@@ -1153,22 +1092,6 @@ Elpy is available on Melpa, the most straightforward way to install it is to use
     :ensure t
     :init
     (elpy-enable))
-#+END_SRC
-
-*** Emacs Lisp
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'emacs-lisp-mode-hook #'flycheck-mode)
-
-  (use-package helpful
-    :custom
-    (counsel-describe-function-function #'helpful-callable)
-    (counsel-describe-variable-function #'helpful-variable)
-    :bind
-    ([remap describe-function] . helpful-function)
-    ([remap describe-symbol] . helpful-symbol)
-    ([remap describe-variable] . helpful-variable)
-    ([remap describe-command] . helpful-command)
-    ([remap describe-key] . helpful-key))
 #+END_SRC
 
 *** Markdown
@@ -1220,13 +1143,6 @@ Elpy is available on Melpa, the most straightforward way to install it is to use
   (setq gc-cons-threshold (* 100 1024 1024)
         read-process-output-max (* 1024 1024)
         create-lockfiles nil) ;; lock files will kill `npm start'
-#+END_SRC
-
-**** Live Server
-#+BEGIN_SRC emacs-lisp
-  ;; 1. Start the server with `httpd-start'
-  ;; 2. Use `impatient-mode' on any buffer
-  (use-package impatient-mode)
 #+END_SRC
 
 **** Skewer
@@ -1551,8 +1467,7 @@ Set up the compile package and ensure that compilation output automatically scro
 *** Syntax checking with Flycheck
 #+BEGIN_SRC emacs-lisp
   (use-package flycheck
-    :init (global-flycheck-mode)
-    :hook (lsp-mode . flycheck-mode))
+    :init (global-flycheck-mode))
 
   (add-hook 'after-init-hook #'global-flycheck-mode)
 #+END_SRC
@@ -1861,7 +1776,13 @@ Useful mu4e manual pages:
     ;; Adding a signature to your emails
     ;; You can set the mu4e-compose-signature variable to a string for the signature to include in your e-mails!
     (setq mu4e-compose-signature
-          "Abd El-Twab M. Fakhry\nSoftware Engineer | Competitive Programmer\nws: http://abdeltwabmf.me/\nm: 01127030951")
+          "Sincerely,
+  Abd El-Twab M. Fakhry
+  Software Engineer | Competitive Programmer | Full-stack Developer
+
+  website: https://abdeltwabmf.github.io/
+  e-mail:  abdeltwab.m.fakhry@protonmail.com
+  phone:   (+20) 1127030951")
 
     ;; Automatically Sign Every Email
     ;; You can automatically sign every e-mail using the message-send-hook:

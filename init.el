@@ -157,7 +157,6 @@
   :custom
   (doom-modeline-height 26)
   (doom-modeline-bar-width 6)
-  (doom-modeline-lsp t)
   (doom-modeline-github nil)
 
   ;; Whether display the mu4e notifications. It requires `mu4e-alert' package.
@@ -308,17 +307,10 @@
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
 (use-package aggressive-indent)
-(add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
 (add-hook 'css-mode-hook #'aggressive-indent-mode)
 
 (global-aggressive-indent-mode 1)
 (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
-
-(add-to-list
- 'aggressive-indent-dont-indent-if
- '(and (derived-mode-p 'c++-mode)
-       (null (string-match "\\([;{}]\\|\\b\\(if\\|for\\|while\\)\\b\\)"
-                           (thing-at-point 'line)))))
 
 (use-package undo-tree
   :ensure t
@@ -535,7 +527,7 @@
 
 (use-package pdf-tools
   :config
-  ;;(pdf-tools-install)
+  ;; (pdf-tools-install)
   (pdf-loader-install)
   (setq-default pdf-view-display-size 'fit-width)
   (define-key pdf-view-mode-map (kbd "C-s") 'isearch-forward)
@@ -600,74 +592,40 @@
 (add-to-list 'auto-mode-alist '("Dockerfile\\'" . dockerfile-mode))
 (use-package docker-compose-mode)
 
-(use-package lsp-docker)
-
-(defvar lsp-docker-client-packages
-  '(lsp-css lsp-clients lsp-bash lsp-go lsp-pyls lsp-html lsp-typescript
-            lsp-terraform lsp-clangd))
-
-(setq lsp-docker-client-configs
-      '((:server-id bash-ls :docker-server-id bashls-docker :server-command "bash-language-server start")
-        (:server-id clangd :docker-server-id clangd-docker :server-command "clangd")
-        (:server-id css-ls :docker-server-id cssls-docker :server-command "css-languageserver --stdio")
-        (:server-id dockerfile-ls :docker-server-id dockerfilels-docker :server-command "docker-langserver --stdio")
-        (:server-id gopls :docker-server-id gopls-docker :server-command "gopls")
-        (:server-id html-ls :docker-server-id htmls-docker :server-command "html-languageserver --stdio")
-        (:server-id pyls :docker-server-id pyls-docker :server-command "pyls")
-        (:server-id ts-ls :docker-server-id tsls-docker :server-command "typescript-language-server --stdio")))
-
-(use-package lsp-mode
-  :commands lsp
-  :hook ((typescript-mode js2-mode web-mode) . lsp)
-  :bind (:map lsp-mode-map
-              ("TAB" . completion-at-point))
-  :custom (lsp-headerline-breadcrumb-enable nil))
-
-(use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode))
-
-(use-package lsp-treemacs)
-
-(use-package dap-mode
-  :custom
-  (lsp-enable-dap-auto-configure nil)
-  :config
-  (dap-ui-mode 1)
-  (dap-tooltip-mode 1)
-  (require 'dap-node)
-  (dap-node-setup))
-
-(use-package lispy
-  :hook ((emacs-lisp-mode . lispy-mode)
-         (scheme-mode . lispy-mode)))
-
-(use-package lispyville
-  :hook ((lispy-mode . lispyville-mode))
-  :config
-  (lispyville-set-key-theme '(operators c-w additional
-                                        additional-movement slurp/barf-cp
-                                        prettify)))
-
 (use-package ggtags
   :ensure t
   :config
   (add-hook 'c-mode-common-hook
             (lambda ()
-              (when (derived-mode-p 'c-mode 'c++-mode 'java-mode)
+              (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
                 (ggtags-mode 1)))))
 
-(use-package ccls
-  :hook ((c-mode c++-mode objc-mode cuda-mode) .
-         (lambda () (require 'ccls) (lsp))))
+(define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
+(define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
+(define-key ggtags-mode-map (kbd "C-c g r") 'ggtags-find-reference)
+(define-key ggtags-mode-map (kbd "C-c g f") 'ggtags-find-file)
+(define-key ggtags-mode-map (kbd "C-c g c") 'ggtags-create-tags)
+(define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
 
-(use-package disaster)
-(define-key c-mode-base-map (kbd "C-c a") 'disaster)
+(define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark)
 
-(use-package go-mode
-  :hook (go-mode . lsp-deferred))
+(use-package modern-cpp-font-lock
+  :ensure t)
 
-(use-package lsp-java)
-(add-hook 'java-mode-hook #'lsp)
+(defun code-compile ()
+  (interactive)
+  (unless (file-exists-p "Makefile")
+    (set (make-local-variable 'compile-command)
+         (let ((file (file-name-nondirectory buffer-file-name)))
+           (format "%s -o %s %s"
+                   (if  (equal (file-name-extension file) "cpp") "g++" "gcc" )
+                   (file-name-sans-extension file)
+                   file)))
+    (compile compile-command)))
+
+(global-set-key [f9] 'code-compile)
+
+(use-package go-mode)
 
 (use-package autodisass-java-bytecode)
 
@@ -682,19 +640,6 @@
   :ensure t
   :init
   (elpy-enable))
-
-(add-hook 'emacs-lisp-mode-hook #'flycheck-mode)
-
-(use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
-  :bind
-  ([remap describe-function] . helpful-function)
-  ([remap describe-symbol] . helpful-symbol)
-  ([remap describe-variable] . helpful-variable)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-key] . helpful-key))
 
 (use-package markdown-mode
   :mode "\\.md\\'"
@@ -737,10 +682,6 @@
 (setq gc-cons-threshold (* 100 1024 1024)
       read-process-output-max (* 1024 1024)
       create-lockfiles nil) ;; lock files will kill `npm start'
-
-;; 1. Start the server with `httpd-start'
-;; 2. Use `impatient-mode' on any buffer
-(use-package impatient-mode)
 
 (use-package skewer-mode)
 
@@ -1004,8 +945,7 @@
     (add-hook 'after-save-hook #'recompile nil t)))
 
 (use-package flycheck
-  :init (global-flycheck-mode)
-  :hook (lsp-mode . flycheck-mode))
+  :init (global-flycheck-mode))
 
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
@@ -1249,7 +1189,13 @@
   ;; Adding a signature to your emails
   ;; You can set the mu4e-compose-signature variable to a string for the signature to include in your e-mails!
   (setq mu4e-compose-signature
-        "Abd El-Twab M. Fakhry\nSoftware Engineer | Competitive Programmer\nws: http://abdeltwabmf.me/\nm: 01127030951")
+        "Sincerely,
+Abd El-Twab M. Fakhry
+Software Engineer | Competitive Programmer | Full-stack Developer
+
+website: https://abdeltwabmf.github.io/
+e-mail:  abdeltwab.m.fakhry@protonmail.com
+phone:   (+20) 1127030951")
 
   ;; Automatically Sign Every Email
   ;; You can automatically sign every e-mail using the message-send-hook:
