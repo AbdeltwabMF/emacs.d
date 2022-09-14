@@ -400,6 +400,7 @@
           (buffer "*scratch*")))))
 (global-set-key (kbd "C-c v") 'ivy-push-view)
 (global-set-key (kbd "C-c V") 'ivy-pop-view)
+(setq desktop-save-mode 1)
 
 (setq ivy-initial-inputs-alist nil)
 

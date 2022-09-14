@@ -742,10 +742,8 @@ You can use this hook on any mode you want, aggressive-indent is not exclusive t
             (buffer "*scratch*")))))
   (global-set-key (kbd "C-c v") 'ivy-push-view)
   (global-set-key (kbd "C-c V") 'ivy-pop-view)
+  (setq desktop-save-mode 1)
 #+END_SRC
-
-#+RESULTS:
-: ivy-pop-view
 
 ** Making M-x Great Again!
 The following line removes the annoying in things like counsel-M-x and other ivy/counsel prompts. The default string means that if you type something immediately after this string only completion candidates that begin with what you typed are shown. Most of the time, I'm searching for a command without knowing what it begins with though.
