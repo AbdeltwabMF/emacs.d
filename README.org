@@ -1723,11 +1723,14 @@ Useful mu4e manual pages:
                     (smtpmail-smtp-service . 465)
                     (smtpmail-stream-type  . ssl)
 
+                    (mu4e-all-folder      . "/work/[Gmail]/All Mail")
                     (mu4e-sent-folder       . "/work/[Gmail]/Sent Mail")
+                    (mu4e-starred-folder      . "/work/[Gmail]/Starred")
+                    (mu4e-snoozed-folder    . "/work/[Gmail]/Snoozed")
+                    (mu4e-important-folder    . "/work/[Gmail]/Important")
+                    (mu4e-scheduled-folder  . "/work/[Gmail]/Scheduled")
                     (mu4e-spam-folder       . "/work/[Gmail]/Spam")
                     (mu4e-trash-folder      . "/work/[Gmail]/Trash")
-                    (mu4e-starred-folder    . "/work/[Gmail]/Starred")
-                    (mu4e-scheduled-folder  . "/work/[Gmail]/Scheduled")
                     (mu4e-drafts-folder     . "/work/[Gmail]/Drafts")))
 
            ;; University account
@@ -1746,6 +1749,7 @@ Useful mu4e manual pages:
 
                     (mu4e-inbox-folder     . "/azhar/Inbox")
                     (mu4e-sent-folder      . "/azhar/Sent Items")
+                    (mu4e-archive-folder      . "/azhar/Archive")
                     (mu4e-spam-folder      . "/azhar/Spambox")
                     (mu4e-trash-folder     . "/azhar/Trash")
                     (mu4e-drafts-folder    . "/azhar/Drafts")))))
@@ -1753,6 +1757,7 @@ Useful mu4e manual pages:
     ;; Mail dir
     (setq mu4e-maildir-shortcuts
           '(("/work/Inbox" 				     . ?i)
+            ("/work/[Gmail]/All Mail" . ?a)
             ("/work/[Gmail]/Sent Mail" . ?s)
             ("/work/[Gmail]/Spam"      . ?p)
             ("/work/[Gmail]/Trash"     . ?t)
@@ -1762,6 +1767,8 @@ Useful mu4e manual pages:
             ("/azhar/Inbox"        . ?u)
             ("/azhar/Sent Items"   . ?n)
             ("/azhar/Spambox"      . ?m)
+            ("/azhar/Draft"      . ?d)
+            ("/azhar/Archive"      . ?a)
             ("/azhar/Trash"        . ?h)))
 
     ;; You can create bookmarks to show merged views of folders across accounts:
