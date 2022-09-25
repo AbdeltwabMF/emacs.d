@@ -1685,145 +1685,16 @@ vterm enables the use of fully-fledged terminal applications within Emacs so tha
 #+END_SRC
 
 ** Mail
-Mail in Emacs with mu4e
-mu4e is the best mail interface I've ever used because it's fast and makes it really easy to power through a huge e-mail backlog. Love the ability to capture links to emails with org-mode too.
-
-Useful mu4e manual pages:
-- [[https://www.djcbsoftware.nl/code/mu/mu4e/MSGV-Keybindings.html#MSGV-Keybindings][Key bindings]]
-- [[https://www.djcbsoftware.nl/code/mu/mu4e/Org_002dmode-links.html#Org_002dmode-links][org-mode integration]]
 
 #+BEGIN_SRC emacs-lisp
-  (use-package mu4e
-    :ensure nil
-    :defer 20 ;; Wait until 10 seconds after startup
-    :config
-
-    ;; Refresh mail using isync every 10 minutes
-    (setq mu4e-update-interval (* 2 60))
-    (setq mu4e-get-mail-command "mbsync -a -c ~/.config/isync/mbsyncrc")
-    (setq mu4e-maildir "~/.local/share/Mail")
-
-    ;; Use Ivy for mu4e completions (maildir folders, etc)
-    (setq mu4e-completing-read-function #'ivy-completing-read)
-
-    ;; load mu4e-context configuration
-    (setq mu4e-contexts
-          (list
-           ;; work
-           (make-mu4e-context
-            :name "work"
-            :match-func
-            (lambda (msg)
-              (when msg
-                (string-prefix-p "/work" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "abdeltwab.m.fakhry@gmail.com")
-                    (user-full-name    . "Abd El-Twab M. Fakhry")
-
-                    (smtpmail-smtp-server  . "smtp.gmail.com")
-                    (smtpmail-smtp-service . 465)
-                    (smtpmail-stream-type  . ssl)
-
-                    (mu4e-all-folder      . "/work/[Gmail]/All Mail")
-                    (mu4e-sent-folder       . "/work/[Gmail]/Sent Mail")
-                    (mu4e-starred-folder      . "/work/[Gmail]/Starred")
-                    (mu4e-snoozed-folder    . "/work/[Gmail]/Snoozed")
-                    (mu4e-important-folder    . "/work/[Gmail]/Important")
-                    (mu4e-scheduled-folder  . "/work/[Gmail]/Scheduled")
-                    (mu4e-spam-folder       . "/work/[Gmail]/Spam")
-                    (mu4e-trash-folder      . "/work/[Gmail]/Trash")
-                    (mu4e-drafts-folder     . "/work/[Gmail]/Drafts")))
-
-           ;; University account
-           (make-mu4e-context
-            :name "azhar"
-            :match-func
-            (lambda (msg)
-              (when msg
-                (string-prefix-p "/azhar" (mu4e-message-field msg :maildir))))
-            :vars '((user-mail-address . "AbdEl-TwabFakhry.2020@azhar.edu.eg")
-                    (user-full-name    . "Abd El-Twab M. Fakhry")
-
-                    (smtpmail-smtp-server  . "smtp.office365.com")
-                    (smtpmail-smtp-service . 587)
-                    (smtpmail-stream-type  . ssl)
-
-                    (mu4e-inbox-folder     . "/azhar/Inbox")
-                    (mu4e-sent-folder      . "/azhar/Sent Items")
-                    (mu4e-archive-folder      . "/azhar/Archive")
-                    (mu4e-spam-folder      . "/azhar/Spambox")
-                    (mu4e-trash-folder     . "/azhar/Trash")
-                    (mu4e-drafts-folder    . "/azhar/Drafts")))))
-
-    ;; Mail dir
-    (setq mu4e-maildir-shortcuts
-          '(("/work/Inbox" 				     . ?i)
-            ("/work/[Gmail]/All Mail" . ?a)
-            ("/work/[Gmail]/Sent Mail" . ?s)
-            ("/work/[Gmail]/Spam"      . ?p)
-            ("/work/[Gmail]/Trash"     . ?t)
-            ("/work/[Gmail]/Starred"   . ?r)
-            ("/work/[Gmail]/Scheduled" . ?c)
-
-            ("/azhar/Inbox"        . ?u)
-            ("/azhar/Sent Items"   . ?n)
-            ("/azhar/Spambox"      . ?m)
-            ("/azhar/Draft"      . ?d)
-            ("/azhar/Archive"      . ?a)
-            ("/azhar/Trash"        . ?h)))
-
-    ;; You can create bookmarks to show merged views of folders across accounts:
-    (add-to-list 'mu4e-bookmarks '("m:/azhar/Inbox or m:/work/Inbox" "All Inboxes" ?i))
-
-    ;; Display options
-    (setq mu4e-view-show-images t)
-    (setq mu4e-view-show-addresses 't)
-
-    (setq message-confirm-send t)
-
-    ;; Picking a context for sending mail
-    ;; When using multiple contexts, you might want to define which context gets picked automatically for sending email (similar to mu4e-context-policy):
-    ;; Only ask if a context hasn't been previously picked
-    (setq mu4e-compose-context-policy 'ask-if-none)
-
-    ;; start with the first (default) context;
-    ;; default is to ask-if-none (ask when there's no context yet, and none match)
-    (setq mu4e-context-policy 'pick-first)
-
-    ;; This is set to 't' to avoid mail syncing issues when using mbsync
-    (setq mu4e-change-filenames-when-moving t)
-
-    ;; Configure the function to use for sending mail
-    (setq message-send-mail-function 'smtpmail-send-it)
-
-    ;; Improving the look of plain text emails
-    ;; By default all e-mails are sent as plain text. This can lead to strange wrapping in other email clients when reading your messages. You can improve this by setting the following variable:
-    ;; Make sure plain text mails flow correctly for recipients
-    (setq mu4e-compose-format-flowed t)
-
-    ;; Adding a signature to your emails
-    ;; You can set the mu4e-compose-signature variable to a string for the signature to include in your e-mails!
-    (setq mu4e-compose-signature
-          "Sincerely,
-  Abd El-Twab M. Fakhry
-  Software Engineer | Competitive Programmer | Full-stack Developer
-
-  website: https://abdeltwabmf.github.io/
-  e-mail:  abdeltwab.m.fakhry@protonmail.com
-  phone:   (+20) 1127030951")
-
-    ;; Automatically Sign Every Email
-    ;; You can automatically sign every e-mail using the message-send-hook:
-    (add-hook 'message-send-hook 'mml-secure-message-sign-pgpmime)
-
-    ;; Run mu4e in the background to sync mail periodically
-    (mu4e t))
+  (load-file "~/.config/emacs/email.el")
 #+END_SRC
 
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
   (use-package mu4e-marker-icons
     :init (mu4e-marker-icons-mode 1))
-#+end_src
+#+END_SRC
 
 Use [[https://github.com/iqbalansari/mu4e-alert][mu4e-alert]] to show notifications when e-mail comes in:
 #+BEGIN_SRC emacs-lisp

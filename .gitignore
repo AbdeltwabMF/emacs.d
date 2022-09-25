@@ -5,3 +5,4 @@ indium-chrome-profile
 site-lisp
 var
 .cask
+email.el
