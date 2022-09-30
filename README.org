@@ -44,7 +44,6 @@ My general working style is to write everything first with pencil and paper, sit
   - [[#displaying-world-time][Displaying World Time]]
   - [[#pinentry][Pinentry]]
   - [[#tramp][TRAMP]]
-  - [[#server][Server]]
 - [[#general-key-bindings][General Key Bindings]]
 - [[#editing-configuration][Editing Configuration]]
   - [[#tab-widths][Tab Widths]]
@@ -508,11 +507,6 @@ Set default connection mode to SSH
 #   (when (memq window-system '(mac ns x))
 #     (exec-path-from-shell-initialize))
 # #+END_SRC
-
-** Server
-#+BEGIN_SRC emacs-lisp
-  (server-mode 1)
-#+END_SRC
 
 * General Key Bindings
 Family of short bindings with a common prefix - a Hydra.
@@ -1884,7 +1878,6 @@ of this is relates to a deeper rooted issue involving fonts and font-lock relian
 
 * Footer
 #+BEGIN_SRC emacs-lisp
-  ;; (server-mode t)
   (provide 'init)
    ;;; init.el ends here
 #+END_SRC

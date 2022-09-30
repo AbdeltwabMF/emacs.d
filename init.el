@@ -247,8 +247,6 @@
 
 (setq tramp-default-method "ssh")
 
-(server-mode 1)
-
 (use-package hydra)
 
 (use-package general
@@ -1267,6 +1265,5 @@
 
 (setq inhibit-compacting-font-caches t)
 
-;; (server-mode t)
 (provide 'init)
  ;;; init.el ends here
