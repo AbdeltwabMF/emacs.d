@@ -398,7 +398,13 @@
           (buffer "*scratch*")))))
 (global-set-key (kbd "C-c v") 'ivy-push-view)
 (global-set-key (kbd "C-c V") 'ivy-pop-view)
-(setq desktop-save-mode 1)
+
+(desktop-save-mode)
+;; optional: automatically load previous session on startup
+;; optional - if your desktop is saved in "~.emacs.d/.cache/"
+(setq desktop-path '("~/.cache/emacs/"))
+(desktop-read)
+;; https://bmag.github.io/2015/12/26/desktop.html
 
 (setq ivy-initial-inputs-alist nil)
 

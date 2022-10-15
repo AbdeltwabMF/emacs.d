@@ -736,7 +736,15 @@ You can use this hook on any mode you want, aggressive-indent is not exclusive t
             (buffer "*scratch*")))))
   (global-set-key (kbd "C-c v") 'ivy-push-view)
   (global-set-key (kbd "C-c V") 'ivy-pop-view)
-  (setq desktop-save-mode 1)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (desktop-save-mode)
+  ;; optional: automatically load previous session on startup
+  ;; optional - if your desktop is saved in "~.emacs.d/.cache/"
+  (setq desktop-path '("~/.cache/emacs/"))
+  (desktop-read)
+  ;; https://bmag.github.io/2015/12/26/desktop.html
 #+END_SRC
 
 ** Making M-x Great Again!
